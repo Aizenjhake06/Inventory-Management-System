@@ -70,7 +70,20 @@ export default function OperationsDashboardPage() {
       
       // Fetch packed orders only (department filtering is handled by API)
       const ordersData = await apiGet<Order[]>(ordersUrl)
-      setOrders(Array.isArray(ordersData) ? ordersData : [])
+      
+      // Get current user info for client-side filtering
+      const currentUserStr = localStorage.getItem('currentUser')
+      const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null
+      const userRole = currentUser?.role
+      const assignedChannel = currentUser?.assignedChannel
+      
+      // Filter orders by assigned channel for dept-manager and operations roles
+      let filteredOrders = Array.isArray(ordersData) ? ordersData : []
+      if ((userRole === 'dept-manager' || userRole === 'operations') && assignedChannel) {
+        filteredOrders = filteredOrders.filter(order => order.sales_channel === assignedChannel)
+      }
+      
+      setOrders(filteredOrders)
       
       // Fetch dashboard stats for revenue chart (department filtering is handled by API)
       let dashboardUrl = `/api/dashboard?period=${timePeriod}`

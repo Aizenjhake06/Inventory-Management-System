@@ -120,6 +120,12 @@ export default function TrackOrdersPage() {
 
   const fetchOrders = async () => {
     try {
+      // Get current user info for filtering
+      const currentUserStr = localStorage.getItem('currentUser')
+      const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null
+      const userRole = currentUser?.role
+      const assignedChannel = currentUser?.assignedChannel
+      
       // Team leaders use their own API endpoint
       if (isTeamLeader) {
         const headers = getAuthHeaders()
@@ -168,11 +174,11 @@ export default function TrackOrdersPage() {
         return
       }
 
-      // Admin: Fetch only packed orders (ready for tracking)
+      // Fetch only packed orders (ready for tracking)
       const data = await apiGet<any[]>('/api/orders?status=Packed')
       
       // Transform data to match Order interface
-      const transformedOrders: Order[] = data.map(order => ({
+      let transformedOrders: Order[] = data.map(order => ({
         id: order.id,
         orderNumber: order.id,
         customerName: order.customer_name || 'N/A',
@@ -202,6 +208,13 @@ export default function TrackOrdersPage() {
         dispatchNotes: order.dispatch_notes || '',
         department: order.sales_channel || 'N/A'
       }))
+      
+      // Filter by assigned channel for dept-manager and operations roles
+      if (userRole === 'dept-manager' || userRole === 'operations') {
+        if (assignedChannel) {
+          transformedOrders = transformedOrders.filter(order => order.department === assignedChannel)
+        }
+      }
       
       setOrders(transformedOrders)
       setFilteredOrders(transformedOrders)

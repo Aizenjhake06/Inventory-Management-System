@@ -202,14 +202,13 @@ export default function PackingQueuePage() {
       }
 
       // Fetch only pending orders (not yet packed)
-      // API already filters by department for operations users
       const data = await apiGet<any[]>('/api/orders?status=Pending')
       
       console.log('[Packing Queue] Total orders fetched from API:', data.length)
       console.log('[Packing Queue] User info:', { role: user?.role, assignedChannel: user?.assignedChannel })
       
       // Map database fields to Order interface
-      const mappedOrders: Order[] = data.map(order => ({
+      let mappedOrders: Order[] = data.map(order => ({
         id: order.id,
         orderNumber: order.id,
         date: order.date,
@@ -244,6 +243,12 @@ export default function PackingQueuePage() {
         restored_by: order.restored_by,
         restored_at: order.restored_at
       } as any))
+      
+      // Filter by assigned channel for dept-manager and operations roles
+      if ((user?.role === 'dept-manager' || user?.role === 'operations') && user?.assignedChannel) {
+        console.log('[Packing Queue] Filtering by assigned channel:', user.assignedChannel)
+        mappedOrders = mappedOrders.filter(order => order.sales_channel === user.assignedChannel)
+      }
       
       console.log('[Packing Queue] Orders to display:', mappedOrders.map(o => ({
         id: o.id.slice(-6),
