@@ -54,7 +54,6 @@ import { toast } from "sonner"
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client"
 import { getCurrentUser } from "@/lib/auth"
 import { BrandLoader } from "@/components/ui/brand-loader"
-import { EmailReportsManager } from "@/components/email-reports-manager"
 import { ImageUpload } from "@/components/ui/image-upload"
 
 interface Account {
@@ -788,17 +787,17 @@ export default function SettingsPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         {/* Professional Tab Navigation */}
         <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-0 shadow-lg p-1">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-8 gap-1 h-auto p-0 bg-transparent">
+          <TabsList className="flex flex-wrap w-full gap-1 h-auto p-0 bg-transparent">
             <TabsTrigger 
               value="profile" 
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium"
+              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium flex-1 min-w-[120px]"
             >
               <User className="h-4 w-4" />
               <span className="hidden sm:inline">Profile</span>
             </TabsTrigger>
             <TabsTrigger 
               value="security" 
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium"
+              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium flex-1 min-w-[120px]"
             >
               <Lock className="h-4 w-4" />
               <span className="hidden sm:inline">Security</span>
@@ -806,7 +805,7 @@ export default function SettingsPage() {
             {isAdmin && (
               <TabsTrigger 
                 value="users" 
-                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium flex-1 min-w-[120px]"
               >
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Users</span>
@@ -815,31 +814,22 @@ export default function SettingsPage() {
             {isAdmin && (
               <TabsTrigger 
                 value="company" 
-                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium flex-1 min-w-[120px]"
               >
                 <Building2 className="h-4 w-4" />
                 <span className="hidden sm:inline">Company</span>
               </TabsTrigger>
             )}
-            {isAdmin && (
-              <TabsTrigger 
-                value="email-reports" 
-                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium"
-              >
-                <Mail className="h-4 w-4" />
-                <span className="hidden sm:inline">Email Reports</span>
-              </TabsTrigger>
-            )}
             <TabsTrigger 
               value="appearance" 
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium"
+              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium flex-1 min-w-[120px]"
             >
               <Palette className="h-4 w-4" />
               <span className="hidden sm:inline">Appearance</span>
             </TabsTrigger>
             <TabsTrigger 
               value="system" 
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium"
+              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium flex-1 min-w-[120px]"
             >
               <Database className="h-4 w-4" />
               <span className="hidden sm:inline">System</span>
@@ -847,7 +837,7 @@ export default function SettingsPage() {
             {isAdmin && (
               <TabsTrigger 
                 value="manual" 
-                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-white dark:data-[state=active]:text-black transition-colors text-sm font-medium flex-1 min-w-[120px]"
               >
                 <BookOpen className="h-4 w-4" />
                 <span className="hidden sm:inline">Manual</span>
@@ -1189,135 +1179,14 @@ export default function SettingsPage() {
                     </div>
                   </div>
                   <Button 
-                    onClick={() => setShowNewUserForm(!showNewUserForm)}
+                    onClick={() => setShowNewUserForm(true)}
                     className="bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900"
                   >
-                    {showNewUserForm ? (
-                      <><X className="h-4 w-4 mr-2" /> Cancel</>
-                    ) : (
-                      <><Plus className="h-4 w-4 mr-2" /> Add User</>
-                    )}
+                    <Plus className="h-4 w-4 mr-2" /> Add User
                   </Button>
                 </div>
               </CardHeader>
               <CardContent className="pt-5 space-y-5">
-                {showNewUserForm && (
-                  <Card className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                    <CardContent className="pt-5 space-y-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Plus className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                        <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Create New User</h3>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="newUsername" className="text-xs font-medium">Username *</Label>
-                          <Input
-                            id="newUsername"
-                            value={newUserForm.username}
-                            onChange={(e) => setNewUserForm({ ...newUserForm, username: e.target.value })}
-                            placeholder="Enter username"
-                            className="h-9"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="newDisplayName" className="text-xs font-medium">Display Name *</Label>
-                          <Input
-                            id="newDisplayName"
-                            value={newUserForm.displayName}
-                            onChange={(e) => setNewUserForm({ ...newUserForm, displayName: e.target.value })}
-                            placeholder="Enter display name"
-                            className="h-9"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="newPassword" className="text-xs font-medium">Password *</Label>
-                          <Input
-                            id="newPassword"
-                            type="password"
-                            value={newUserForm.password}
-                            onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
-                            placeholder="Enter password (min 6 characters)"
-                            className="h-9"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="newRole" className="text-xs font-medium">Role *</Label>
-                          <div className="flex gap-2">
-                            <select
-                              id="newRole"
-                              value={newUserForm.role}
-                              onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value as any, assignedChannel: '' })}
-                              className="flex h-9 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-background px-3 py-2 text-sm"
-                            >
-                              <option value="admin">Administrator</option>
-                              <option value="operations">Operations Staff (Agent)</option>
-                              <option value="dept-manager">Department Manager</option>
-                              <option value="packer">Packer</option>
-                              <option value="tracker">Tracker</option>
-                              <option value="logistics-admin">Logistics Admin</option>
-                            </select>
-                            
-                            {/* Sales Channel Dropdown - Show for Operations and Dept Manager */}
-                            {(newUserForm.role === 'operations' || newUserForm.role === 'dept-manager') && (
-                              <select
-                                id="newChannel"
-                                value={newUserForm.assignedChannel}
-                                onChange={(e) => setNewUserForm({ ...newUserForm, assignedChannel: e.target.value })}
-                                className="flex h-9 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-background px-3 py-2 text-sm"
-                              >
-                                <option value="">Select department...</option>
-                                <option value="Shopee">Shopee</option>
-                                <option value="Lazada">Lazada</option>
-                                <option value="TikTok">TikTok</option>
-                                <option value="Facebook">Facebook</option>
-                                <option value="Physical Store">Physical Store</option>
-                              </select>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Profile Image Upload */}
-                      <div className="space-y-2">
-                        <Label className="text-xs font-medium">Profile Image (Optional)</Label>
-                        <ImageUpload
-                          uploadType="profile"
-                          value={newUserForm.profileImage}
-                          onChange={(url) => setNewUserForm({ ...newUserForm, profileImage: url })}
-                          onRemove={() => setNewUserForm({ ...newUserForm, profileImage: '' })}
-                        />
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          Upload a profile picture (max 300KB, auto-compressed to WebP)
-                        </p>
-                      </div>
-
-                      <div className="flex gap-2 pt-2">
-                        <Button 
-                          onClick={handleCreateUser} 
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-9"
-                        >
-                          <Check className="h-4 w-4 mr-2" />
-                          Create User
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => {
-                            setShowNewUserForm(false)
-                            setNewUserForm({ username: '', password: '', displayName: '', role: 'operations', assignedChannel: '', profileImage: '' })
-                          }}
-                          className="h-9 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
-                        >
-                          <X className="h-4 w-4 mr-2" />
-                          Cancel
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
 
                 <div className="space-y-5">
                   {/* 3 Role Group Cards - Horizontal */}
@@ -1502,7 +1371,7 @@ export default function SettingsPage() {
                       </CardContent>
                     </Card>
 
-                    {/* Department Managers Card */}
+                    {/* Dept. Heads Card */}
                     <Card className="border-0 shadow-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                       <CardHeader className="p-4 pb-3 border-b border-slate-200 dark:border-slate-700">
                         <div className="flex items-center justify-between">
@@ -1510,7 +1379,7 @@ export default function SettingsPage() {
                             <div className="p-1.5 rounded-lg bg-purple-600">
                               <Users className="h-3.5 w-3.5 text-white" />
                             </div>
-                            <span className="text-sm font-semibold text-slate-900 dark:text-white">Dept Managers</span>
+                            <span className="text-sm font-semibold text-slate-900 dark:text-white">Dept. Heads</span>
                           </div>
                           <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                             {accounts.filter(a => a.role === 'dept-manager').length} users
@@ -1519,7 +1388,7 @@ export default function SettingsPage() {
                       </CardHeader>
                       <CardContent className="p-3 space-y-2">
                         {accounts.filter(a => a.role === 'dept-manager').length === 0 ? (
-                          <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-3">No department managers</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-3">No dept. heads</p>
                         ) : (
                           accounts.filter(a => a.role === 'dept-manager').map((account) => (
                             <div key={account.id} className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
@@ -1909,13 +1778,6 @@ export default function SettingsPage() {
           </TabsContent>
         )}
 
-        {/* Email Reports Tab (Admin Only) */}
-        {isAdmin && (
-          <TabsContent value="email-reports" className="space-y-6">
-            <EmailReportsManager />
-          </TabsContent>
-        )}
-
         {/* Appearance Tab */}
         <TabsContent value="appearance" className="space-y-6">
           <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
@@ -2246,6 +2108,140 @@ export default function SettingsPage() {
         </TabsContent>
 
       </Tabs>
+
+      {/* Add User Modal */}
+      <Dialog open={showNewUserForm} onOpenChange={setShowNewUserForm}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-white dark:bg-slate-900 border-0 shadow-2xl">
+          <DialogHeader className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-blue-600">
+                <Plus className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                  Create New User
+                </DialogTitle>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Add a new user account with role and permissions
+                </p>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          <div className="p-5 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="modalUsername" className="text-sm font-medium">Username *</Label>
+                <Input
+                  id="modalUsername"
+                  value={newUserForm.username}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, username: e.target.value })}
+                  placeholder="Enter username"
+                  className="h-10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="modalDisplayName" className="text-sm font-medium">Display Name *</Label>
+                <Input
+                  id="modalDisplayName"
+                  value={newUserForm.displayName}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, displayName: e.target.value })}
+                  placeholder="Enter display name"
+                  className="h-10"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="modalPassword" className="text-sm font-medium">Password *</Label>
+                <Input
+                  id="modalPassword"
+                  type="password"
+                  value={newUserForm.password}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
+                  placeholder="Enter password (min 6 characters)"
+                  className="h-10"
+                />
+                <p className="text-xs text-slate-500 dark:text-slate-400">Minimum 6 characters</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="modalRole" className="text-sm font-medium">Role *</Label>
+                <select
+                  id="modalRole"
+                  value={newUserForm.role}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value as any, assignedChannel: '' })}
+                  className="flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-background px-3 py-2 text-sm"
+                >
+                  <option value="admin">Administrator</option>
+                  <option value="operations">Operations Staff (Agent)</option>
+                  <option value="dept-manager">Dept. Head</option>
+                  <option value="packer">Packer</option>
+                  <option value="tracker">Tracker</option>
+                  <option value="logistics-admin">Logistics Admin</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Sales Channel Dropdown - Show for Operations and Dept Manager */}
+            {(newUserForm.role === 'operations' || newUserForm.role === 'dept-manager') && (
+              <div className="space-y-2">
+                <Label htmlFor="modalChannel" className="text-sm font-medium">Assigned Department *</Label>
+                <select
+                  id="modalChannel"
+                  value={newUserForm.assignedChannel}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, assignedChannel: e.target.value })}
+                  className="flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">Select department...</option>
+                  <option value="Shopee">Shopee</option>
+                  <option value="Lazada">Lazada</option>
+                  <option value="TikTok">TikTok</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="Physical Store">Physical Store</option>
+                </select>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Required for Operations Staff and Dept. Heads</p>
+              </div>
+            )}
+
+            {/* Profile Image Upload */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Profile Image (Optional)</Label>
+              <ImageUpload
+                uploadType="profile"
+                value={newUserForm.profileImage}
+                onChange={(url) => setNewUserForm({ ...newUserForm, profileImage: url })}
+                onRemove={() => setNewUserForm({ ...newUserForm, profileImage: '' })}
+              />
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Upload a profile picture (max 300KB, auto-compressed to WebP)
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowNewUserForm(false)
+                setNewUserForm({ username: '', password: '', displayName: '', role: 'operations', assignedChannel: '', profileImage: '' })
+              }}
+              className="h-10"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleCreateUser} 
+              className="h-10 bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Check className="h-4 w-4 mr-2" />
+              Create User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   )
 }
@@ -2502,13 +2498,12 @@ const MANUAL_DATA: Record<string, { label: string; icon: string; pages: Record<s
       },
       settings: {
         title: 'Settings',
-        description: 'Configure profile, security, users, company info, email reports, appearance, and system settings.',
+        description: 'Configure profile, security, users, company info, appearance, and system settings.',
         workflow: [
           'Profile tab: Update display name, email, phone, and profile image.',
           'Security tab: Change your password.',
           'Users tab (Admin only): Create, edit, or delete user accounts.',
           'Company tab: Update company information.',
-          'Email Reports: Schedule automated email reports.',
           'Appearance: Switch between light/dark/system theme.',
           'System: Export data, create backups, view system metrics.',
           'Manual tab: This page — view guides for each role and page.',
@@ -2793,6 +2788,7 @@ const MANUAL_DATA: Record<string, { label: string; icon: string; pages: Record<s
 function ManualTab() {
   const [selectedAccount, setSelectedAccount] = useState<string>('')
   const [selectedPage, setSelectedPage] = useState<string>('')
+  const [exporting, setExporting] = useState(false)
 
   const accountOptions = Object.entries(MANUAL_DATA).map(([key, val]) => ({
     key,
@@ -2815,21 +2811,755 @@ function ManualTab() {
     setSelectedPage('')
   }
 
+  const handleExportPDF = async () => {
+    try {
+      setExporting(true)
+      toast.info('Generating comprehensive system documentation...')
+      
+      // Dynamically import jsPDF
+      const { default: jsPDF } = await import('jspdf')
+      
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      })
+
+      // Professional color palette
+      const colors = {
+        primary: [37, 99, 235],      // Blue
+        secondary: [71, 85, 105],    // Slate
+        success: [34, 197, 94],      // Green
+        warning: [234, 179, 8],      // Yellow
+        accent: [168, 85, 247],      // Purple
+        info: [14, 165, 233],        // Sky blue
+        text: [15, 23, 42],          // Dark slate
+        textLight: [100, 116, 139],  // Light slate
+        border: [226, 232, 240]      // Very light slate
+      }
+
+      // Page settings
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const pageHeight = doc.internal.pageSize.getHeight()
+      const margin = 25
+      const contentWidth = pageWidth - (margin * 2)
+      let yPos = margin
+      let pageNumber = 1
+
+      // Helper: Add page number and footer
+      const addFooter = () => {
+        doc.setFontSize(8)
+        doc.setFont('helvetica', 'normal')
+        doc.setTextColor(...colors.textLight)
+        doc.text(
+          `WIHI Asia Marketing Inc. | Page ${pageNumber}`,
+          pageWidth / 2,
+          pageHeight - 10,
+          { align: 'center' }
+        )
+      }
+
+      // Helper: Check page break
+      const checkPageBreak = (requiredSpace: number) => {
+        if (yPos + requiredSpace > pageHeight - 20) {
+          addFooter()
+          doc.addPage()
+          pageNumber++
+          yPos = margin
+          return true
+        }
+        return false
+      }
+
+      // Helper: Clean text (remove emojis and special characters)
+      const cleanText = (text: string) => {
+        return text
+          .replace(/[^\x00-\x7F]/g, '') // Remove non-ASCII
+          .replace(/[\u{1F300}-\u{1F9FF}]/gu, '') // Remove emojis
+          .trim()
+      }
+
+      // Helper: Add wrapped text
+      const addWrappedText = (text: string, x: number, fontSize: number, maxWidth: number, lineHeight: number, color: number[] = colors.text) => {
+        const cleanedText = cleanText(text)
+        doc.setFontSize(fontSize)
+        doc.setTextColor(...color)
+        const lines = doc.splitTextToSize(cleanedText, maxWidth)
+        lines.forEach((line: string) => {
+          checkPageBreak(lineHeight)
+          doc.text(line, x, yPos)
+          yPos += lineHeight
+        })
+      }
+
+      // Helper: Add section header
+      const addSectionHeader = (title: string, color: number[] = colors.primary) => {
+        checkPageBreak(15)
+        doc.setFillColor(...color)
+        doc.rect(margin - 5, yPos - 5, contentWidth + 10, 12, 'F')
+        
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(255, 255, 255)
+        doc.text(title, margin, yPos + 2)
+        yPos += 15
+      }
+
+      // Helper: Add section box
+      const addSectionBox = (title: string, icon: string, bgColor: number[]) => {
+        checkPageBreak(12)
+        
+        // Draw background box
+        doc.setFillColor(...bgColor)
+        doc.roundedRect(margin, yPos - 4, contentWidth, 10, 2, 2, 'F')
+        
+        // Add title
+        doc.setFontSize(11)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(255, 255, 255)
+        doc.text(`${icon} ${title}`, margin + 3, yPos + 2)
+        yPos += 12
+      }
+
+      // ========== COVER PAGE ==========
+      // Header bar
+      doc.setFillColor(...colors.primary)
+      doc.rect(0, 0, pageWidth, 70, 'F')
+      
+      // Company name
+      doc.setFontSize(36)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.text('WIHI ASIA', pageWidth / 2, 30, { align: 'center' })
+      
+      doc.setFontSize(16)
+      doc.setFont('helvetica', 'normal')
+      doc.text('MARKETING INC.', pageWidth / 2, 42, { align: 'center' })
+      
+      doc.setFontSize(12)
+      doc.text('Inventory Management System', pageWidth / 2, 55, { align: 'center' })
+      
+      // Document title
+      yPos = 95
+      doc.setFontSize(32)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...colors.text)
+      doc.text('SYSTEM', pageWidth / 2, yPos, { align: 'center' })
+      yPos += 10
+      doc.text('DOCUMENTATION', pageWidth / 2, yPos, { align: 'center' })
+      
+      // Decorative line
+      yPos += 20
+      doc.setDrawColor(...colors.border)
+      doc.setLineWidth(0.5)
+      doc.line(margin + 30, yPos, pageWidth - margin - 30, yPos)
+      
+      // Subtitle
+      yPos += 25
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.textLight)
+      doc.text('Complete Feature Overview & User Guide', pageWidth / 2, yPos, { align: 'center' })
+      
+      // Document info
+      yPos += 15
+      const today = new Date()
+      const formattedDate = today.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      })
+      
+      doc.setFontSize(10)
+      doc.text(`Version 1.0`, pageWidth / 2, yPos, { align: 'center' })
+      yPos += 6
+      doc.text(`${formattedDate}`, pageWidth / 2, yPos, { align: 'center' })
+      
+      // Footer box
+      yPos = pageHeight - 60
+      doc.setFillColor(248, 250, 252)
+      doc.roundedRect(margin, yPos, contentWidth, 35, 3, 3, 'F')
+      
+      yPos += 10
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...colors.text)
+      doc.text('Enterprise-Grade Solution', pageWidth / 2, yPos, { align: 'center' })
+      
+      yPos += 8
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.textLight)
+      doc.text('Multi-channel sales tracking, real-time inventory management,', pageWidth / 2, yPos, { align: 'center' })
+      yPos += 5
+      doc.text('and comprehensive business analytics in one platform.', pageWidth / 2, yPos, { align: 'center' })
+      
+      // ========== SYSTEM OVERVIEW PAGE ==========
+      doc.addPage()
+      pageNumber++
+      yPos = margin
+      
+      addSectionHeader('1. SYSTEM OVERVIEW')
+      
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.text)
+      addWrappedText(
+        'WIHI Asia Inventory Management System is a comprehensive cloud-based platform designed to streamline multi-channel e-commerce operations. Built with modern web technologies, it provides real-time inventory tracking, order management, and business intelligence across Shopee, Lazada, TikTok, Facebook, and Physical Store channels.',
+        margin, 10, contentWidth, 5
+      )
+      
+      yPos += 10
+      addSectionHeader('KEY CAPABILITIES', colors.info)
+      
+      const capabilities = [
+        'Multi-Channel Integration: Unified management across all sales platforms',
+        'Real-Time Inventory: Automatic stock updates with low-stock alerts',
+        'Order Management: Complete lifecycle from POS to delivery tracking',
+        'Business Intelligence: ABC classification, turnover analysis, profit margins',
+        'Role-Based Security: Five user roles with granular permissions',
+        'Audit Trail: Complete activity logging for compliance'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      capabilities.forEach(cap => {
+        checkPageBreak(6)
+        doc.setFillColor(...colors.primary)
+        doc.circle(margin + 2, yPos - 1.5, 1.5, 'F')
+        doc.setTextColor(...colors.text)
+        const lines = doc.splitTextToSize(cleanText(cap), contentWidth - 8)
+        lines.forEach((line: string) => {
+          checkPageBreak(5)
+          doc.text(line, margin + 7, yPos)
+          yPos += 5
+        })
+      })
+      
+      addFooter()
+      
+      // ========== FEATURES PAGE ==========
+      doc.addPage()
+      pageNumber++
+      yPos = margin
+      
+      addSectionHeader('2. KEY FEATURES & BENEFITS')
+      
+      // Inventory Management
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...colors.primary)
+      doc.text('INVENTORY MANAGEMENT', margin, yPos)
+      yPos += 8
+      
+      const inventoryFeatures = [
+        'Product & Bundle Management with automatic stock calculation',
+        'Real-time Stock Levels across all channels',
+        'Low Stock Alerts with configurable reorder points',
+        'COGS Tracking and profit margin analysis',
+        'Image Management with auto-compression',
+        'Multi-level Category Organization'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      inventoryFeatures.forEach(feature => {
+        checkPageBreak(6)
+        doc.setFillColor(...colors.success)
+        doc.circle(margin + 2, yPos - 1.5, 1, 'F')
+        doc.setTextColor(...colors.text)
+        const lines = doc.splitTextToSize(cleanText(feature), contentWidth - 8)
+        lines.forEach((line: string) => {
+          checkPageBreak(5)
+          doc.text(line, margin + 6, yPos)
+          yPos += 5
+        })
+      })
+      
+      yPos += 5
+      
+      // Sales & Orders
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...colors.primary)
+      doc.text('SALES & ORDER PROCESSING', margin, yPos)
+      yPos += 8
+      
+      const salesFeatures = [
+        'Point of Sale with fast order creation',
+        'Packing Queue with organized fulfillment workflow',
+        'Order Tracking with complete status updates',
+        'Waybill Management with duplicate validation',
+        'Multi-Product Order handling',
+        'Cancellation & Returns with restoration options'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      salesFeatures.forEach(feature => {
+        checkPageBreak(6)
+        doc.setFillColor(...colors.success)
+        doc.circle(margin + 2, yPos - 1.5, 1, 'F')
+        doc.setTextColor(...colors.text)
+        doc.circle(margin + 2, yPos - 1.5, 1, 'F')
+        const lines = doc.splitTextToSize(cleanText(feature), contentWidth - 8)
+        lines.forEach((line: string) => {
+          checkPageBreak(5)
+          doc.text(line, margin + 6, yPos)
+          yPos += 5
+        })
+      })
+      
+      yPos += 5
+      
+      // Analytics
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...colors.primary)
+      doc.text('ANALYTICS & REPORTING', margin, yPos)
+      yPos += 8
+      
+      const analyticsFeatures = [
+        'Revenue Analytics with visual trend charts',
+        'Profit Margin Analysis and calculations',
+        'ABC Classification for inventory',
+        'Inventory Turnover with days-to-sell metrics',
+        'Channel Performance breakdown',
+        'Fast/Slow/Dead Stock analysis',
+        'Excel and PDF export capabilities'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      analyticsFeatures.forEach(feature => {
+        checkPageBreak(6)
+        doc.setFillColor(...colors.success)
+        doc.circle(margin + 2, yPos - 1.5, 1, 'F')
+        doc.setTextColor(...colors.text)
+        const lines = doc.splitTextToSize(cleanText(feature), contentWidth - 8)
+        lines.forEach((line: string) => {
+          checkPageBreak(5)
+          doc.text(line, margin + 6, yPos)
+          yPos += 5
+        })
+      })
+      
+      addFooter()
+      
+      // ========== ROLES PAGE ==========
+      doc.addPage()
+      pageNumber++
+      yPos = margin
+      
+      addSectionHeader('3. ROLE-BASED ACCESS CONTROL')
+      
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.text)
+      addWrappedText(
+        'The system implements comprehensive role-based access control with five distinct user roles, each tailored to specific operational responsibilities.',
+        margin, 10, contentWidth, 5
+      )
+      
+      yPos += 10
+      
+      // Administrator Role
+      checkPageBreak(35)
+      doc.setFillColor(...colors.accent)
+      doc.roundedRect(margin, yPos, contentWidth, 8, 1, 1, 'F')
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.text('ADMINISTRATOR', margin + 3, yPos + 5)
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Full System Access', pageWidth - margin - 3, yPos + 5, { align: 'right' })
+      yPos += 12
+      
+      const adminCaps = [
+        'Complete dashboard with all KPIs',
+        'Full inventory management',
+        'User account management',
+        'Business intelligence access',
+        'System settings configuration',
+        'Activity log and audit trails'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.text)
+      adminCaps.forEach(cap => {
+        checkPageBreak(5)
+        doc.setFillColor(...colors.accent)
+        doc.circle(margin + 2, yPos - 1.5, 0.8, 'F')
+        doc.text(cleanText(cap), margin + 6, yPos)
+        yPos += 5
+      })
+      yPos += 6
+      
+      // Dept Head Role
+      checkPageBreak(30)
+      doc.setFillColor(...colors.primary)
+      doc.roundedRect(margin, yPos, contentWidth, 8, 1, 1, 'F')
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.text('DEPT. HEAD', margin + 3, yPos + 5)
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Department Oversight', pageWidth - margin - 3, yPos + 5, { align: 'right' })
+      yPos += 12
+      
+      const deptCaps = [
+        'Department dashboard and KPIs',
+        'Agent performance monitoring',
+        'POS and order creation',
+        'Team activity tracking',
+        'Department order logs'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.text)
+      deptCaps.forEach(cap => {
+        checkPageBreak(5)
+        doc.setFillColor(...colors.primary)
+        doc.circle(margin + 2, yPos - 1.5, 0.8, 'F')
+        doc.text(cleanText(cap), margin + 6, yPos)
+        yPos += 5
+      })
+      yPos += 6
+      
+      // Operations Role
+      checkPageBreak(25)
+      doc.setFillColor(...colors.info)
+      doc.roundedRect(margin, yPos, contentWidth, 8, 1, 1, 'F')
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.text('OPERATIONS STAFF', margin + 3, yPos + 5)
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Channel Operations', pageWidth - margin - 3, yPos + 5, { align: 'right' })
+      yPos += 12
+      
+      const opsCaps = [
+        'POS for assigned channel',
+        'Order creation and management',
+        'Customer information entry',
+        'Order tracking and updates'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.text)
+      opsCaps.forEach(cap => {
+        checkPageBreak(5)
+        doc.setFillColor(...colors.info)
+        doc.circle(margin + 2, yPos - 1.5, 0.8, 'F')
+        doc.text(cleanText(cap), margin + 6, yPos)
+        yPos += 5
+      })
+      yPos += 6
+      
+      // Logistics Role
+      checkPageBreak(25)
+      doc.setFillColor(...colors.success)
+      doc.roundedRect(margin, yPos, contentWidth, 8, 1, 1, 'F')
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.text('LOGISTICS ADMIN', margin + 3, yPos + 5)
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Logistics Coordination', pageWidth - margin - 3, yPos + 5, { align: 'right' })
+      yPos += 12
+      
+      const logCaps = [
+        'Logistics dashboard',
+        'Business contact management',
+        'Order monitoring (read-only)',
+        'Dispatch coordination'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.text)
+      logCaps.forEach(cap => {
+        checkPageBreak(5)
+        doc.setFillColor(...colors.success)
+        doc.circle(margin + 2, yPos - 1.5, 0.8, 'F')
+        doc.text(cleanText(cap), margin + 6, yPos)
+        yPos += 5
+      })
+      yPos += 6
+      
+      // Packer Role
+      checkPageBreak(25)
+      doc.setFillColor(...colors.warning)
+      doc.roundedRect(margin, yPos, contentWidth, 8, 1, 1, 'F')
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.text('PACKER', margin + 3, yPos + 5)
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Packing Operations', pageWidth - margin - 3, yPos + 5, { align: 'right' })
+      yPos += 12
+      
+      const packCaps = [
+        'Packing queue management',
+        'Mark orders as packed',
+        'Inventory deduction confirmation',
+        'Packing metrics dashboard'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.text)
+      packCaps.forEach(cap => {
+        checkPageBreak(5)
+        doc.setFillColor(...colors.warning)
+        doc.circle(margin + 2, yPos - 1.5, 0.8, 'F')
+        doc.text(cleanText(cap), margin + 6, yPos)
+        yPos += 5
+      })
+      yPos += 6
+      
+      // Tracker Role
+      checkPageBreak(25)
+      doc.setFillColor(...colors.secondary)
+      doc.roundedRect(margin, yPos, contentWidth, 8, 1, 1, 'F')
+      doc.setFontSize(11)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.text('TRACKER', margin + 3, yPos + 5)
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Order Tracking', pageWidth - margin - 3, yPos + 5, { align: 'right' })
+      yPos += 12
+      
+      const trackCaps = [
+        'Order tracking dashboard',
+        'Update parcel status',
+        'Mark orders as delivered',
+        'Handle returns and issues',
+        'Tracking metrics overview'
+      ]
+      
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.text)
+      trackCaps.forEach(cap => {
+        checkPageBreak(5)
+        doc.setFillColor(...colors.secondary)
+        doc.circle(margin + 2, yPos - 1.5, 0.8, 'F')
+        doc.text(cleanText(cap), margin + 6, yPos)
+        yPos += 5
+      })
+      
+      addFooter()
+      
+      // ========== USER GUIDES SEPARATOR ==========
+      doc.addPage()
+      pageNumber++
+      yPos = pageHeight / 2 - 20
+      
+      doc.setFontSize(28)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...colors.primary)
+      doc.text('USER GUIDES', pageWidth / 2, yPos, { align: 'center' })
+      
+      yPos += 15
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(...colors.textLight)
+      doc.text('Detailed instructions for each account type', pageWidth / 2, yPos, { align: 'center' })
+      
+      addFooter()
+      
+      // ========== CONTENT PAGES ==========
+      Object.entries(MANUAL_DATA).forEach(([accountKey, accountData]) => {
+        doc.addPage()
+        pageNumber++
+        yPos = margin
+
+        // Account type header with colored bar
+        doc.setFillColor(...colors.primary)
+        doc.rect(0, yPos - 5, pageWidth, 20, 'F')
+        
+        doc.setFontSize(20)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(255, 255, 255)
+        doc.text(accountData.label.toUpperCase(), margin, yPos + 7)
+        
+        yPos += 25
+
+        // Loop through pages
+        Object.entries(accountData.pages).forEach(([pageKey, pageContent], pageIndex) => {
+          checkPageBreak(30)
+          
+          // Page title with underline
+          doc.setFontSize(16)
+          doc.setFont('helvetica', 'bold')
+          doc.setTextColor(...colors.text)
+          doc.text(cleanText(pageContent.title), margin, yPos)
+          yPos += 2
+          
+          doc.setDrawColor(...colors.primary)
+          doc.setLineWidth(0.8)
+          doc.line(margin, yPos, margin + 60, yPos)
+          yPos += 8
+
+          // Description
+          doc.setFontSize(10)
+          doc.setFont('helvetica', 'normal')
+          doc.setTextColor(...colors.textLight)
+          addWrappedText(pageContent.description, margin, 10, contentWidth, 5, colors.textLight)
+          yPos += 5
+
+          // Workflow section
+          addSectionBox('WORKFLOW', 'STEP-BY-STEP', colors.primary)
+          
+          doc.setFont('helvetica', 'normal')
+          pageContent.workflow.forEach((step, i) => {
+            checkPageBreak(10)
+            
+            // Step number in circle
+            doc.setFillColor(...colors.primary)
+            doc.circle(margin + 3, yPos - 2, 2.5, 'F')
+            
+            doc.setFontSize(8)
+            doc.setFont('helvetica', 'bold')
+            doc.setTextColor(255, 255, 255)
+            doc.text(`${i + 1}`, margin + 3, yPos, { align: 'center' })
+            
+            // Step text
+            doc.setFont('helvetica', 'normal')
+            doc.setTextColor(...colors.text)
+            const stepText = cleanText(step)
+            const stepLines = doc.splitTextToSize(stepText, contentWidth - 12)
+            stepLines.forEach((line: string, lineIndex: number) => {
+              if (lineIndex > 0) checkPageBreak(5)
+              doc.setFontSize(9)
+              doc.text(line, margin + 9, yPos)
+              yPos += 5
+            })
+            yPos += 2
+          })
+          yPos += 3
+
+          // Guide section
+          addSectionBox('KEY INFORMATION', 'GUIDELINES', colors.success)
+          
+          doc.setFont('helvetica', 'normal')
+          pageContent.guide.forEach((item) => {
+            checkPageBreak(10)
+            
+            // Checkmark bullet
+            doc.setFillColor(...colors.success)
+            doc.circle(margin + 2.5, yPos - 1.5, 1.5, 'F')
+            
+            // Item text
+            doc.setFontSize(9)
+            doc.setTextColor(...colors.text)
+            const itemText = cleanText(item)
+            const itemLines = doc.splitTextToSize(itemText, contentWidth - 10)
+            itemLines.forEach((line: string, lineIndex: number) => {
+              if (lineIndex > 0) checkPageBreak(5)
+              doc.text(line, margin + 8, yPos)
+              yPos += 5
+            })
+            yPos += 1
+          })
+          yPos += 3
+
+          // Notes section
+          if (pageContent.notes && pageContent.notes.length > 0) {
+            addSectionBox('IMPORTANT NOTES', 'ATTENTION', colors.warning)
+            
+            doc.setFont('helvetica', 'normal')
+            pageContent.notes.forEach((note) => {
+              checkPageBreak(10)
+              
+              // Warning triangle
+              doc.setFillColor(...colors.warning)
+              doc.triangle(
+                margin + 2, yPos - 3,
+                margin + 0.5, yPos,
+                margin + 3.5, yPos,
+                'F'
+              )
+              
+              // Note text
+              doc.setFontSize(9)
+              doc.setTextColor(...colors.text)
+              const noteText = cleanText(note)
+              const noteLines = doc.splitTextToSize(noteText, contentWidth - 10)
+              noteLines.forEach((line: string, lineIndex: number) => {
+                if (lineIndex > 0) checkPageBreak(5)
+                doc.text(line, margin + 8, yPos)
+                yPos += 5
+              })
+              yPos += 1
+            })
+            yPos += 3
+          }
+
+          yPos += 8 // Space between page sections
+        })
+        
+        addFooter()
+      })
+
+      // Save PDF
+      doc.save('WIHI-Asia-Inventory-System-Complete-Documentation.pdf')
+      toast.success('Comprehensive documentation exported successfully!')
+      
+    } catch (error) {
+      console.error('Error exporting PDF:', error)
+      toast.error('Failed to export PDF manual')
+    } finally {
+      setExporting(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <Card className="border-0 shadow-lg bg-white dark:bg-slate-900">
         <CardHeader className="border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-500/30">
-              <BookOpen className="h-5 w-5 text-white" />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-500/30">
+                <BookOpen className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">System Manual</CardTitle>
+                <CardDescription className="text-sm text-slate-500 dark:text-slate-400">
+                  Select an account type and page to view its guide, workflow, and instructions.
+                </CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">System Manual</CardTitle>
-              <CardDescription className="text-sm text-slate-500 dark:text-slate-400">
-                Select an account type and page to view its guide, workflow, and instructions.
-              </CardDescription>
-            </div>
+            
+            {/* Export Documentation Button */}
+            <Button
+              onClick={handleExportPDF}
+              disabled={exporting}
+              className="bg-red-600 hover:bg-red-700 text-white shadow-sm transition-colors border-0 px-4 h-10 flex-shrink-0"
+            >
+              {exporting ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  <span className="text-sm font-medium">Generating...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4 mr-2" />
+                  <span className="text-sm font-medium">Export Complete Documentation</span>
+                </>
+              )}
+            </Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">

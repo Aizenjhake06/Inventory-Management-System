@@ -73,7 +73,8 @@ export async function POST(request: NextRequest) {
         password,
         role: role || "operations",
         displayName: displayName || username,
-        assignedChannel: body.assignedChannel || null
+        assignedChannel: body.assignedChannel || null,
+        profileImage: body.profileImage || null
       })
       
       return NextResponse.json({
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
           role: newAccount.role,
           displayName: newAccount.displayName,
           assignedChannel: newAccount.assignedChannel,
+          profileImage: newAccount.profileImage,
           createdAt: newAccount.createdAt
         }
       })

@@ -21,7 +21,7 @@ export default function DeptManagerLayout({ children }: { children: React.ReactN
   const router = useRouter()
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [currentTime, setCurrentTime] = useState('')
-  const [displayName, setDisplayName] = useState('Department Manager')
+  const [displayName, setDisplayName] = useState('Dept. Head')
   const [assignedChannel, setAssignedChannel] = useState('')
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [initials, setInitials] = useState('DM')
@@ -64,7 +64,7 @@ export default function DeptManagerLayout({ children }: { children: React.ReactN
               <img src="/Vertex-icon-2.png" alt="Vertex" className="h-6 w-auto object-contain hidden dark:block" />
               <div className="flex flex-col">
                 <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium leading-none">
-                  {assignedChannel ? `${assignedChannel} Manager` : 'Department Manager'}
+                  {assignedChannel ? `${assignedChannel} Dept. Head` : 'Dept. Head'}
                 </span>
                 <span className="text-sm font-semibold text-slate-900 dark:text-white leading-tight">{displayName}</span>
               </div>
@@ -136,7 +136,7 @@ export default function DeptManagerLayout({ children }: { children: React.ReactN
           </AlertDialogHeader>
           <div className="py-4">
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              You are about to sign out of your Department Manager account. Any unsaved work will be lost.
+              You are about to sign out of your Dept. Head account. Any unsaved work will be lost.
             </p>
           </div>
           <AlertDialogFooter className="gap-2 sm:gap-2">

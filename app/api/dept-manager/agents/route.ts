@@ -36,7 +36,7 @@ export const GET = withAuth(async (request: NextRequest, { user }) => {
     return NextResponse.json(
       (opsUsers || []).map(a => ({
         username: a.username,
-        displayName: a.role === 'dept-manager' ? `${a.display_name || a.username} (Manager)` : (a.display_name || a.username),
+        displayName: a.role === 'dept-manager' ? `${a.display_name || a.username} (Dept. Head)` : (a.display_name || a.username),
         assignedChannel: a.assigned_channel,
         isManager: a.role === 'dept-manager'
       }))

@@ -46,7 +46,7 @@ export const ROLES = {
   },
   'dept-manager': {
     id: 'dept-manager' as const,
-    name: 'Department Manager',
+    name: 'Dept. Head',
     description: 'View all agents performance within their department',
     icon: '👥'
   }

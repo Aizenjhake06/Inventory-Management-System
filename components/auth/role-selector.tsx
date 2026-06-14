@@ -42,7 +42,7 @@ const roles = [
   },
   {
     id: "dept-manager" as UserRole,
-    label: "Manager",
+    label: "Dept. Head",
     icon: UserCog,
     description: "Department performance overview",
     color: "orange",

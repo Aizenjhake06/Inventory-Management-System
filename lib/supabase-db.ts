@@ -753,6 +753,7 @@ export async function addAccount(account: Omit<Account, "id" | "createdAt">): Pr
       role: account.role,
       display_name: account.displayName,
       assigned_channel: account.assignedChannel || null, // Add assigned_channel field
+      profile_image: account.profileImage || null, // Add profile_image field
       created_at: createdAt,
     })
     .select()
@@ -770,6 +771,7 @@ export async function addAccount(account: Omit<Account, "id" | "createdAt">): Pr
     role: account.role,
     assignedChannel: account.assignedChannel,
     displayName: account.displayName,
+    profileImage: account.profileImage,
     createdAt,
   }
 }
