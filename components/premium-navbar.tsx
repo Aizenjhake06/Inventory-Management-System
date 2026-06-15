@@ -71,7 +71,22 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
             setUsername(displayName || storedUsername)
           }
           if (storedRole) {
-            setUserRole(storedRole === "admin" ? "Administrator" : storedRole === "operations" ? assignedChannel || "Staff" : "Staff")
+            // Set proper role display names
+            if (storedRole === "admin") {
+              setUserRole("Administrator")
+            } else if (storedRole === "dept-manager") {
+              setUserRole("Dept. Head")
+            } else if (storedRole === "operations") {
+              setUserRole(assignedChannel || "Operations")
+            } else if (storedRole === "tracker") {
+              setUserRole("Tracker")
+            } else if (storedRole === "packer") {
+              setUserRole("Packer")
+            } else if (storedRole === "logistics") {
+              setUserRole("Logistics")
+            } else {
+              setUserRole("Staff")
+            }
           }
           if (storedProfileImage && storedProfileImage !== 'null' && storedProfileImage !== 'undefined') {
             console.log('[Header] Setting profile image:', storedProfileImage)
@@ -141,7 +156,7 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
         "fixed z-40",
         reducedMotion ? "" : "transition-all duration-300",
         // Full width header - edge to edge
-        "left-0 right-0 top-0 h-14",
+        "left-0 right-0 top-0 h-16",
         // White background with border
         "bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800"
       )}
@@ -155,8 +170,8 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
           sidebarCollapsed ? "lg:ml-14 xl:lg:ml-16" : "lg:ml-48 xl:lg:ml-52"
         )}
       >
-        {/* Left: Department Logo + Welcome Message */}
-        <div className="flex items-center gap-3 sm:gap-8">
+        {/* Left: User Info - Compact */}
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Mobile Menu Button */}
           <button
             onClick={onMobileMenuToggle}
@@ -167,11 +182,11 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
             <Menu className="h-5 w-5" />
           </button>
 
-          {/* Department Logo + Welcome - Desktop Only */}
-          <div className="hidden lg:flex items-center gap-2 sm:gap-3">
-            {/* Department Logo */}
-            {currentUser?.role === 'operations' && currentUser?.assignedChannel && (
-              <div className="flex-shrink-0">
+          {/* User Info with Welcome Back */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Department Logo - For Operations AND Dept. Head */}
+            {((currentUser?.role === 'operations' || currentUser?.role === 'dept-manager') && currentUser?.assignedChannel) && (
+              <div className="flex-shrink-0 hidden lg:block">
                 {currentUser.assignedChannel === 'Shopee' && (
                   <img src="/Shopee.png" alt="Shopee" className="h-6 w-auto object-contain" />
                 )}
@@ -190,46 +205,69 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
               </div>
             )}
             
-            {/* Welcome Message */}
+            {/* Welcome Back + User Name + Role Badge */}
             <div className="flex flex-col">
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium leading-none">Welcome back</span>
-              <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white leading-tight">{username}</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-none">Welcome back</span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-sm font-semibold text-slate-900 dark:text-white leading-tight">{username}</span>
+                <span className={cn(
+                  "text-[10px] font-medium px-2 py-0.5 rounded-full",
+                  userRole === "Administrator" 
+                    ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" 
+                    : userRole.includes("Dept") || userRole === "Dept. Head"
+                    ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"
+                    : "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                )}>{userRole}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right: Time + Actions */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          {/* Time Display - Desktop Only */}
-          <div className="hidden sm:block text-xs text-slate-500 dark:text-slate-400 font-mono tabular-nums">
+        {/* Right: Date/Time + Actions - Better Spacing */}
+        <div className="flex items-center gap-4 sm:gap-6">
+          {/* Date & Time Display - Compact Professional Format */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {currentDate}
+            </span>
+            <span className="text-slate-300 dark:text-slate-600">•</span>
+            <span className="text-sm text-slate-900 dark:text-white font-semibold font-mono tabular-nums">
+              {currentTime}
+            </span>
+          </div>
+
+          {/* Mobile Time Only */}
+          <div className="md:hidden text-xs text-slate-600 dark:text-slate-400 font-mono tabular-nums font-semibold">
             {currentTime}
           </div>
           
-          {/* Divider - Desktop Only */}
-          <div className="hidden sm:block h-4 w-px bg-slate-200 dark:border-slate-800"></div>
+          {/* Divider */}
+          <div className="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
           
           {/* Action Buttons */}
-          <div className="flex items-center gap-0.5 sm:gap-1">
+          <div className="flex items-center gap-2">
             <button 
               onClick={() => window.location.reload()}
-              className="h-6 w-6 sm:h-7 sm:w-7 p-0 flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="h-9 w-9 flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
               aria-label="Refresh page"
+              title="Refresh"
             >
-              <RefreshCw className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              <RefreshCw className="h-[18px] w-[18px]" />
             </button>
             
             <ToggleTheme 
               duration={600}
               animationType="flip-x-in"
-              className="h-6 w-6 sm:h-7 sm:w-7 p-0 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="h-9 w-9 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
             />
             
             {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button 
-                  className="h-7 w-7 sm:h-8 sm:w-8 rounded-full overflow-hidden border-2 border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 transition-colors flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600"
+                  className="h-9 w-9 rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all hover:shadow-md flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600"
                   aria-label="User menu"
+                  title={`${username} - ${userRole}`}
                 >
                   {profileImage ? (
                     <img 
@@ -242,7 +280,7 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
                       }}
                     />
                   ) : (
-                    <User className="h-4 w-4 text-white" strokeWidth={2} />
+                    <User className="h-5 w-5 text-white" strokeWidth={2.5} />
                   )}
                 </button>
               </DropdownMenuTrigger>

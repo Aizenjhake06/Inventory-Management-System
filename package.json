@@ -13,6 +13,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@21st-sdk/agent": "^0.0.18",
+    "@21st-sdk/nextjs": "^0.0.11",
+    "@ai-sdk/react": "^3.0.207",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
@@ -89,7 +92,7 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.0.0",
     "xlsx": "^0.18.5",
-    "zod": "3.25.76"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",

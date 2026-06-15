@@ -25,6 +25,7 @@ export default function LogisticsLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [currentTime, setCurrentTime] = useState('')
+  const [currentDate, setCurrentDate] = useState('')
   const [displayName, setDisplayName] = useState('Logistics Admin')
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [initials, setInitials] = useState('LA')
@@ -36,6 +37,12 @@ export default function LogisticsLayout({ children }: { children: React.ReactNod
     const updateTime = () => {
       const now = new Date()
       setCurrentTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }))
+      const dateString = now.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric'
+      })
+      setCurrentDate(dateString)
     }
     updateTime()
     const interval = setInterval(updateTime, 1000)
@@ -101,34 +108,45 @@ export default function LogisticsLayout({ children }: { children: React.ReactNod
               </nav>
             </div>
 
-            {/* Right: Time + Actions */}
-            <div className="flex items-center gap-4">
-              {/* Time Display */}
-              <div className="text-xs text-slate-500 dark:text-slate-400 font-mono tabular-nums">
+            {/* Right: Date/Time + Actions - Better Spacing */}
+            <div className="flex items-center gap-6">
+              {/* Date & Time Display - Compact Professional Format */}
+              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  {currentDate}
+                </span>
+                <span className="text-slate-300 dark:text-slate-600">•</span>
+                <span className="text-sm text-slate-900 dark:text-white font-semibold font-mono tabular-nums">
+                  {currentTime}
+                </span>
+              </div>
+
+              {/* Mobile Time Only */}
+              <div className="md:hidden text-xs text-slate-600 dark:text-slate-400 font-mono tabular-nums font-semibold">
                 {currentTime}
               </div>
               
               {/* Divider */}
-              <div className="h-4 w-px bg-slate-200 dark:bg-slate-800"></div>
+              <div className="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
               
               {/* Action Buttons */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={handleRefresh}
-                  className="h-7 w-7 p-0 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="h-9 w-9 p-0 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
-                  <RefreshCw className="h-3.5 w-3.5" />
+                  <RefreshCw className="h-[18px] w-[18px]" />
                 </Button>
                 <ThemeToggle />
                 {/* User Avatar */}
                 <div className="flex items-center gap-1.5 ml-1 pl-1 border-l border-slate-200 dark:border-slate-800">
-                  <div className="h-7 w-7 rounded-full overflow-hidden bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 ring-2 ring-slate-200 dark:ring-slate-700">
+                  <div className="h-9 w-9 rounded-full overflow-hidden bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 ring-2 ring-slate-200 dark:ring-slate-700">
                     {profileImage ? (
                       <img src={profileImage} alt={displayName} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-[10px] font-bold text-blue-700 dark:text-blue-300">{initials}</span>
+                      <span className="text-xs font-bold text-blue-700 dark:text-blue-300">{initials}</span>
                     )}
                   </div>
                 </div>
@@ -136,9 +154,9 @@ export default function LogisticsLayout({ children }: { children: React.ReactNod
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setShowLogoutDialog(true)}
-                  className="h-7 w-7 p-0 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="h-9 w-9 p-0 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
-                  <LogOut className="h-3.5 w-3.5" />
+                  <LogOut className="h-[18px] w-[18px]" />
                 </Button>
               </div>
             </div>

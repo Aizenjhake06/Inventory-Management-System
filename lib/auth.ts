@@ -82,7 +82,6 @@ export const ROLE_PERMISSIONS = {
     '/dashboard/track-orders',
     '/dashboard/inventory/**',
     '/dashboard/customers',
-    '/dashboard/business-contacts',
     '/dashboard/log'
   ],
   packer: [
@@ -105,7 +104,6 @@ export const ROLE_PERMISSIONS = {
     '/dashboard/track-orders',
     '/dashboard/inventory/**',
     '/dashboard/customers',
-    '/dashboard/business-contacts',
     '/dashboard/log',
     '/dashboard/agent-performance',
     '/dept-manager/agents',

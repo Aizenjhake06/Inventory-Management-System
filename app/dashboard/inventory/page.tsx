@@ -1184,8 +1184,11 @@ export default function InventoryPage() {
               </div>
             </div>
             
-            {/* Stats Row - 4 Cards with Professional Corporate Design */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {/* Stats Row - Responsive Grid (4 cards for admin, 3 cards for department agents) */}
+            <div className={cn(
+              "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4",
+              isDepartment ? "lg:grid-cols-3" : "lg:grid-cols-4"
+            )}>
               {/* Total Items - Indigo Gradient */}
               <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 rounded-full -mr-16 -mt-16" />
@@ -1249,26 +1252,28 @@ export default function InventoryPage() {
                 </div>
               </div>
 
-              {/* Total COGS - Orange Gradient */}
-              <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-full -mr-16 -mt-16" />
-                <div className="relative">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
-                      <Package className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+              {/* Total COGS - Orange Gradient - Hidden for Department Agents */}
+              {!isDepartment && (
+                <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-full -mr-16 -mt-16" />
+                  <div className="relative">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
+                        <Package className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Total COGS</p>
-                  <p className="text-2xl sm:text-3xl font-bold bg-gradient-to-br from-orange-600 to-orange-700 bg-clip-text text-transparent tabular-nums mb-2">
-                    {formatCurrency(Array.isArray(items) ? items.reduce((sum, item) => sum + (item.totalCOGS || (item.costPrice * item.quantity)), 0) : 0)}
-                  </p>
-                  {(search || salesChannelFilter !== "all") && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Filtered: {formatCurrency(Array.isArray(filteredItems) ? filteredItems.reduce((sum, item) => sum + (item.totalCOGS || (item.costPrice * item.quantity)), 0) : 0)}
+                    <p className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Total COGS</p>
+                    <p className="text-2xl sm:text-3xl font-bold bg-gradient-to-br from-orange-600 to-orange-700 bg-clip-text text-transparent tabular-nums mb-2">
+                      {formatCurrency(Array.isArray(items) ? items.reduce((sum, item) => sum + (item.totalCOGS || (item.costPrice * item.quantity)), 0) : 0)}
                     </p>
-                  )}
+                    {(search || salesChannelFilter !== "all") && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Filtered: {formatCurrency(Array.isArray(filteredItems) ? filteredItems.reduce((sum, item) => sum + (item.totalCOGS || (item.costPrice * item.quantity)), 0) : 0)}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -1385,16 +1390,16 @@ export default function InventoryPage() {
                       </th>
                       <th className={cn(
                         "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        !isDepartment ? "w-[11%]" : "w-[13%]"
+                        !isDepartment ? "w-[11%]" : "w-[15%]"
                       )}>
                         Stock
                       </th>
-                      <th className={cn(
-                        "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        !isDepartment ? "w-[10%]" : "w-[12%]"
-                      )}>
-                        Cost
-                      </th>
+                      {/* Hide Cost column for department agents (operations role) */}
+                      {!isDepartment && (
+                        <th className="py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50 w-[10%]">
+                          Cost
+                        </th>
+                      )}
                       <th className={cn(
                         "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
                         !isDepartment ? "w-[10%]" : "w-[12%]"
@@ -1403,7 +1408,7 @@ export default function InventoryPage() {
                       </th>
                       <th className={cn(
                         "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        isDepartment ? "w-[10%]" : "w-[8%]"
+                        isDepartment ? "w-[12%]" : "w-[8%]"
                       )}>
                         Margin
                       </th>
@@ -1537,12 +1542,14 @@ export default function InventoryPage() {
                             </div>
                           </td>
 
-                          {/* Cost */}
-                          <td className="py-2 px-3">
-                            <span className="text-xs font-medium text-slate-800 dark:text-slate-200 tabular-nums">
-                              {formatCurrency(item.costPrice)}
-                            </span>
-                          </td>
+                          {/* Cost - Hidden for department agents (operations role) */}
+                          {!isDepartment && (
+                            <td className="py-2 px-3">
+                              <span className="text-xs font-medium text-slate-800 dark:text-slate-200 tabular-nums">
+                                {formatCurrency(item.costPrice)}
+                              </span>
+                            </td>
+                          )}
 
                           {/* Price */}
                           <td className="py-2 px-3">

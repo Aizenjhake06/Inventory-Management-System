@@ -293,12 +293,27 @@ export default function POSPage() {
       const newDispatchId = `WD-${Date.now()}`
       setDispatchId(newDispatchId)
       
-      // Store dispatched items for display
-      setDispatchedItems(cart.map(cartItem => ({
-        name: cartItem.item.name,
-        quantity: cartItem.quantity,
-        price: cartItem.item.sellingPrice
-      })))
+      // Store dispatched items for display using the ACTUAL total from order form
+      // Note: If total was edited in the form, we use that instead of cart prices
+      const actualTotal = orderForm.total
+      const calculatedTotal = cart.reduce((sum, item) => sum + (item.item.sellingPrice * item.quantity), 0)
+      
+      // If total was edited, distribute proportionally or just use the form total
+      if (Math.abs(actualTotal - calculatedTotal) > 0.01) {
+        // Total was edited - use single line item with combined product names
+        setDispatchedItems([{
+          name: orderForm.product,
+          quantity: orderForm.qty,
+          price: actualTotal
+        }])
+      } else {
+        // Total matches - use individual items
+        setDispatchedItems(cart.map(cartItem => ({
+          name: cartItem.item.name,
+          quantity: cartItem.quantity,
+          price: cartItem.item.sellingPrice * cartItem.quantity
+        })))
+      }
       
       setCart([])
       fetchItems()
@@ -489,9 +504,12 @@ export default function POSPage() {
                           <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
                             ₱{item.sellingPrice.toFixed(0)}
                           </span>
-                          <span className="text-[10px] text-slate-400 dark:text-slate-500 tabular-nums">
-                            COGS ₱{item.costPrice.toFixed(0)}
-                          </span>
+                          {/* Hide COGS for department agents (operations and dept-manager) */}
+                          {currentUserRole !== 'operations' && currentUserRole !== 'dept-manager' && (
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500 tabular-nums">
+                              COGS ₱{item.costPrice.toFixed(0)}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </button>
@@ -1030,12 +1048,12 @@ export default function POSPage() {
                           {item.name}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {formatCurrency(item.price)} × {item.quantity}
+                          Qty: {item.quantity}
                         </p>
                       </div>
                       <div className="ml-4 flex-shrink-0">
                         <p className="text-sm font-bold text-slate-900 dark:text-white">
-                          {formatCurrency(item.price * item.quantity)}
+                          {formatCurrency(item.price)}
                         </p>
                       </div>
                     </div>
@@ -1045,7 +1063,7 @@ export default function POSPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-slate-900 dark:text-white">Total</span>
                     <span className="text-lg font-bold text-slate-900 dark:text-white">
-                      {formatCurrency(dispatchedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0))}
+                      {formatCurrency(dispatchedItems.reduce((sum, item) => sum + item.price, 0))}
                     </span>
                   </div>
                 </div>

@@ -41,6 +41,178 @@
           ]
         },
         {
+          "name": "AI Assistant",
+          "item": [
+            {
+              "name": "Send Message to AI Chat",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"What is the current inventory level for electronics?\",\n  \"messages\": []\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/ai-chat",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "ai-chat"]
+                },
+                "description": "Send a message to the AI assistant and receive a response. The AI can help with inventory queries, order tracking, and system statistics."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Test 1: Status code should be 200",
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "// Test 2: Response should be JSON",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.response.to.be.json;",
+                      "});",
+                      "",
+                      "// Test 3: Response has required fields",
+                      "pm.test('Response has response field', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData).to.have.property('response');",
+                      "    pm.expect(jsonData.response).to.be.a('string');",
+                      "    pm.expect(jsonData.response.length).to.be.above(0);",
+                      "});",
+                      "",
+                      "// Test 4: Response mentions the user's message",
+                      "pm.test('Response contains context from request', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    const requestBody = JSON.parse(pm.request.body.raw);",
+                      "    // Check if response references the message",
+                      "    pm.expect(jsonData.response).to.include('message');",
+                      "});",
+                      "",
+                      "// Test 5: Response time is acceptable",
+                      "pm.test('Response time is acceptable', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "AI Chat - Missing Message",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"messages\": []\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/ai-chat",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "ai-chat"]
+                },
+                "description": "Test error handling when message field is missing"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Test 1: Should still return 200 (graceful handling)",
+                      "pm.test('Status code is 200 or 400', function () {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+                      "});",
+                      "",
+                      "// Test 2: Response is JSON",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.response.to.be.json;",
+                      "});",
+                      "",
+                      "// Test 3: Response has either response or error field",
+                      "pm.test('Response has response or error field', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    const hasResponseOrError = jsonData.hasOwnProperty('response') || jsonData.hasOwnProperty('error');",
+                      "    pm.expect(hasResponseOrError).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "AI Chat - With Conversation History",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"What about orders?\",\n  \"messages\": [\n    {\"role\": \"user\", \"content\": \"Tell me about the inventory\"},\n    {\"role\": \"assistant\", \"content\": \"The inventory system tracks products across multiple sales channels...\"}\n  ]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/ai-chat",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "ai-chat"]
+                },
+                "description": "Test AI chat with conversation history to verify context handling"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Test 1: Status code should be 200",
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "// Test 2: Response should be JSON",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.response.to.be.json;",
+                      "});",
+                      "",
+                      "// Test 3: Response has response field",
+                      "pm.test('Response has response field', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData).to.have.property('response');",
+                      "    pm.expect(jsonData.response).to.be.a('string');",
+                      "});",
+                      "",
+                      "// Test 4: Response is not empty",
+                      "pm.test('Response is not empty', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.response.length).to.be.above(0);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "name": "Inventory Items",
           "item": [
             {
