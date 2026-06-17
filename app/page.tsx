@@ -8,14 +8,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { 
-  Loader2, Mail, CheckCircle2, AlertCircle
+  Loader2, Mail, CheckCircle2, AlertCircle, Package, TrendingUp, Users, 
+  ShoppingCart, BarChart3, Shield, Zap, Clock, ChevronRight, Sparkles,
+  Database, Truck, FileText, Settings, Eye, Lock, AlertTriangle, User
 } from "lucide-react"
 import { apiPost } from "@/lib/api-client"
 import { SecurityIndicator } from "@/components/auth/security-indicator"
 
-export default function EnterpriseLoginPage() {
+export default function LandingLoginPage() {
   const [mounted, setMounted] = useState(false)
   const [showForgotPasswordDialog, setShowForgotPasswordDialog] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("")
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false)
   const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState(false)
@@ -31,6 +34,31 @@ export default function EnterpriseLoginPage() {
   const router = useRouter()
 
   const isDevelopment = process.env.NODE_ENV === 'development'
+
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, observerOptions)
+
+    // Observe all sections with data-animate attribute
+    const animatedElements = document.querySelectorAll('[data-animate]')
+    animatedElements.forEach((el) => observer.observe(el))
+
+    return () => observer.disconnect()
+  }, [mounted])
 
   useEffect(() => {
     setMounted(true)
@@ -162,7 +190,6 @@ export default function EnterpriseLoginPage() {
       }
     } catch (error) {
       console.error("Forgot password error:", error)
-      // Extract error message from the error
       const errorMessage = error instanceof Error ? error.message : "Failed to send reset email. Please try again."
       setError(errorMessage)
     } finally {
@@ -217,7 +244,7 @@ export default function EnterpriseLoginPage() {
         localStorage.setItem("username", user.username)
         localStorage.setItem("userRole", user.role)
         localStorage.setItem("displayName", user.displayName)
-        localStorage.setItem("sessionId", sessionId) // Store session ID for security
+        localStorage.setItem("sessionId", sessionId)
 
         // Store optional fields
         if (user.profileImage) {
@@ -241,290 +268,912 @@ export default function EnterpriseLoginPage() {
     }
   }
 
-  // Prevent hydration mismatch by not rendering until mounted
+  // Prevent hydration mismatch
   if (!mounted) {
     return null
   }
 
   return (
-    <div className="min-h-screen flex relative overflow-hidden bg-white">
-      {/* Left Panel - Hero Section */}
-      <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-8 bg-white">
-        <div className="relative z-10 w-full max-w-2xl space-y-4 animate-in fade-in-0 slide-in-from-left-10 duration-1000">
-          {/* Logo Icon */}
-          <div className="animate-in fade-in-0 zoom-in-95 duration-700">
-            <img 
-              src="/Vertex-icon.png" 
-              alt="Vertex" 
-              className="h-16 w-auto object-contain"
-              loading="eager"
-            />
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-slate-900 relative overflow-hidden">
 
-          {/* Build-up Text - ENHANCED TYPOGRAPHY */}
-          <div className="space-y-3 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
-            <h1 className="text-5xl font-bold leading-tight text-slate-900 tracking-tight">
-              Manage your inventory<br />
-              <span className="text-blue-600">with ease.</span>
-            </h1>
-            <p className="text-lg text-slate-600 leading-relaxed max-w-lg">
-              Track stock, manage warehouses, and streamline fulfillment in one powerful platform.
+      {/* Animated Grid Background */}
+      <div className="fixed inset-0 pointer-events-none opacity-20">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'linear-gradient(rgba(218, 165, 32, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(218, 165, 32, 0.1) 1px, transparent 1px)',
+          backgroundSize: '50px 50px'
+        }}></div>
+      </div>
+
+      {/* Floating Gold Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 -left-20 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl animate-float-slow"></div>
+        <div className="absolute bottom-40 -right-20 w-[500px] h-[500px] bg-yellow-600/15 rounded-full blur-3xl animate-float-slower"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl animate-pulse-slow"></div>
+      </div>
+
+      {/* Premium Gold Accents */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+
+      {/* Navigation Bar - Premium Black & Gold */}
+      <nav className="relative z-50 border-b border-amber-900/20 bg-black/60 backdrop-blur-xl shadow-2xl">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo - Icon Only */}
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-full"></div>
+                <img 
+                  src="/Vertex-icon.png" 
+                  alt="Vertex" 
+                  className="h-12 w-auto object-contain relative z-10 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]"
+                  loading="eager"
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons - Gold Theme */}
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setShowLoginModal(true)}
+                className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold shadow-lg shadow-amber-600/50 hover:shadow-amber-500/70 transition-all duration-300 border border-amber-400/30"
+              >
+                <Lock className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section - Premium Black & Gold */}
+      <section className="relative z-10 pt-24 pb-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Hero Content */}
+            <div className="space-y-8 animate-in fade-in-0 slide-in-from-left-10 duration-1000">
+              {/* Premium Badge */}
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-900/30 to-yellow-900/30 border border-amber-500/30 text-amber-300 rounded-full text-sm font-semibold backdrop-blur-sm shadow-lg shadow-amber-900/20">
+                <Sparkles className="h-4 w-4 text-amber-400" />
+                <span className="bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">Enterprise-Grade Multi-Channel Solution</span>
+              </div>
+
+              {/* Hero Heading - Luxurious Typography */}
+              <div className="space-y-6">
+                <h1 className="text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight">
+                  <span className="text-white">Transform Your</span>
+                  <br />
+                  <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(245,158,11,0.3)]">
+                    Inventory Empire
+                  </span>
+                </h1>
+                <p className="text-xl text-slate-300 leading-relaxed max-w-xl">
+                  Elite order fulfillment platform for multi-channel e-commerce operations with military-grade precision.
+                </p>
+              </div>
+
+              {/* Premium Stats - Gold Accented */}
+              <div className="grid grid-cols-3 gap-6 pt-4">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
+                  <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
+                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">5+</div>
+                    <div className="text-sm text-amber-200/70 font-medium mt-1">Sales Channels</div>
+                  </div>
+                </div>
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
+                  <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
+                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">6</div>
+                    <div className="text-sm text-amber-200/70 font-medium mt-1">User Roles</div>
+                  </div>
+                </div>
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
+                  <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
+                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">24/7</div>
+                    <div className="text-sm text-amber-200/70 font-medium mt-1">Live Sync</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Buttons - Premium Gold */}
+              <div className="flex flex-wrap gap-4 pt-4">
+                <Button
+                  onClick={() => setShowLoginModal(true)}
+                  size="lg"
+                  className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold text-lg px-10 py-7 shadow-2xl shadow-amber-600/50 hover:shadow-amber-500/70 transition-all duration-300 border border-amber-400/30 hover:scale-105"
+                >
+                  Access Dashboard
+                  <ChevronRight className="h-5 w-5 ml-2" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-10 py-7 border-2 border-amber-500/30 text-amber-300 hover:bg-amber-500/10 hover:border-amber-400/50 backdrop-blur-sm transition-all duration-300"
+                  onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  <Eye className="h-5 w-5 mr-2" />
+                  Explore Features
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: Hero Image - Premium Frame */}
+            <div className="relative animate-in fade-in-0 slide-in-from-right-10 duration-1000 delay-300">
+              <div className="relative group">
+                {/* Gold Glow Effect */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-amber-600/30 via-yellow-500/30 to-amber-600/30 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                
+                {/* Image Container */}
+                <div className="relative border-2 border-amber-500/30 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
+                  <img 
+                    src="/Log-in-Image.png" 
+                    alt="Inventory Dashboard" 
+                    className="w-full h-auto"
+                    loading="eager"
+                  />
+                </div>
+                
+                {/* Floating Stats Card 1 - Premium Gold */}
+                <div className="absolute -top-6 -left-6 bg-gradient-to-br from-black via-slate-900 to-black border border-amber-500/30 p-5 rounded-2xl shadow-2xl shadow-amber-900/30 animate-float backdrop-blur-xl">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl shadow-lg shadow-amber-600/50">
+                      <TrendingUp className="h-6 w-6 text-black" strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <div className="text-xs text-amber-300/70 font-medium tracking-wide">SALES TODAY</div>
+                      <div className="text-2xl font-black bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent">₱45,230</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Floating Stats Card 2 - Premium Gold */}
+                <div className="absolute -bottom-6 -right-6 bg-gradient-to-br from-black via-slate-900 to-black border border-amber-500/30 p-5 rounded-2xl shadow-2xl shadow-amber-900/30 animate-float-delay backdrop-blur-xl">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl shadow-lg shadow-amber-600/50">
+                      <Package className="h-6 w-6 text-black" strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <div className="text-xs text-amber-300/70 font-medium tracking-wide">ORDERS PACKED</div>
+                      <div className="text-2xl font-black bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent">127</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section - Premium Black & Gold */}
+      <section id="features" className="relative z-10 py-24 px-6 bg-gradient-to-b from-slate-950 to-black border-y border-amber-900/20">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-20 space-y-6" data-animate="fade-up">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-900/30 to-yellow-900/30 border border-amber-500/30 text-amber-300 rounded-full text-sm font-semibold backdrop-blur-sm shadow-lg shadow-amber-900/20">
+              <Zap className="h-4 w-4 text-amber-400" />
+              <span className="bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">Core System Features</span>
+            </div>
+            <h2 className="text-5xl lg:text-6xl font-black text-white">
+              Complete E-Commerce
+              <br />
+              <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 bg-clip-text text-transparent">
+                Management Platform
+              </span>
+            </h2>
+            <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+              Enterprise-grade tools built for Shopee, Lazada, Facebook, TikTok, and Physical Store operations
             </p>
           </div>
 
-          {/* Hero Image - EAGER LOADED */}
-          <div className="relative animate-in fade-in-0 zoom-in-95 duration-1000 delay-300 mt-4">
-            <img 
-              src="/Log-in-Image.png" 
-              alt="Inventory Management Dashboard" 
-              className="w-full h-auto"
-              loading="eager"
-            />
+          {/* Feature Grid - Premium Cards */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Feature 1 */}
+            <div className="group relative" data-animate="scale" data-animate-delay="100">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+              <div className="relative p-8 bg-gradient-to-br from-slate-900 via-black to-slate-900 border border-amber-500/20 rounded-2xl hover:border-amber-500/40 transition-all duration-300 h-full">
+                <div className="p-4 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl w-fit mb-6 shadow-lg shadow-amber-600/50 group-hover:scale-110 transition-transform">
+                  <ShoppingCart className="h-7 w-7 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">Multi-Channel Operations</h3>
+                <p className="text-slate-400 mb-6 leading-relaxed">
+                  Unified dashboard for 5 sales channels with dedicated department management and agent assignments.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-xs px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-full font-medium">Shopee</span>
+                  <span className="text-xs px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-full font-medium">Lazada</span>
+                  <span className="text-xs px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-full font-medium">Facebook</span>
+                  <span className="text-xs px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-full font-medium">TikTok</span>
+                  <span className="text-xs px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-full font-medium">Physical Store</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="group relative" data-animate="scale" data-animate-delay="200">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+              <div className="relative p-8 bg-gradient-to-br from-slate-900 via-black to-slate-900 border border-amber-500/20 rounded-2xl hover:border-amber-500/40 transition-all duration-300 h-full">
+                <div className="p-4 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl w-fit mb-6 shadow-lg shadow-amber-600/50 group-hover:scale-110 transition-transform">
+                  <Users className="h-7 w-7 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">6-Tier Role System</h3>
+                <p className="text-slate-400 mb-6 leading-relaxed">
+                  Hierarchical access control with granular permissions for Administrator, Department Head, Agent, Packer, Tracker, and Logistics roles.
+                </p>
+                <ul className="text-sm text-slate-400 space-y-2">
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Admin: Full system control + analytics</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Dept. Head: Team oversight + reporting</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Agent: Order creation + customer mgmt</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Packer/Tracker/Logistics: Specialized ops</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="group relative" data-animate="scale" data-animate-delay="300">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+              <div className="relative p-8 bg-gradient-to-br from-slate-900 via-black to-slate-900 border border-amber-500/20 rounded-2xl hover:border-amber-500/40 transition-all duration-300 h-full">
+                <div className="p-4 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl w-fit mb-6 shadow-lg shadow-amber-600/50 group-hover:scale-110 transition-transform">
+                  <Truck className="h-7 w-7 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">Manual Order Tracking</h3>
+                <p className="text-slate-400 mb-6 leading-relaxed">
+                  Internal tracking system with waybill management, status updates controlled by Tracker account, and comprehensive order history.
+                </p>
+                <div className="text-sm text-slate-400">
+                  <div className="flex items-center gap-2 p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    </div>
+                    <span className="text-amber-300">Tracker-Managed Updates</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 4 */}
+            <div className="group relative" data-animate="scale" data-animate-delay="400">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+              <div className="relative p-8 bg-gradient-to-br from-slate-900 via-black to-slate-900 border border-amber-500/20 rounded-2xl hover:border-amber-500/40 transition-all duration-300 h-full">
+                <div className="p-4 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl w-fit mb-6 shadow-lg shadow-amber-600/50 group-hover:scale-110 transition-transform">
+                  <Package className="h-7 w-7 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">Smart Inventory Control</h3>
+                <p className="text-slate-400 mb-6 leading-relaxed">
+                  Real-time stock management with product bundles, low-stock alerts, cost/profit tracking, and automated inventory deduction on packing.
+                </p>
+                <ul className="text-sm text-slate-400 space-y-2">
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Products + Bundle management</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Cost price + selling price tracking</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Auto stock deduction on pack</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Feature 5 */}
+            <div className="group relative" data-animate="scale" data-animate-delay="500">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+              <div className="relative p-8 bg-gradient-to-br from-slate-900 via-black to-slate-900 border border-amber-500/20 rounded-2xl hover:border-amber-500/40 transition-all duration-300 h-full">
+                <div className="p-4 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl w-fit mb-6 shadow-lg shadow-amber-600/50 group-hover:scale-110 transition-transform">
+                  <BarChart3 className="h-7 w-7 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">Business Intelligence</h3>
+                <p className="text-slate-400 mb-6 leading-relaxed">
+                  Comprehensive analytics dashboard with sales by channel, agent performance, profit margins, order fulfillment rates, and return tracking.
+                </p>
+                <ul className="text-sm text-slate-400 space-y-2">
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Channel-wise revenue breakdown</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Department performance metrics</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Fulfillment & delivery rates</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Feature 6 */}
+            <div className="group relative" data-animate="scale" data-animate-delay="600">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+              <div className="relative p-8 bg-gradient-to-br from-slate-900 via-black to-slate-900 border border-amber-500/20 rounded-2xl hover:border-amber-500/40 transition-all duration-300 h-full">
+                <div className="p-4 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl w-fit mb-6 shadow-lg shadow-amber-600/50 group-hover:scale-110 transition-transform">
+                  <Shield className="h-7 w-7 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">Enterprise Security</h3>
+                <p className="text-slate-400 mb-6 leading-relaxed">
+                  Session-based authentication, activity audit logs, role-based access control, and complete transaction history for compliance.
+                </p>
+                <ul className="text-sm text-slate-400 space-y-2">
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Secure login system</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Activity logging per user</li>
+                  <li className="flex items-center gap-2"><span className="text-amber-500">▸</span> Permission-based features</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Right Panel - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 relative z-10 bg-white">
-        <div className="w-full max-w-[440px] animate-in fade-in-0 slide-in-from-right-10 duration-1000">
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-8 text-center animate-in fade-in-0 zoom-in-95 duration-700">
-            <div className="inline-flex items-center justify-center">
+      {/* Additional Features Section - Premium Black & Gold */}
+      <section className="relative z-10 py-24 px-6 bg-black border-y border-amber-900/20">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16" data-animate="fade-up">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-900/30 to-yellow-900/30 border border-amber-500/30 text-amber-300 rounded-full text-sm font-semibold backdrop-blur-sm shadow-lg shadow-amber-900/20 mb-6">
+              <Settings className="h-4 w-4 text-amber-400" />
+              <span className="bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">Advanced Capabilities</span>
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
+              More Powerful Features
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+              Additional tools and functionalities to maximize your operational efficiency
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Order Cancellation */}
+            <div className="group relative" data-animate="fade-up" data-animate-delay="100">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+              <div className="relative p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all h-full">
+                <div className="p-3 bg-gradient-to-br from-red-500 to-red-600 rounded-lg w-fit mb-4 shadow-lg">
+                  <AlertTriangle className="h-6 w-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Order Cancellation</h3>
+                <p className="text-sm text-slate-400">Cancel orders with reason tracking, automatic inventory restoration, and complete audit trail.</p>
+              </div>
+            </div>
+
+            {/* Customer Management */}
+            <div className="group relative" data-animate="fade-up" data-animate-delay="200">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+              <div className="relative p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all h-full">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg w-fit mb-4 shadow-lg">
+                  <User className="h-6 w-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Customer Database</h3>
+                <p className="text-sm text-slate-400">Comprehensive customer records with contact info, purchase history, and order frequency tracking.</p>
+              </div>
+            </div>
+
+            {/* Internal Usage Tracking */}
+            <div className="group relative" data-animate="fade-up" data-animate-delay="300">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+              <div className="relative p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all h-full">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg w-fit mb-4 shadow-lg">
+                  <Database className="h-6 w-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Internal Usage</h3>
+                <p className="text-sm text-slate-400">Track internal product consumption for company use, separate from customer sales inventory.</p>
+              </div>
+            </div>
+
+            {/* Activity Logs */}
+            <div className="group relative" data-animate="fade-up" data-animate-delay="400">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+              <div className="relative p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all h-full">
+                <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg w-fit mb-4 shadow-lg">
+                  <FileText className="h-6 w-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Activity Logs</h3>
+                <p className="text-sm text-slate-400">Complete audit trail of all user actions with timestamps, user info, and action details.</p>
+              </div>
+            </div>
+
+            {/* Product Bundles */}
+            <div className="group relative" data-animate="fade-up" data-animate-delay="100">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+              <div className="relative p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all h-full">
+                <div className="p-3 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-lg w-fit mb-4 shadow-lg">
+                  <Package className="h-6 w-6 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Product Bundles</h3>
+                <p className="text-sm text-slate-400">Create combo packages with multiple products, manage bundle inventory separately with auto-deduction.</p>
+              </div>
+            </div>
+
+            {/* Department Performance */}
+            <div className="group relative" data-animate="fade-up" data-animate-delay="200">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+              <div className="relative p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all h-full">
+                <div className="p-3 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg w-fit mb-4 shadow-lg">
+                  <Users className="h-6 w-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Agent Performance</h3>
+                <p className="text-sm text-slate-400">Track individual agent sales, order counts, and performance metrics per department/channel.</p>
+              </div>
+            </div>
+
+            {/* Waybill Management */}
+            <div className="group relative" data-animate="fade-up" data-animate-delay="300">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+              <div className="relative p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all h-full">
+                <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg w-fit mb-4 shadow-lg">
+                  <Truck className="h-6 w-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Waybill Validation</h3>
+                <p className="text-sm text-slate-400">Duplicate waybill detection with instant alerts to prevent order processing errors.</p>
+              </div>
+            </div>
+
+            {/* Low Stock Alerts */}
+            <div className="group relative" data-animate="fade-up" data-animate-delay="400">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+              <div className="relative p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all h-full">
+                <div className="p-3 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg w-fit mb-4 shadow-lg">
+                  <AlertTriangle className="h-6 w-6 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Smart Alerts</h3>
+                <p className="text-sm text-slate-400">Automated low-stock notifications with reorder level settings and inventory forecasting.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Capabilities Section - Premium Black & Gold */}
+      <section className="relative z-10 py-24 px-6 bg-black">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            {/* Left: Content */}
+            <div className="space-y-8" data-animate="fade-right">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-900/30 to-yellow-900/30 border border-amber-500/30 text-amber-300 rounded-full text-sm font-semibold backdrop-blur-sm shadow-lg shadow-amber-900/20">
+                <Database className="h-4 w-4 text-amber-400" />
+                <span className="bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">Complete Workflow System</span>
+              </div>
+              <h2 className="text-5xl font-black text-white leading-tight">
+                Order to Delivery
+                <br />
+                <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 bg-clip-text text-transparent">
+                  Complete Pipeline
+                </span>
+              </h2>
+              <p className="text-lg text-slate-400 leading-relaxed">
+                Seamless order fulfillment workflow from creation to customer delivery with full visibility and control.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="group relative">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+                  <div className="relative flex items-start gap-5 p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg shadow-amber-600/50 flex-shrink-0 text-black font-black">
+                      1
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-white mb-2">Order Creation (POS)</h4>
+                      <p className="text-sm text-slate-400">Agent creates order in POS system, assigns sales channel, selects products/bundles, enters customer details, and dispatches with waybill. Order enters Packing Queue automatically.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="group relative">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+                  <div className="relative flex items-start gap-5 p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg shadow-amber-600/50 flex-shrink-0 text-black font-black">
+                      2
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-white mb-2">Packing Queue</h4>
+                      <p className="text-sm text-slate-400">Packer views pending orders, verifies items and customer details, marks as "Packed". System automatically deducts inventory stock upon packing confirmation.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="group relative">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+                  <div className="relative flex items-start gap-5 p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg shadow-amber-600/50 flex-shrink-0 text-black font-black">
+                      3
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-white mb-2">Manual Tracking Updates</h4>
+                      <p className="text-sm text-slate-400">Tracker manually updates parcel status (In Transit, Out for Delivery, Delivered, etc.) based on courier information. All updates are internal - not synced with courier APIs.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="group relative">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+                  <div className="relative flex items-start gap-5 p-6 bg-gradient-to-br from-slate-900 to-black border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg shadow-amber-600/50 flex-shrink-0 text-black font-black">
+                      4
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-white mb-2">Analytics & Reporting</h4>
+                      <p className="text-sm text-slate-400">Admin views comprehensive reports: sales by channel, agent performance, fulfillment rates, return rates, and profit margins across all departments.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Premium Stats Grid */}
+            <div className="grid grid-cols-2 gap-6" data-animate="fade-left">
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-all"></div>
+                <div className="relative p-8 bg-gradient-to-br from-amber-600 to-yellow-600 rounded-2xl shadow-2xl shadow-amber-900/50 h-full">
+                  <Clock className="h-10 w-10 mb-4 text-black/70" strokeWidth={2.5} />
+                  <div className="text-4xl font-black mb-2 text-black">Real-Time</div>
+                  <div className="text-black/70 font-semibold">Stock Updates</div>
+                </div>
+              </div>
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-all"></div>
+                <div className="relative p-8 bg-gradient-to-br from-slate-800 to-slate-900 border border-amber-500/30 rounded-2xl shadow-2xl h-full">
+                  <Users className="h-10 w-10 mb-4 text-amber-400" strokeWidth={2.5} />
+                  <div className="text-4xl font-black mb-2 text-white">Multi-User</div>
+                  <div className="text-amber-300/70 font-semibold">Collaboration</div>
+                </div>
+              </div>
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-all"></div>
+                <div className="relative p-8 bg-gradient-to-br from-slate-800 to-slate-900 border border-amber-500/30 rounded-2xl shadow-2xl h-full">
+                  <TrendingUp className="h-10 w-10 mb-4 text-amber-400" strokeWidth={2.5} />
+                  <div className="text-4xl font-black mb-2 text-white">Analytics</div>
+                  <div className="text-amber-300/70 font-semibold">Dashboard</div>
+                </div>
+              </div>
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-all"></div>
+                <div className="relative p-8 bg-gradient-to-br from-amber-600 to-yellow-600 rounded-2xl shadow-2xl shadow-amber-900/50 h-full">
+                  <Shield className="h-10 w-10 mb-4 text-black/70" strokeWidth={2.5} />
+                  <div className="text-4xl font-black mb-2 text-black">Secure</div>
+                  <div className="text-black/70 font-semibold">& Auditable</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section - Premium Black & Gold */}
+      <section className="relative z-10 py-32 px-6 bg-gradient-to-b from-black to-slate-950">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative group" data-animate="scale">
+            {/* Premium Glow */}
+            <div className="absolute -inset-2 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition-all duration-500"></div>
+            
+            {/* Premium Card */}
+            <div className="relative p-16 bg-gradient-to-br from-slate-900 via-black to-slate-900 border-2 border-amber-500/30 rounded-3xl shadow-2xl">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="px-6 py-2 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-full shadow-lg shadow-amber-600/50">
+                  <span className="text-sm font-bold text-black tracking-wide">EXCLUSIVE ACCESS</span>
+                </div>
+              </div>
+              
+              <div className="text-center space-y-8">
+                <h2 className="text-5xl lg:text-6xl font-black text-white leading-tight">
+                  Ready to Elevate Your
+                  <br />
+                  <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 bg-clip-text text-transparent">
+                    Business Operations?
+                  </span>
+                </h2>
+                
+                <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                  Transform your e-commerce operations with our enterprise-grade inventory management system. Streamline order fulfillment, maximize efficiency, and scale your business across multiple channels.
+                </p>
+
+                {/* Key Benefits Grid */}
+                <div className="grid md:grid-cols-3 gap-6 pt-6 pb-4">
+                  <div className="p-6 bg-slate-800/50 border border-amber-500/20 rounded-xl">
+                    <div className="text-3xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent mb-2">
+                      100%
+                    </div>
+                    <div className="text-sm text-slate-400">
+                      Order Visibility
+                      <br />
+                      From Creation to Delivery
+                    </div>
+                  </div>
+                  <div className="p-6 bg-slate-800/50 border border-amber-500/20 rounded-xl">
+                    <div className="text-3xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent mb-2">
+                      5
+                    </div>
+                    <div className="text-sm text-slate-400">
+                      Sales Channels
+                      <br />
+                      Unified in One Platform
+                    </div>
+                  </div>
+                  <div className="p-6 bg-slate-800/50 border border-amber-500/20 rounded-xl">
+                    <div className="text-3xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent mb-2">
+                      Real-Time
+                    </div>
+                    <div className="text-sm text-slate-400">
+                      Inventory Updates
+                      <br />
+                      Across All Departments
+                    </div>
+                  </div>
+                </div>
+
+                {/* What You Get */}
+                <div className="pt-4 pb-6 space-y-4">
+                  <h3 className="text-xl font-bold text-white">What You Get:</h3>
+                  <div className="grid md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Multi-Channel Integration</div>
+                        <div className="text-sm text-slate-400">Manage Shopee, Lazada, Facebook, TikTok & Physical Store</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Complete Order Workflow</div>
+                        <div className="text-sm text-slate-400">POS → Packing → Tracking → Analytics</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Role-Based Access Control</div>
+                        <div className="text-sm text-slate-400">6 user roles with granular permissions</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Advanced Analytics Dashboard</div>
+                        <div className="text-sm text-slate-400">Sales reports, profit tracking & performance metrics</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Smart Inventory Management</div>
+                        <div className="text-sm text-slate-400">Auto-deduction, bundles & low-stock alerts</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Complete Audit Trail</div>
+                        <div className="text-sm text-slate-400">Activity logs & security compliance</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={() => setShowLoginModal(true)}
+                  size="lg"
+                  className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold text-xl px-12 py-8 h-auto shadow-2xl shadow-amber-600/50 hover:shadow-amber-500/70 transition-all duration-300 border-2 border-amber-400/30 hover:scale-105"
+                >
+                  <Lock className="h-6 w-6 mr-3" strokeWidth={2.5} />
+                  Access Elite Dashboard
+                  <ChevronRight className="h-6 w-6 ml-3" strokeWidth={2.5} />
+                </Button>
+
+                <p className="text-sm text-slate-500 pt-4">
+                  Secure login • Enterprise-grade security • Role-based access control
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer - Premium Black & Gold */}
+      <footer className="relative z-10 py-10 px-6 border-t border-amber-900/20 bg-black">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
               <img 
                 src="/Vertex-icon.png" 
                 alt="Vertex" 
-                className="h-16 w-auto object-contain"
+                className="h-8 w-auto object-contain opacity-80"
                 loading="eager"
               />
+              <div className="text-slate-500 text-sm">
+                <div className="font-semibold text-slate-400">Vertex IMS</div>
+                <div>© 2026 All Rights Reserved</div>
+              </div>
             </div>
-          </div>
-
-          {/* Login Card - ENHANCED */}
-          <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-8 lg:p-10 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 delay-200 transition-all">
-            {/* Header */}
-            <div className="mb-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30 mb-4">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h1 className="text-3xl font-bold text-white mb-2 tracking-tight" style={{ color: '#ffffff' }}>
-                Secure Access Portal
-              </h1>
-              <p className="text-slate-300 text-sm font-medium">Enter your credentials to continue to dashboard</p>
-            </div>
-
-            {/* Error Alert */}
-            {error && (
-              <div className="mb-6 p-4 bg-red-900/20 border border-red-800 rounded-lg">
-                <p className="text-sm text-red-400">{error}</p>
-              </div>
-            )}
-
-            {/* Login Form */}
-            <form onSubmit={handleLogin} className="space-y-5">
-              {/* Username */}
-              <div className="space-y-2">
-                <Label htmlFor="username" className="text-sm font-medium text-slate-300">
-                  Username
-                </Label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <Input
-                    id="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter your username"
-                    className="pl-10 bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500"
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-slate-300">
-                  Password
-                </Label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    className="pl-10 pr-10 bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500"
-                    required
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-300"
-                    disabled={loading}
-                  >
-                    {showPassword ? (
-                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                      </svg>
-                    ) : (
-                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Remember & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={rememberDevice}
-                    onChange={(e) => setRememberDevice(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-700 bg-slate-900/50 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-800"
-                    disabled={loading}
-                  />
-                  <span className="text-sm text-slate-400">Remember this device</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowForgotPasswordDialog(true)}
-                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
-                  disabled={loading}
-                >
-                  Forgot password?
-                </button>
-              </div>
-
-              {/* Sign In Button */}
-              <Button
-                type="submit"
-                disabled={loading || !username || !password}
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base rounded-lg transition-all shadow-lg shadow-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    <span>Signing in...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <span>Sign In</span>
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </div>
-                )}
-              </Button>
-            </form>
-
-            {/* Security Indicator */}
-            <div className="mt-8">
-              <SecurityIndicator />
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-8 text-center text-sm text-slate-400 animate-in fade-in-0 duration-1000 delay-500">
-            <p>© 2026 Vertex. All rights reserved.</p>
+            <p className="text-slate-500 text-sm">
+              Powered by <span className="text-amber-500 font-semibold">Enterprise Technology</span>
+            </p>
           </div>
         </div>
-      </div>
+      </footer>
 
-      {/* Forgot Password Dialog */}
-      <Dialog open={showForgotPasswordDialog} onOpenChange={setShowForgotPasswordDialog}>
-        <DialogContent className="sm:max-w-md">
+      {/* Login Modal - Premium Black & Gold */}
+      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
+        <DialogContent className="sm:max-w-md bg-gradient-to-br from-slate-900 via-black to-slate-900 border-2 border-amber-500/30 shadow-2xl shadow-amber-900/50">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5 text-blue-500" />
-              Reset Password
+            <div className="flex justify-center mb-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-amber-500/30 blur-2xl rounded-full"></div>
+                <img 
+                  src="/Vertex-icon.png" 
+                  alt="Vertex" 
+                  className="h-16 w-auto object-contain relative z-10"
+                  loading="eager"
+                />
+              </div>
+            </div>
+            <DialogTitle className="text-3xl font-black text-center bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 bg-clip-text text-transparent">
+              Welcome Back
             </DialogTitle>
-            <DialogDescription>
-              {forgotPasswordSuccess 
-                ? "Check your email for password reset instructions"
-                : "Enter your email address and we'll send you a password reset link"}
+            <DialogDescription className="text-center text-slate-400 text-base">
+              Sign in to access your elite dashboard
             </DialogDescription>
           </DialogHeader>
 
-          {forgotPasswordSuccess ? (
-            <div className="py-6">
-              <div className="flex flex-col items-center text-center space-y-4">
-                <div className="rounded-full bg-green-100 dark:bg-green-900/20 p-3">
-                  <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-slate-900 dark:text-white mb-1">
-                    Email Sent!
-                  </p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    We've sent password reset instructions to <span className="font-medium">{forgotPasswordEmail}</span>
-                  </p>
-                </div>
+          <form onSubmit={handleLogin} className="space-y-5 mt-4">
+            {error && (
+              <Alert variant="destructive" className="bg-red-950/50 border-red-500/50">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="username" className="text-amber-300 font-semibold">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                disabled={loading}
+                autoComplete="username"
+                className="bg-black/40 border-amber-500/30 text-white placeholder:text-slate-500 focus:border-amber-500 focus:ring-amber-500/20"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-amber-300 font-semibold">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  autoComplete="current-password"
+                  className="bg-black/40 border-amber-500/30 text-white placeholder:text-slate-500 focus:border-amber-500 focus:ring-amber-500/20 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-400 transition-colors"
+                  tabIndex={-1}
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
               </div>
             </div>
-          ) : (
-            <div className="space-y-4 py-4">
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  checked={rememberDevice}
+                  onChange={(e) => setRememberDevice(e.target.checked)}
+                  className="rounded border-amber-500/30 bg-black/40 text-amber-500 focus:ring-amber-500/20"
+                />
+                <Label htmlFor="remember" className="text-sm font-normal cursor-pointer text-slate-400">
+                  Remember me
+                </Label>
+              </div>
+              <Button
+                type="button"
+                variant="link"
+                className="px-0 text-sm text-amber-400 hover:text-amber-300"
+                onClick={() => {
+                  setShowLoginModal(false)
+                  setShowForgotPasswordDialog(true)
+                }}
+              >
+                Forgot password?
+              </Button>
+            </div>
+
+            <SecurityIndicator />
+
+            <DialogFooter>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold py-6 shadow-lg shadow-amber-600/50 border border-amber-400/30" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Authenticating...
+                  </>
+                ) : (
+                  <>
+                    <Lock className="mr-2 h-5 w-5" />
+                    Sign In to Dashboard
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Forgot Password Dialog - Premium Black & Gold */}
+      <Dialog open={showForgotPasswordDialog} onOpenChange={resetForgotPasswordDialog}>
+        <DialogContent className="sm:max-w-md bg-gradient-to-br from-slate-900 via-black to-slate-900 border-2 border-amber-500/30 shadow-2xl shadow-amber-900/50">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white">Reset Password</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Enter your email address and we'll send you a password reset link.
+            </DialogDescription>
+          </DialogHeader>
+
+          {!forgotPasswordSuccess ? (
+            <div className="space-y-4">
               {error && (
-                <Alert className="border-red-800 bg-red-900/20">
-                  <AlertCircle className="h-4 w-4 text-red-400" />
-                  <AlertDescription className="text-red-400 ml-2">
-                    {error}
-                  </AlertDescription>
+                <Alert variant="destructive" className="bg-red-950/50 border-red-500/50">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="forgot-email">Email Address</Label>
+                <Label htmlFor="email" className="text-amber-300 font-semibold">Email Address</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                   <Input
-                    id="forgot-email"
+                    id="email"
                     type="email"
-                    placeholder="your.email@company.com"
+                    placeholder="your.email@example.com"
                     value={forgotPasswordEmail}
                     onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                    className="pl-10"
                     disabled={forgotPasswordLoading}
+                    className="pl-10 bg-black/40 border-amber-500/30 text-white placeholder:text-slate-500 focus:border-amber-500 focus:ring-amber-500/20"
+                    autoComplete="email"
                   />
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Make sure this email is registered in your profile settings
-                </p>
               </div>
-            </div>
-          )}
 
-          <DialogFooter>
-            {forgotPasswordSuccess ? (
-              <Button onClick={resetForgotPasswordDialog} className="w-full">
-                Close
-              </Button>
-            ) : (
-              <>
+              <DialogFooter className="flex-col sm:flex-row gap-2">
                 <Button
+                  type="button"
                   variant="outline"
                   onClick={resetForgotPasswordDialog}
                   disabled={forgotPasswordLoading}
+                  className="w-full sm:w-auto bg-black/40 border-amber-500/30 text-slate-300 hover:bg-amber-500/10 hover:border-amber-500/50"
                 >
                   Cancel
                 </Button>
                 <Button
+                  type="button"
                   onClick={handleForgotPassword}
                   disabled={forgotPasswordLoading || !forgotPasswordEmail}
+                  className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-black font-bold shadow-lg shadow-amber-600/50"
                 >
                   {forgotPasswordLoading ? (
                     <>
@@ -532,14 +1181,251 @@ export default function EnterpriseLoginPage() {
                       Sending...
                     </>
                   ) : (
-                    "Send Reset Link"
+                    <>
+                      <Mail className="mr-2 h-4 w-4" />
+                      Send Reset Link
+                    </>
                   )}
                 </Button>
-              </>
-            )}
-          </DialogFooter>
+              </DialogFooter>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <div className="mb-4 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 p-4 shadow-lg shadow-amber-600/50">
+                  <CheckCircle2 className="h-10 w-10 text-black" strokeWidth={2.5} />
+                </div>
+                <h3 className="mb-2 text-2xl font-bold text-white">
+                  Check Your Email
+                </h3>
+                <p className="text-sm text-slate-400 mb-2">
+                  We've sent a password reset link to
+                </p>
+                <p className="text-amber-400 font-semibold">{forgotPasswordEmail}</p>
+                <p className="mt-4 text-xs text-slate-500">
+                  The link will expire in 1 hour.
+                </p>
+              </div>
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  onClick={resetForgotPasswordDialog}
+                  className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-black font-bold shadow-lg shadow-amber-600/50"
+                >
+                  Close
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
+
+      {/* Premium CSS Animations - Black & Gold Theme */}
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+
+        @keyframes float-slow {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(30px, -30px) scale(1.1);
+          }
+        }
+
+        @keyframes float-slower {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(-40px, 40px) scale(1.15);
+          }
+        }
+
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1.05);
+          }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes fadeInRight {
+          from {
+            opacity: 0;
+            transform: translateX(40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-float-delay {
+          animation: float 3s ease-in-out 0.5s infinite;
+        }
+
+        .animate-float-slow {
+          animation: float-slow 8s ease-in-out infinite;
+        }
+
+        .animate-float-slower {
+          animation: float-slower 10s ease-in-out infinite;
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+
+        /* Scroll Animation Classes */
+        [data-animate] {
+          opacity: 0;
+        }
+
+        [data-animate="fade-up"].animate-in {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        [data-animate="fade-down"].animate-in {
+          animation: fadeInDown 0.8s ease-out forwards;
+        }
+
+        [data-animate="fade-left"].animate-in {
+          animation: fadeInLeft 0.8s ease-out forwards;
+        }
+
+        [data-animate="fade-right"].animate-in {
+          animation: fadeInRight 0.8s ease-out forwards;
+        }
+
+        [data-animate="scale"].animate-in {
+          animation: scaleIn 0.8s ease-out forwards;
+        }
+
+        /* Staggered animation delays for grid items */
+        [data-animate-delay="100"].animate-in {
+          animation-delay: 0.1s;
+        }
+
+        [data-animate-delay="200"].animate-in {
+          animation-delay: 0.2s;
+        }
+
+        [data-animate-delay="300"].animate-in {
+          animation-delay: 0.3s;
+        }
+
+        [data-animate-delay="400"].animate-in {
+          animation-delay: 0.4s;
+        }
+
+        [data-animate-delay="500"].animate-in {
+          animation-delay: 0.5s;
+        }
+
+        [data-animate-delay="600"].animate-in {
+          animation-delay: 0.6s;
+        }
+
+        .delay-100 {
+          animation-delay: 0.1s;
+        }
+
+        .delay-200 {
+          animation-delay: 0.2s;
+        }
+
+        .delay-500 {
+          animation-delay: 0.5s;
+        }
+
+        .delay-1000 {
+          animation-delay: 1s;
+        }
+
+        /* Smooth scroll */
+        html {
+          scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar for premium look */
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: linear-gradient(to bottom, #d97706, #eab308);
+          border-radius: 6px;
+          border: 2px solid #000000;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to bottom, #f59e0b, #fbbf24);
+        }
+      `}</style>
     </div>
   )
 }

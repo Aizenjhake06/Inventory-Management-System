@@ -77,7 +77,7 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
             } else if (storedRole === "dept-manager") {
               setUserRole("Dept. Head")
             } else if (storedRole === "operations") {
-              setUserRole(assignedChannel || "Operations")
+              setUserRole("Agent")  // Changed from channel name to "Agent"
             } else if (storedRole === "tracker") {
               setUserRole("Tracker")
             } else if (storedRole === "packer") {
