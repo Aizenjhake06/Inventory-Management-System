@@ -292,11 +292,16 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="dark:bg-amber-500/10" />
-                <DropdownMenuItem onSelect={() => window.location.href = '/dashboard/settings'} className="dark:hover:bg-amber-500/10 dark:focus:bg-amber-500/10">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="dark:bg-amber-500/10" />
+                {/* Settings — admin only */}
+                {currentUser?.role === 'admin' && (
+                  <DropdownMenuItem onSelect={() => window.location.href = '/dashboard/settings'} className="dark:hover:bg-amber-500/10 dark:focus:bg-amber-500/10">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                )}
+                {currentUser?.role === 'admin' && (
+                  <DropdownMenuSeparator className="dark:bg-amber-500/10" />
+                )}
                 <DropdownMenuItem
                   className="text-red-600 dark:text-red-400 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10"
                   onSelect={() => setShowLogoutDialog(true)}
