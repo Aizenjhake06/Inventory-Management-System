@@ -92,6 +92,7 @@ export default function LogisticsAdminDashboard() {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedChannel, setSelectedChannel] = useState<string>('all')
+  const [isDark, setIsDark] = useState(false)
 
   const CHANNELS = ['Shopee', 'Lazada', 'TikTok', 'Facebook', 'Physical Store']
 
@@ -107,6 +108,15 @@ export default function LogisticsAdminDashboard() {
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
     return () => clearInterval(timer)
+  }, [])
+
+  // Detect and watch dark mode
+  useEffect(() => {
+    const update = () => setIsDark(document.documentElement.classList.contains('dark'))
+    update()
+    const observer = new MutationObserver(update)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
   }, [])
 
   const packedInPeriod = useMemo(() => {
@@ -281,9 +291,16 @@ export default function LogisticsAdminDashboard() {
             status: s.label,
             count: statusCounts[s.key] || 0,
           }))
+
+          const gridColor = isDark ? 'rgba(245,158,11,0.08)' : '#e2e8f0'
+          const axisColor = isDark ? '#9ca3af' : '#94a3b8'
+          const tooltipBg = isDark ? '#1a1a1a' : 'rgba(255,255,255,0.98)'
+          const tooltipBorder = isDark ? 'rgba(245,158,11,0.25)' : '#e2e8f0'
+          const tooltipText = isDark ? '#f1f5f9' : '#0f172a'
+
           return (
-            <Card className="border border-slate-200 dark:border-slate-800 shadow-sm">
-              <CardHeader className="pb-2 border-b border-slate-100 dark:border-slate-800">
+            <Card className="shadow-sm">
+              <CardHeader className="pb-2 border-b border-slate-100 dark:border-amber-500/10">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20">
                     <Activity className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
@@ -299,40 +316,56 @@ export default function LogisticsAdminDashboard() {
                   <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                     <defs>
                       <linearGradient id="statusGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0.02} />
+                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.35} />
+                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} vertical={false} />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke={gridColor}
+                      opacity={1}
+                      vertical={false}
+                    />
                     <XAxis
                       dataKey="status"
-                      tick={{ fontSize: 10, fill: '#94a3b8' }}
+                      tick={{ fontSize: 10, fill: axisColor }}
                       tickLine={false}
                       axisLine={false}
                     />
                     <YAxis
-                      tick={{ fontSize: 10, fill: '#94a3b8' }}
+                      tick={{ fontSize: 10, fill: axisColor }}
                       tickLine={false}
                       axisLine={false}
                       allowDecimals={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: 'rgba(255,255,255,0.95)',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '8px',
+                        backgroundColor: tooltipBg,
+                        border: `1px solid ${tooltipBorder}`,
+                        borderRadius: '10px',
                         fontSize: '12px',
+                        color: tooltipText,
+                        boxShadow: isDark
+                          ? '0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,158,11,0.15)'
+                          : '0 4px 16px rgba(0,0,0,0.1)',
+                        padding: '8px 12px',
                       }}
+                      labelStyle={{
+                        fontWeight: 700,
+                        color: isDark ? '#fbbf24' : '#0f172a',
+                        marginBottom: '2px',
+                      }}
+                      itemStyle={{ color: tooltipText }}
                       formatter={(value: number) => [value, 'Orders']}
                     />
                     <Area
                       type="monotone"
                       dataKey="count"
-                      stroke="#6366f1"
+                      stroke="#f59e0b"
                       strokeWidth={2.5}
                       fill="url(#statusGradient)"
-                      dot={{ fill: '#6366f1', strokeWidth: 2, r: 4 }}
-                      activeDot={{ r: 6, fill: '#6366f1' }}
+                      dot={{ fill: '#f59e0b', strokeWidth: 2, r: 4, stroke: '#d97706' }}
+                      activeDot={{ r: 6, fill: '#fbbf24', stroke: '#f59e0b', strokeWidth: 2 }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
