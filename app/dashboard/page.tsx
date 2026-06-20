@@ -162,7 +162,7 @@ export default function DashboardPage() {
       {/* Row 1: Financial Metrics (4 cards) */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Sold */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="p-5 border-0 shadow-lg">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/30 flex-shrink-0">
               <ShoppingCart className="h-5 w-5 text-white" strokeWidth={2.5} />
@@ -180,7 +180,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Total Revenue */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="p-5 border-0 shadow-lg">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-green-600 shadow-lg shadow-green-500/30 flex-shrink-0">
               <TrendingUp className="h-5 w-5 text-white" strokeWidth={2.5} />
@@ -359,7 +359,7 @@ export default function DashboardPage() {
       )}>
         {/* Quick Actions - Admin Only */}
         {currentUser?.role === 'admin' && (
-          <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <Card className="transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
                 <Activity className="h-4 w-4 text-blue-600" />
@@ -398,7 +398,7 @@ export default function DashboardPage() {
         )}
 
         {/* Critical Alerts - Redesigned Compact */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
@@ -414,7 +414,7 @@ export default function DashboardPage() {
             {(outOfStockCount > 0 || lowStockCount > 0) ? (
               <div className="grid grid-cols-2 gap-2">
                 {/* Out of Stock Card */}
-                <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+                <Card className="rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div>
@@ -443,7 +443,7 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Low Stock Card */}
-                <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+                <Card className="rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div>
@@ -496,8 +496,8 @@ export default function DashboardPage() {
       {/* Performance Analytics */}
       <div className="grid gap-5 grid-cols-1 lg:grid-cols-3">
         {/* Top Products Chart */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-emerald-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-slate-900 dark:text-white text-sm font-bold tracking-tight">Top Products</h3>
@@ -545,8 +545,8 @@ export default function DashboardPage() {
         </Card>
 
         {/* Top Categories Chart */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-purple-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-slate-900 dark:text-white text-sm font-bold tracking-tight">Top Categories</h3>
@@ -594,8 +594,8 @@ export default function DashboardPage() {
         </Card>
 
         {/* Return Count by Sales Channel */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-red-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Return Count by Sales Channel</h3>
@@ -653,8 +653,8 @@ export default function DashboardPage() {
       {/* Stock Distribution */}
       <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
         {/* Department Performance Chart */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-blue-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Department Performance</h3>
@@ -693,8 +693,8 @@ export default function DashboardPage() {
         </Card>
 
         {/* Store Performance Chart */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-emerald-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Store Performance</h3>
@@ -732,8 +732,8 @@ export default function DashboardPage() {
       {/* Recent Activity */}
       <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
         {/* Recent Sales */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-emerald-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Recent Sales</h3>
@@ -773,8 +773,8 @@ export default function DashboardPage() {
         </Card>
 
         {/* Recent Restocks */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-blue-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Recent Restocks</h3>
@@ -814,8 +814,8 @@ export default function DashboardPage() {
       {/* Insights & Health */}
       <div className="grid gap-5 grid-cols-1 lg:grid-cols-3">
         {/* Business Insights */}
-        <Card className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="lg:col-span-2 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-violet-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Business Insights</h3>
@@ -867,8 +867,8 @@ export default function DashboardPage() {
         </Card>
 
         {/* Inventory Health Score */}
-        <Card className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
             <div className="flex items-center gap-2">
               <div className="h-5 w-1 bg-emerald-500 rounded-full flex-shrink-0"></div>
               <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Inventory Health</h3>

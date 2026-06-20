@@ -2895,3 +2895,117 @@ pre code {
   border: 1px solid rgba(245, 158, 11, 0.20);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 8px rgba(245, 158, 11, 0.08);
 }
+
+/* ============================================
+   GLOBAL DARK MODE CARD & TEXT OVERRIDES
+   Cascades to ALL dashboard pages automatically
+   ============================================ */
+
+/* Override any hardcoded dark:bg-slate-900 on cards */
+.dark .dark\:bg-slate-900:not(nav):not(header):not(aside) {
+  background-color: #111111 !important;
+  border-color: rgba(245, 158, 11, 0.08) !important;
+}
+
+/* Override dark:bg-slate-800 (used in list rows, hover states) */
+.dark .dark\:bg-slate-800 {
+  background-color: #1a1a1a !important;
+}
+
+/* Override dark:bg-slate-800\/50 (striped rows, nested cards) */
+.dark .dark\:bg-slate-800\/50 {
+  background-color: rgba(26, 26, 26, 0.5) !important;
+}
+
+/* Override dark:border-slate-800 everywhere */
+.dark .dark\:border-slate-800 {
+  border-color: rgba(245, 158, 11, 0.10) !important;
+}
+
+/* Override dark:border-slate-700 */
+.dark .dark\:border-slate-700 {
+  border-color: rgba(245, 158, 11, 0.08) !important;
+}
+
+/* Text overrides for dark mode — better hierarchy */
+/* Primary text: crisp white */
+.dark .dark\:text-white {
+  color: #ffffff !important;
+}
+
+/* Secondary text: warm gray (not cold slate) */
+.dark .dark\:text-slate-400 {
+  color: #9ca3af !important;
+}
+
+.dark .dark\:text-slate-300 {
+  color: #d1d5db !important;
+}
+
+.dark .dark\:text-slate-500 {
+  color: #6b7280 !important;
+}
+
+/* Card text color fix */
+.dark .dark\:text-\[#E0E0E0\] {
+  color: #ffffff !important;
+}
+
+/* Chart/table text in dark mode */
+.dark .dark\:text-slate-600 {
+  color: #4b5563 !important;
+}
+
+/* Border dividers inside cards */
+.dark .dark\:divide-slate-800 > * + * {
+  border-color: rgba(245, 158, 11, 0.08) !important;
+}
+
+/* Table rows hover in dark mode */
+.dark .dark\:hover\:bg-slate-800:hover {
+  background-color: rgba(245, 158, 11, 0.04) !important;
+}
+
+/* Subtle row hover in tables */
+.dark tbody tr:hover {
+  background-color: rgba(245, 158, 11, 0.03) !important;
+}
+
+/* Badge/chip dark backgrounds */
+.dark .dark\:bg-slate-700 {
+  background-color: #222222 !important;
+}
+
+.dark .dark\:bg-slate-900\/50 {
+  background-color: rgba(10, 10, 10, 0.5) !important;
+}
+
+/* Input overrides in dark mode */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.dark textarea,
+.dark select {
+  background-color: #0d0d0d !important;
+  border-color: rgba(245, 158, 11, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.dark input:focus:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.dark textarea:focus,
+.dark select:focus {
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.10) !important;
+  outline: none !important;
+}
+
+/* Placeholder text in dark mode */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #4b5563 !important;
+}
+
+/* Panel/popover backgrounds */
+.dark [role="dialog"],
+.dark [data-radix-popper-content-wrapper] > * {
+  background-color: #0d0d0d !important;
+  border-color: rgba(245, 158, 11, 0.15) !important;
+}
