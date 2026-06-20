@@ -418,16 +418,17 @@ export function PremiumSidebar({ onNavClick, mobileOpen = false, onMobileClose, 
                         reducedMotion ? "" : "transition-all duration-200",
                         // Collapsed state: centered icon with better spacing
                         collapsed ? "justify-center py-2.5 xl:py-3 mx-auto" : "gap-1.5 xl:gap-2 px-1.5 xl:px-2 py-1.5 xl:py-2",
-                        // Active state - NEON ORANGE GRADIENT with LEFT BORDER
+                        // Active state - GOLD GRADIENT with LEFT BORDER
                         isActive 
-                          ? "border-l-3 border-orange-500" 
-                          : "text-white/70 hover:text-white hover:bg-white/5 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/5 border-l-3 border-transparent",
+                          ? "border-l-3 border-amber-500" 
+                          : "text-white/70 hover:text-white hover:bg-amber-500/5 dark:text-white/70 dark:hover:text-white dark:hover:bg-amber-500/5 border-l-3 border-transparent",
                         // Smooth transitions
                         "transition-all duration-200"
                       )}
                       style={isActive ? {
                         borderLeftWidth: '3px',
-                        borderLeftColor: '#f97316',
+                        borderLeftColor: '#f59e0b',
+                        background: 'rgba(245, 158, 11, 0.10)',
                       } : {
                         borderLeftWidth: '3px',
                         borderLeftColor: 'transparent'
@@ -451,17 +452,17 @@ export function PremiumSidebar({ onNavClick, mobileOpen = false, onMobileClose, 
                           )}
                           strokeWidth={isActive ? 2.5 : 2}
                           style={isActive ? {
-                            filter: 'drop-shadow(0 0 6px rgba(249, 115, 22, 0.8)) drop-shadow(0 0 12px rgba(249, 115, 22, 0.4))',
-                            color: '#fb923c'
+                            filter: 'drop-shadow(0 0 6px rgba(245, 158, 11, 0.8)) drop-shadow(0 0 12px rgba(245, 158, 11, 0.4))',
+                            color: '#fbbf24'
                           } : undefined}
                           aria-hidden="true"
                         />
-                        {/* Neon glow backdrop for active icon */}
+                        {/* Gold glow backdrop for active icon */}
                         {isActive && (
                           <div 
                             className="absolute inset-0 blur-md opacity-50"
                             style={{
-                              background: 'radial-gradient(circle, rgba(249, 115, 22, 0.6) 0%, transparent 70%)'
+                              background: 'radial-gradient(circle, rgba(245, 158, 11, 0.6) 0%, transparent 70%)'
                             }}
                           />
                         )}
@@ -475,11 +476,11 @@ export function PremiumSidebar({ onNavClick, mobileOpen = false, onMobileClose, 
                               isActive ? "font-semibold" : "font-normal"
                             )}
                             style={isActive ? {
-                              background: 'linear-gradient(90deg, #fb923c 0%, #f97316 50%, #ea580c 100%)',
+                              background: 'linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%)',
                               WebkitBackgroundClip: 'text',
                               WebkitTextFillColor: 'transparent',
                               backgroundClip: 'text',
-                              filter: 'drop-shadow(0 0 8px rgba(249, 115, 22, 0.5))'
+                              filter: 'drop-shadow(0 0 8px rgba(245, 158, 11, 0.5))'
                             } : undefined}
                           >
                             {item.name}
@@ -490,10 +491,10 @@ export function PremiumSidebar({ onNavClick, mobileOpen = false, onMobileClose, 
                               className={cn(
                                 "ml-auto text-xs xl:text-sm px-1 xl:px-1.5 py-0",
                                 item.badgeVariant === 'warning' && "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400",
-                                isActive && "bg-orange-500/20 text-orange-300 border border-orange-500/50"
+                                isActive && "bg-amber-500/20 text-amber-300 border border-amber-500/50"
                               )}
                               style={isActive ? {
-                                boxShadow: '0 0 8px rgba(249, 115, 22, 0.3)'
+                                boxShadow: '0 0 8px rgba(245, 158, 11, 0.3)'
                               } : undefined}
                             >
                               {item.badge}
@@ -625,8 +626,8 @@ export function PremiumSidebar({ onNavClick, mobileOpen = false, onMobileClose, 
         <AlertDialogContent className="max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl">
           <AlertDialogHeader className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
-                <LogOut className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="h-12 w-12 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center flex-shrink-0">
+                <LogOut className="h-6 w-6 text-amber-600 dark:text-amber-400" />
               </div>
               <div className="flex-1">
                 <AlertDialogTitle className="text-xl font-semibold text-slate-900 dark:text-white">

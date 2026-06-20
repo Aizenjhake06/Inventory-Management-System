@@ -155,10 +155,10 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
       className={cn(
         "fixed z-40",
         reducedMotion ? "" : "transition-all duration-300",
-        // Full width header - edge to edge
         "left-0 right-0 top-0 h-16",
-        // White background with border
-        "bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800"
+        "bg-white dark:bg-black border-b border-slate-200 dark:border-amber-500/10",
+        // Subtle gold top line in dark mode
+        "dark:shadow-[0_1px_0_0_rgba(245,158,11,0.08)]"
       )}
       role="banner"
     >
@@ -207,13 +207,13 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
             
             {/* Welcome Back + User Name + Role Badge */}
             <div className="flex flex-col">
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-none">Welcome back</span>
+              <span className="text-[10px] text-slate-500 dark:text-amber-400/60 font-medium leading-none">Welcome back</span>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-sm font-semibold text-slate-900 dark:text-white leading-tight">{username}</span>
                 <span className={cn(
                   "text-[10px] font-medium px-2 py-0.5 rounded-full",
                   userRole === "Administrator" 
-                    ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" 
+                    ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400" 
                     : userRole.includes("Dept") || userRole === "Dept. Head"
                     ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"
                     : "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
@@ -225,30 +225,30 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
 
         {/* Right: Date/Time + Actions - Better Spacing */}
         <div className="flex items-center gap-4 sm:gap-6">
-          {/* Date & Time Display - Compact Professional Format */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          {/* Date & Time Display */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-amber-500/15">
+            <span className="text-xs text-slate-500 dark:text-amber-400/70 font-medium">
               {currentDate}
             </span>
-            <span className="text-slate-300 dark:text-slate-600">•</span>
-            <span className="text-sm text-slate-900 dark:text-white font-semibold font-mono tabular-nums">
+            <span className="text-slate-300 dark:text-amber-900/50">•</span>
+            <span className="text-sm text-slate-900 dark:text-amber-300 font-semibold font-mono tabular-nums">
               {currentTime}
             </span>
           </div>
 
           {/* Mobile Time Only */}
-          <div className="md:hidden text-xs text-slate-600 dark:text-slate-400 font-mono tabular-nums font-semibold">
+          <div className="md:hidden text-xs text-slate-600 dark:text-amber-400/80 font-mono tabular-nums font-semibold">
             {currentTime}
           </div>
           
           {/* Divider */}
-          <div className="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
+          <div className="h-8 w-px bg-slate-200 dark:bg-amber-900/30"></div>
           
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             <button 
               onClick={() => window.location.reload()}
-              className="h-9 w-9 flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              className="h-9 w-9 flex items-center justify-center rounded-lg text-slate-600 dark:text-amber-400/70 hover:text-slate-900 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-amber-500/10 transition-all"
               aria-label="Refresh page"
               title="Refresh"
             >
@@ -258,14 +258,14 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
             <ToggleTheme 
               duration={600}
               animationType="flip-x-in"
-              className="h-9 w-9 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="h-9 w-9 text-slate-600 dark:text-amber-400/70 hover:text-slate-900 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-amber-500/10"
             />
             
             {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button 
-                  className="h-9 w-9 rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all hover:shadow-md flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600"
+                  className="h-9 w-9 rounded-full overflow-hidden border-2 border-slate-300 dark:border-amber-900/50 hover:border-amber-500 dark:hover:border-amber-400 transition-all hover:shadow-md flex items-center justify-center bg-gradient-to-br from-amber-500 to-amber-600"
                   aria-label="User menu"
                   title={`${username} - ${userRole}`}
                 >
@@ -284,21 +284,21 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
                   )}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 dark:bg-black dark:border-amber-500/15">
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
                     <span className="font-semibold">{username}</span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">{userRole}</span>
+                    <span className="text-xs text-slate-500 dark:text-amber-400/60 font-normal">{userRole}</span>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={() => window.location.href = '/dashboard/settings'}>
+                <DropdownMenuSeparator className="dark:bg-amber-500/10" />
+                <DropdownMenuItem onSelect={() => window.location.href = '/dashboard/settings'} className="dark:hover:bg-amber-500/10 dark:focus:bg-amber-500/10">
                   <Settings className="h-4 w-4 mr-2" />
                   Settings
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="dark:bg-amber-500/10" />
                 <DropdownMenuItem
-                  className="text-red-600 dark:text-red-400"
+                  className="text-red-600 dark:text-red-400 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10"
                   onSelect={() => setShowLogoutDialog(true)}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -312,11 +312,11 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
 
       {/* Professional Logout Confirmation Dialog */}
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <AlertDialogContent className="max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl">
+        <AlertDialogContent className="max-w-md bg-white dark:bg-black border border-slate-200 dark:border-amber-500/20 shadow-xl dark:shadow-amber-900/20">
           <AlertDialogHeader className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
-                <LogOut className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="h-12 w-12 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center flex-shrink-0">
+                <LogOut className="h-6 w-6 text-amber-600 dark:text-amber-400" />
               </div>
               <div className="flex-1">
                 <AlertDialogTitle className="text-xl font-semibold text-slate-900 dark:text-white">
