@@ -1086,7 +1086,7 @@ h6 { font-size: 1rem;     font-weight: 600; letter-spacing: -0.01em; }
    ============================================ */
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--gradient-blue) 0%, var(--gradient-purple) 50%, var(--gradient-pink) 100%);
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -2021,17 +2021,13 @@ html {
   opacity: 1;
 }
 
-/* Enhanced gradient text for dark mode */
+/* Enhanced gradient text for dark mode - GOLD theme */
 .dark .gradient-text {
-  background: linear-gradient(135deg, 
-    #60a5fa 0%, 
-    #a78bfa 50%, 
-    #f472b6 100%
-  );
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: brightness(1.1);
+  filter: brightness(1.05);
 }
 
 /* Card with gradient border */
@@ -2767,15 +2763,6 @@ pre code {
   color: #fcd34d !important;
 }
 
-/* Gold gradient text for page titles in dark mode */
-.dark .gradient-text {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-}
-
 /* Gold selection highlight in dark mode */
 .dark ::selection {
   background: rgba(245, 158, 11, 0.25);
@@ -3102,4 +3089,45 @@ pre code {
 .dark [class*="border-slate-1"],
 .dark [class*="border-slate-2"] {
   border-color: rgba(245, 158, 11, 0.08) !important;
+}
+
+/* ============================================
+   FIX: List row text visibility in dark mode
+   bg-slate-50 rows use dark text - override in dark mode
+   ============================================ */
+
+/* bg-slate-50 rows in dark mode */
+.dark .dark\:bg-slate-800\/50,
+.dark [class*="dark:bg-slate-800"] {
+  color: #e2e8f0;
+}
+
+/* Number badge in list rows */
+.dark .dark\:bg-slate-700 {
+  background-color: #2a2a2a !important;
+  color: #d1d5db !important;
+}
+
+/* bg-slate-50 in dark mode (light rows that need dark text flip) */
+.dark .bg-slate-50 {
+  background-color: rgba(26, 26, 26, 0.8) !important;
+  color: #e2e8f0 !important;
+}
+
+/* Fix Quick Actions button text in dark mode */
+.dark .btn-outline,
+.dark button[class*="variant-outline"],
+.dark [data-slot="button"][class*="outline"] {
+  color: #e2e8f0 !important;
+  border-color: rgba(245, 158, 11, 0.20) !important;
+}
+
+/* Ensure card chart section titles are visible */
+.dark .dark\:text-white {
+  color: #ffffff !important;
+}
+
+/* Card subtitle text (description below chart title) */
+.dark .dark\:text-slate-400 {
+  color: #9ca3af !important;
 }

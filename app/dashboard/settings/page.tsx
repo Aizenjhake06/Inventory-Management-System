@@ -776,7 +776,7 @@ export default function SettingsPage() {
     <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 py-6 space-y-6">
       {/* Page Header - Professional */}
       <div className="space-y-1">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text [-webkit-text-fill-color:transparent]">
+        <h2 className="text-2xl sm:text-3xl font-bold gradient-text mb-1">
           Settings Overview
         </h2>
         <p className="text-xs text-slate-600 dark:text-slate-400">

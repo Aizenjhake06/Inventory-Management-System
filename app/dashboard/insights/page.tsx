@@ -313,7 +313,7 @@ export default function InsightsPage() {
       {/* Page Header - Professional */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold mb-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text [-webkit-text-fill-color:transparent]">Business Insights Overview</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold gradient-text mb-1">Business Insights Overview</h2>
           <p className="text-xs text-slate-600 dark:text-slate-400">
             AI-powered analytics and strategic recommendations for data-driven decisions
           </p>

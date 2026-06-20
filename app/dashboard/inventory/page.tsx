@@ -1112,7 +1112,7 @@ export default function InventoryPage() {
       {/* Page Header - Professional */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold mb-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text [-webkit-text-fill-color:transparent]">
+          <h2 className="text-2xl sm:text-3xl font-bold gradient-text mb-1">
             Inventory Overview
           </h2>
           <p className="text-xs text-slate-600 dark:text-slate-400">
