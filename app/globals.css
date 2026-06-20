@@ -2901,8 +2901,10 @@ pre code {
    Cascades to ALL dashboard pages automatically
    ============================================ */
 
-/* Override any hardcoded dark:bg-slate-900 on cards */
-.dark .dark\:bg-slate-900:not(nav):not(header):not(aside) {
+/* Override any hardcoded dark:bg-slate-900 on cards — 
+   scoped only to main content areas, NOT nav/header/aside */
+.dark main .dark\:bg-slate-900,
+.dark [data-slot="card"].dark\:bg-slate-900 {
   background-color: #111111 !important;
   border-color: rgba(245, 158, 11, 0.08) !important;
 }
@@ -2930,40 +2932,35 @@ pre code {
 /* Text overrides for dark mode — better hierarchy */
 /* Primary text: crisp white */
 .dark .dark\:text-white {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 /* Secondary text: warm gray (not cold slate) */
 .dark .dark\:text-slate-400 {
-  color: #9ca3af !important;
+  color: #9ca3af;
 }
 
 .dark .dark\:text-slate-300 {
-  color: #d1d5db !important;
+  color: #d1d5db;
 }
 
 .dark .dark\:text-slate-500 {
-  color: #6b7280 !important;
+  color: #6b7280;
 }
 
 /* Card text color fix */
 .dark .dark\:text-\[#E0E0E0\] {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 /* Chart/table text in dark mode */
 .dark .dark\:text-slate-600 {
-  color: #4b5563 !important;
+  color: #6b7280;
 }
 
 /* Border dividers inside cards */
 .dark .dark\:divide-slate-800 > * + * {
   border-color: rgba(245, 158, 11, 0.08) !important;
-}
-
-/* Table rows hover in dark mode */
-.dark .dark\:hover\:bg-slate-800:hover {
-  background-color: rgba(245, 158, 11, 0.04) !important;
 }
 
 /* Subtle row hover in tables */
@@ -2980,18 +2977,9 @@ pre code {
   background-color: rgba(10, 10, 10, 0.5) !important;
 }
 
-/* Input overrides in dark mode */
-.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-.dark textarea,
-.dark select {
-  background-color: #0d0d0d !important;
-  border-color: rgba(245, 158, 11, 0.12) !important;
-  color: #ffffff !important;
-}
-
-.dark input:focus:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-.dark textarea:focus,
-.dark select:focus {
+/* Input focus gold ring in dark mode — scoped only, no aggressive overrides */
+.dark input:focus:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([class*="search"]),
+.dark textarea:focus {
   border-color: rgba(245, 158, 11, 0.45) !important;
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.10) !important;
   outline: none !important;
@@ -3000,12 +2988,118 @@ pre code {
 /* Placeholder text in dark mode */
 .dark input::placeholder,
 .dark textarea::placeholder {
-  color: #4b5563 !important;
+  color: #6b7280 !important;
+  opacity: 1;
 }
 
-/* Panel/popover backgrounds */
-.dark [role="dialog"],
-.dark [data-radix-popper-content-wrapper] > * {
-  background-color: #0d0d0d !important;
-  border-color: rgba(245, 158, 11, 0.15) !important;
+/* ============================================
+   DARK MODE TEXT READABILITY FIXES
+   Ensures all text is readable on dark backgrounds
+   ============================================ */
+
+/* Fix: light text on dark cards that have no dark: variant */
+.dark p:not([class*="text-"]),
+.dark span:not([class*="text-"]),
+.dark td:not([class*="text-"]),
+.dark th:not([class*="text-"]) {
+  color: inherit;
+}
+
+/* Fix: text-slate-900 (black text) — invisible on dark bg */
+.dark .text-slate-900 {
+  color: #f9fafb !important;
+}
+
+/* Fix: text-slate-800 */
+.dark .text-slate-800 {
+  color: #f1f5f9 !important;
+}
+
+/* Fix: text-slate-700 */
+.dark .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+/* Fix: text-slate-600 — used heavily for secondary text */
+.dark .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+/* Fix: text-slate-500 */
+.dark .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Fix: text-gray-900 */
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+/* Fix: text-gray-800 */
+.dark .text-gray-800 {
+  color: #f1f5f9 !important;
+}
+
+/* Fix: text-gray-700 */
+.dark .text-gray-700 {
+  color: #e2e8f0 !important;
+}
+
+/* Fix: text-gray-600 */
+.dark .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+/* Fix: text-black — completely invisible on dark */
+.dark .text-black {
+  color: #f9fafb !important;
+}
+
+/* Fix: text-neutral-900/800/700 */
+.dark .text-neutral-900,
+.dark .text-neutral-800,
+.dark .text-neutral-700 {
+  color: #f1f5f9 !important;
+}
+
+/* Fix: labels in forms */
+.dark label:not([class*="text-"]) {
+  color: #e2e8f0;
+}
+
+/* Fix: table headers */
+.dark th {
+  color: #94a3b8;
+}
+
+/* Fix: table data — inherit card text color */
+.dark td {
+  color: #e2e8f0;
+}
+
+/* Fix: headings without explicit dark: class */
+.dark h1:not([class*="dark:"]),
+.dark h2:not([class*="dark:"]),
+.dark h3:not([class*="dark:"]),
+.dark h4:not([class*="dark:"]),
+.dark h5:not([class*="dark:"]),
+.dark h6:not([class*="dark:"]) {
+  color: #ffffff;
+}
+
+/* Fix: paragraph text without explicit dark: class */
+.dark p:not([class*="dark:"]):not([class*="text-"]) {
+  color: #d1d5db;
+}
+
+/* Fix: select/option text visibility */
+.dark select option {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+/* Fix: card inner borders that appear too dark */
+.dark [class*="border-slate-1"],
+.dark [class*="border-slate-2"] {
+  border-color: rgba(245, 158, 11, 0.08) !important;
 }
