@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,28 @@ import {
 import { apiPost } from "@/lib/api-client"
 import { SecurityIndicator } from "@/components/auth/security-indicator"
 
+// Animated counter hook
+function useCountUp(target: number | string, duration = 2000, isActive = false) {
+  const [count, setCount] = useState(0)
+  const isString = typeof target === 'string'
+  
+  useEffect(() => {
+    if (!isActive || isString) return
+    const numTarget = target as number
+    const startTime = performance.now()
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3) // cubic ease-out
+      setCount(Math.floor(eased * numTarget))
+      if (progress < 1) requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+  }, [target, duration, isActive, isString])
+  
+  return isString ? target : count
+}
+
 export default function LandingLoginPage() {
   const [mounted, setMounted] = useState(false)
   const [showForgotPasswordDialog, setShowForgotPasswordDialog] = useState(false)
@@ -24,6 +46,9 @@ export default function LandingLoginPage() {
   const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [statsVisible, setStatsVisible] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const statsRef = useRef<HTMLDivElement>(null)
   
   // Form state
   const [username, setUsername] = useState("")
@@ -33,32 +58,65 @@ export default function LandingLoginPage() {
   
   const router = useRouter()
 
+  // Counter values
+  const ordersCount = useCountUp(45230, 2000, statsVisible)
+  const packedCount = useCountUp(127, 1500, statsVisible)
+  const channelsCount = useCountUp(5, 1000, statsVisible)
+
   const isDevelopment = process.env.NODE_ENV === 'development'
 
-  // Intersection Observer for scroll animations
+  // Check for reduced motion preference
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReducedMotion(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  // Intersection Observer for scroll animations + stats counter trigger
   useEffect(() => {
     if (typeof window === 'undefined') return
 
     const observerOptions = {
       threshold: 0.1,
-      rootMargin: '0px 0px -100px 0px'
+      rootMargin: '0px 0px -80px 0px'
     }
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('animate-in')
+          if (!prefersReducedMotion) {
+            entry.target.classList.add('animate-in')
+          } else {
+            // Instantly visible for reduced motion users
+            ;(entry.target as HTMLElement).style.opacity = '1'
+          }
           observer.unobserve(entry.target)
         }
       })
     }, observerOptions)
 
-    // Observe all sections with data-animate attribute
     const animatedElements = document.querySelectorAll('[data-animate]')
     animatedElements.forEach((el) => observer.observe(el))
 
-    return () => observer.disconnect()
-  }, [mounted])
+    // Stats counter observer
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true)
+          statsObserver.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.5 })
+
+    if (statsRef.current) statsObserver.observe(statsRef.current)
+
+    return () => {
+      observer.disconnect()
+      statsObserver.disconnect()
+    }
+  }, [mounted, prefersReducedMotion])
 
   useEffect(() => {
     setMounted(true)
@@ -276,23 +334,34 @@ export default function LandingLoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-slate-900 relative overflow-hidden">
 
+      {/* Subtle Noise Texture Overlay */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+        backgroundSize: '200px 200px'
+      }}></div>
+
       {/* Animated Grid Background */}
-      <div className="fixed inset-0 pointer-events-none opacity-20">
+      <div className="fixed inset-0 pointer-events-none" style={{ opacity: 0.06 }}>
         <div className="absolute inset-0" style={{
-          backgroundImage: 'linear-gradient(rgba(218, 165, 32, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(218, 165, 32, 0.1) 1px, transparent 1px)',
-          backgroundSize: '50px 50px'
+          backgroundImage: 'linear-gradient(rgba(218, 165, 32, 0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(218, 165, 32, 0.8) 1px, transparent 1px)',
+          backgroundSize: '60px 60px'
         }}></div>
       </div>
 
       {/* Floating Gold Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl animate-float-slow"></div>
-        <div className="absolute bottom-40 -right-20 w-[500px] h-[500px] bg-yellow-600/15 rounded-full blur-3xl animate-float-slower"></div>
+        <div className="absolute top-20 -left-20 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl animate-float-slow" style={{ willChange: 'transform' }}></div>
+        <div className="absolute bottom-40 -right-20 w-[500px] h-[500px] bg-yellow-600/15 rounded-full blur-3xl animate-float-slower" style={{ willChange: 'transform' }}></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        {/* Extra accent orbs */}
+        <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-yellow-500/10 rounded-full blur-2xl animate-float-slow" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-56 h-56 bg-amber-600/10 rounded-full blur-2xl animate-float-slower" style={{ animationDelay: '3s' }}></div>
       </div>
 
-      {/* Premium Gold Accents */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+      {/* Premium Gold Top Border */}
+      <div className="fixed top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent z-50"></div>
+      {/* Premium Gold Bottom Border on Nav */}
 
       {/* Navigation Bar - Premium Black & Gold */}
       <nav className="relative z-50 border-b border-amber-900/20 bg-black/60 backdrop-blur-xl shadow-2xl">
@@ -351,27 +420,33 @@ export default function LandingLoginPage() {
                 </p>
               </div>
 
-              {/* Premium Stats - Gold Accented */}
-              <div className="grid grid-cols-3 gap-6 pt-4">
+              {/* Premium Stats - Gold Accented with Counter Animation */}
+              <div className="grid grid-cols-3 gap-6 pt-4" ref={statsRef}>
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
                   <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
-                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">5+</div>
+                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent tabular-nums">
+                      {statsVisible ? `${ordersCount > 999 ? `₱${Math.floor(ordersCount/1000)}K` : ordersCount}` : '₱0'}
+                    </div>
+                    <div className="text-sm text-amber-200/70 font-medium mt-1">Sales Today</div>
+                  </div>
+                </div>
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
+                  <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
+                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent tabular-nums">
+                      {statsVisible ? packedCount : 0}
+                    </div>
+                    <div className="text-sm text-amber-200/70 font-medium mt-1">Orders Packed</div>
+                  </div>
+                </div>
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
+                  <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
+                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent tabular-nums">
+                      {statsVisible ? channelsCount : 0}+
+                    </div>
                     <div className="text-sm text-amber-200/70 font-medium mt-1">Sales Channels</div>
-                  </div>
-                </div>
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
-                  <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
-                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">6</div>
-                    <div className="text-sm text-amber-200/70 font-medium mt-1">User Roles</div>
-                  </div>
-                </div>
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
-                  <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
-                    <div className="text-4xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">24/7</div>
-                    <div className="text-sm text-amber-200/70 font-medium mt-1">Live Sync</div>
                   </div>
                 </div>
               </div>
@@ -381,7 +456,7 @@ export default function LandingLoginPage() {
                 <Button
                   onClick={() => setShowLoginModal(true)}
                   size="lg"
-                  className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold text-lg px-10 py-7 shadow-2xl shadow-amber-600/50 hover:shadow-amber-500/70 transition-all duration-300 border border-amber-400/30 hover:scale-105"
+                  className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold text-lg px-10 py-7 shadow-2xl shadow-amber-600/50 hover:shadow-amber-500/70 transition-all duration-300 border border-amber-400/30 hover:scale-105 btn-ripple"
                 >
                   Access Dashboard
                   <ChevronRight className="h-5 w-5 ml-2" />
@@ -389,7 +464,7 @@ export default function LandingLoginPage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="text-lg px-10 py-7 border-2 border-amber-500/30 text-amber-300 hover:bg-amber-500/10 hover:border-amber-400/50 backdrop-blur-sm transition-all duration-300"
+                  className="text-lg px-10 py-7 border-2 border-amber-500/30 text-amber-300 hover:bg-amber-500/10 hover:border-amber-400/50 backdrop-blur-sm transition-all duration-300 animate-border-glow"
                   onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                 >
                   <Eye className="h-5 w-5 mr-2" />
@@ -422,7 +497,9 @@ export default function LandingLoginPage() {
                     </div>
                     <div>
                       <div className="text-xs text-amber-300/70 font-medium tracking-wide">SALES TODAY</div>
-                      <div className="text-2xl font-black bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent">₱45,230</div>
+                      <div className="text-2xl font-black bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent tabular-nums">
+                        ₱{statsVisible ? `${Math.floor(ordersCount/1000)}K` : '0K'}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -435,7 +512,9 @@ export default function LandingLoginPage() {
                     </div>
                     <div>
                       <div className="text-xs text-amber-300/70 font-medium tracking-wide">ORDERS PACKED</div>
-                      <div className="text-2xl font-black bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent">127</div>
+                      <div className="text-2xl font-black bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent tabular-nums">
+                        {statsVisible ? packedCount : 0}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -962,7 +1041,7 @@ export default function LandingLoginPage() {
                 <Button
                   onClick={() => setShowLoginModal(true)}
                   size="lg"
-                  className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold text-xl px-12 py-8 h-auto shadow-2xl shadow-amber-600/50 hover:shadow-amber-500/70 transition-all duration-300 border-2 border-amber-400/30 hover:scale-105"
+                  className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold text-xl px-12 py-8 h-auto shadow-2xl shadow-amber-600/50 hover:shadow-amber-500/70 transition-all duration-300 border-2 border-amber-400/30 hover:scale-105 btn-ripple"
                 >
                   <Lock className="h-6 w-6 mr-3" strokeWidth={2.5} />
                   Access Elite Dashboard
@@ -1224,206 +1303,157 @@ export default function LandingLoginPage() {
       {/* Premium CSS Animations - Black & Gold Theme */}
       <style jsx>{`
         @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
         }
-
         @keyframes float-slow {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          50% {
-            transform: translate(30px, -30px) scale(1.1);
-          }
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(30px, -30px) scale(1.1); }
         }
-
         @keyframes float-slower {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          50% {
-            transform: translate(-40px, 40px) scale(1.15);
-          }
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-40px, 40px) scale(1.15); }
         }
-
         @keyframes pulse-slow {
-          0%, 100% {
-            opacity: 0.3;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.5;
-            transform: scale(1.05);
-          }
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.05); }
         }
-
         @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes fadeInDown {
-          from {
-            opacity: 0;
-            transform: translateY(-40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-40px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes fadeInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateX(-40px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-
         @keyframes fadeInRight {
-          from {
-            opacity: 0;
-            transform: translateX(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateX(40px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-
         @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
+          from { opacity: 0; transform: scale(0.92); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        @keyframes ripple {
+          0% { transform: scale(0); opacity: 0.6; }
+          100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes borderGlow {
+          0%, 100% { border-color: rgba(245, 158, 11, 0.2); box-shadow: 0 0 0px rgba(245, 158, 11, 0); }
+          50% { border-color: rgba(245, 158, 11, 0.5); box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
+        }
+        @keyframes particleDrift {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.6; }
+          50% { opacity: 0.9; }
+          100% { transform: translateY(-120px) translateX(30px) rotate(180deg); opacity: 0; }
         }
 
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
+        .animate-float { animation: float 3s ease-in-out infinite; will-change: transform; }
+        .animate-float-delay { animation: float 3s ease-in-out 0.5s infinite; will-change: transform; }
+        .animate-float-slow { animation: float-slow 8s ease-in-out infinite; will-change: transform; }
+        .animate-float-slower { animation: float-slower 10s ease-in-out infinite; will-change: transform; }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+
+        /* Shimmer border effect on cards */
+        .shimmer-border {
+          background: linear-gradient(
+            90deg,
+            rgba(245, 158, 11, 0.2),
+            rgba(234, 179, 8, 0.6),
+            rgba(245, 158, 11, 0.2)
+          );
+          background-size: 200% auto;
+          animation: shimmer 3s linear infinite;
         }
 
-        .animate-float-delay {
-          animation: float 3s ease-in-out 0.5s infinite;
+        /* Gold border glow pulse */
+        .animate-border-glow {
+          animation: borderGlow 3s ease-in-out infinite;
         }
 
-        .animate-float-slow {
-          animation: float-slow 8s ease-in-out infinite;
+        /* Button ripple effect */
+        .btn-ripple {
+          position: relative;
+          overflow: hidden;
+        }
+        .btn-ripple::after {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.3);
+          width: 100px;
+          height: 100px;
+          margin-top: -50px;
+          margin-left: -50px;
+          top: 50%;
+          left: 50%;
+          animation: ripple 0.6s linear;
+          transform: scale(0);
+        }
+        .btn-ripple:active::after {
+          animation: ripple 0.6s linear;
         }
 
-        .animate-float-slower {
-          animation: float-slower 10s ease-in-out infinite;
-        }
-
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
+        /* Floating gold particles */
+        .particle {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: radial-gradient(circle, rgba(245,158,11,0.8), transparent);
+          border-radius: 50%;
+          animation: particleDrift linear infinite;
         }
 
         /* Scroll Animation Classes */
-        [data-animate] {
-          opacity: 0;
+        [data-animate] { opacity: 0; }
+        [data-animate="fade-up"].animate-in { animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        [data-animate="fade-down"].animate-in { animation: fadeInDown 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        [data-animate="fade-left"].animate-in { animation: fadeInLeft 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        [data-animate="fade-right"].animate-in { animation: fadeInRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        [data-animate="scale"].animate-in { animation: scaleIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+        [data-animate-delay="100"].animate-in { animation-delay: 0.1s; }
+        [data-animate-delay="200"].animate-in { animation-delay: 0.2s; }
+        [data-animate-delay="300"].animate-in { animation-delay: 0.3s; }
+        [data-animate-delay="400"].animate-in { animation-delay: 0.4s; }
+        [data-animate-delay="500"].animate-in { animation-delay: 0.5s; }
+        [data-animate-delay="600"].animate-in { animation-delay: 0.6s; }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+          [data-animate] { opacity: 1 !important; animation: none !important; }
+          .animate-float, .animate-float-delay, .animate-float-slow,
+          .animate-float-slower, .animate-pulse-slow { animation: none !important; }
+          .shimmer-border { animation: none !important; }
         }
 
-        [data-animate="fade-up"].animate-in {
-          animation: fadeInUp 0.8s ease-out forwards;
-        }
+        html { scroll-behavior: smooth; }
 
-        [data-animate="fade-down"].animate-in {
-          animation: fadeInDown 0.8s ease-out forwards;
-        }
-
-        [data-animate="fade-left"].animate-in {
-          animation: fadeInLeft 0.8s ease-out forwards;
-        }
-
-        [data-animate="fade-right"].animate-in {
-          animation: fadeInRight 0.8s ease-out forwards;
-        }
-
-        [data-animate="scale"].animate-in {
-          animation: scaleIn 0.8s ease-out forwards;
-        }
-
-        /* Staggered animation delays for grid items */
-        [data-animate-delay="100"].animate-in {
-          animation-delay: 0.1s;
-        }
-
-        [data-animate-delay="200"].animate-in {
-          animation-delay: 0.2s;
-        }
-
-        [data-animate-delay="300"].animate-in {
-          animation-delay: 0.3s;
-        }
-
-        [data-animate-delay="400"].animate-in {
-          animation-delay: 0.4s;
-        }
-
-        [data-animate-delay="500"].animate-in {
-          animation-delay: 0.5s;
-        }
-
-        [data-animate-delay="600"].animate-in {
-          animation-delay: 0.6s;
-        }
-
-        .delay-100 {
-          animation-delay: 0.1s;
-        }
-
-        .delay-200 {
-          animation-delay: 0.2s;
-        }
-
-        .delay-500 {
-          animation-delay: 0.5s;
-        }
-
-        .delay-1000 {
-          animation-delay: 1s;
-        }
-
-        /* Smooth scroll */
-        html {
-          scroll-behavior: smooth;
-        }
-
-        /* Custom scrollbar for premium look */
-        ::-webkit-scrollbar {
-          width: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-          background: #000000;
-        }
-
+        /* Custom gold scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb {
           background: linear-gradient(to bottom, #d97706, #eab308);
-          border-radius: 6px;
-          border: 2px solid #000000;
+          border-radius: 5px;
+          border: 2px solid #050505;
         }
-
         ::-webkit-scrollbar-thumb:hover {
           background: linear-gradient(to bottom, #f59e0b, #fbbf24);
+        }
+
+        /* Focus indicators for accessibility */
+        button:focus-visible, a:focus-visible, input:focus-visible {
+          outline: 2px solid rgba(245, 158, 11, 0.8);
+          outline-offset: 2px;
+          border-radius: 4px;
         }
       `}</style>
     </div>
