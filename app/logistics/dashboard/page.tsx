@@ -363,30 +363,30 @@ export default function LogisticsAdminDashboard() {
               {filteredQueue.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center">
                   <CheckCircle className="h-8 w-8 text-emerald-400 mb-2" />
-                  <p className="text-sm font-semibold" style={{ color: '#64748b' }}>All caught up!</p>
+                  <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">All caught up!</p>
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[320px] overflow-y-auto">
                   {filteredQueue.map((order, i) => (
-                    <div key={order.id} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <span className="text-xs font-black w-5 flex-shrink-0" style={{ color: i === 0 ? '#f97316' : '#94a3b8' }}>{i + 1}</span>
+                    <div key={order.id} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-[#1a1a1a] transition-colors">
+                      <span className={cn("text-xs font-black w-5 flex-shrink-0", i === 0 ? "text-orange-500" : "text-slate-400 dark:text-slate-500")}>{i + 1}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate" style={{ color: '#0f172a' }}>
+                        <p className="text-sm font-semibold truncate text-slate-900 dark:text-white">
                           {toTitleCase(order.itemName)}
                         </p>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <span className={cn('h-1.5 w-1.5 rounded-full flex-shrink-0', CHANNEL_COLORS[order.channel] || 'bg-slate-400')} />
-                          <span className="text-xs truncate" style={{ color: '#64748b' }}>
+                          <span className="text-xs truncate text-slate-500 dark:text-slate-400">
                             {order.customerName} · {order.channel}
                           </span>
                         </div>
                         {order.waybill && order.waybill !== order.id && (
-                          <p className="text-[10px] font-mono mt-0.5 truncate" style={{ color: '#94a3b8' }}>
+                          <p className="text-[10px] font-mono mt-0.5 truncate text-slate-400 dark:text-slate-500">
                             {order.waybill}
                           </p>
                         )}
                       </div>
-                      <span className="text-xs font-bold px-2 py-1 rounded-md flex-shrink-0" style={{ background: '#f1f5f9', color: '#475569' }}>
+                      <span className="text-xs font-bold px-2 py-1 rounded-md flex-shrink-0 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                         ×{order.quantity}
                       </span>
                     </div>
@@ -419,19 +419,19 @@ export default function LogisticsAdminDashboard() {
                   const amount = statusAmounts[status.key] || 0
                   const pct = totalOrders > 0 ? Math.round((count / totalOrders) * 100) : 0
                   return (
-                    <div key={status.key} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <div key={status.key} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#1a1a1a] hover:bg-slate-100 dark:hover:bg-[#222] transition-colors">
                       <div className={cn('h-2.5 w-2.5 rounded-full flex-shrink-0', status.dot)} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold" style={{ color: '#374151' }}>{status.label}</span>
-                          <span className="text-xs font-bold" style={{ color: '#111827' }}>{count}</span>
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{status.label}</span>
+                          <span className="text-xs font-bold text-slate-900 dark:text-white">{count}</span>
                         </div>
                         <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                           <div className={cn('h-full rounded-full transition-all duration-500', status.color)} style={{ width: `${pct}%` }} />
                         </div>
                         <div className="flex items-center justify-between mt-0.5">
-                          <span className="text-[10px]" style={{ color: '#94a3b8' }}>{pct}%</span>
-                          <span className="text-[10px] font-semibold" style={{ color: '#64748b' }}>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500">{pct}%</span>
+                          <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
                             ₱{amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                           </span>
                         </div>
@@ -468,22 +468,22 @@ export default function LogisticsAdminDashboard() {
               {problematicCount === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <CheckCircle className="h-8 w-8 text-emerald-400 mb-2" />
-                  <p className="text-sm font-semibold" style={{ color: '#64748b' }}>No issues — all on track</p>
+                  <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">No issues — all on track</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {[
-                    { key: 'CANCELLED',   label: 'Cancelled',   icon: XCircle,       color: '#ef4444', bg: '#fef2f2', border: '#fecaca' },
-                    { key: 'RETURNED',    label: 'Returned',    icon: RotateCcw,     color: '#f59e0b', bg: '#fffbeb', border: '#fde68a' },
-                    { key: 'DETAINED',    label: 'Detained',    icon: ShieldAlert,   color: '#f97316', bg: '#fff7ed', border: '#fed7aa' },
-                    { key: 'PROBLEMATIC', label: 'Problematic', icon: AlertTriangle, color: '#f43f5e', bg: '#fff1f2', border: '#fecdd3' },
+                    { key: 'CANCELLED',   label: 'Cancelled',   icon: XCircle,       colorClass: 'text-red-500',    bgClass: 'bg-red-50 dark:bg-red-950/40',     borderClass: 'border-red-200 dark:border-red-900/50' },
+                    { key: 'RETURNED',    label: 'Returned',    icon: RotateCcw,     colorClass: 'text-amber-500',  bgClass: 'bg-amber-50 dark:bg-amber-950/40', borderClass: 'border-amber-200 dark:border-amber-900/50' },
+                    { key: 'DETAINED',    label: 'Detained',    icon: ShieldAlert,   colorClass: 'text-orange-500', bgClass: 'bg-orange-50 dark:bg-orange-950/40',borderClass: 'border-orange-200 dark:border-orange-900/50' },
+                    { key: 'PROBLEMATIC', label: 'Problematic', icon: AlertTriangle, colorClass: 'text-rose-500',   bgClass: 'bg-rose-50 dark:bg-rose-950/40',   borderClass: 'border-rose-200 dark:border-rose-900/50' },
                   ].filter(s => (statusCounts[s.key] || 0) > 0).map(s => (
-                    <div key={s.key} className="flex items-center justify-between p-3 rounded-xl border" style={{ background: s.bg, borderColor: s.border }}>
+                    <div key={s.key} className={cn("flex items-center justify-between p-3 rounded-xl border", s.bgClass, s.borderClass)}>
                       <div className="flex items-center gap-2.5">
-                        <s.icon className="h-4 w-4" style={{ color: s.color }} />
-                        <span className="text-sm font-semibold" style={{ color: '#374151' }}>{s.label}</span>
+                        <s.icon className={cn("h-4 w-4", s.colorClass)} />
+                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{s.label}</span>
                       </div>
-                      <span className="text-xl font-black" style={{ color: s.color }}>{statusCounts[s.key] || 0}</span>
+                      <span className={cn("text-xl font-black", s.colorClass)}>{statusCounts[s.key] || 0}</span>
                     </div>
                   ))}
                 </div>
@@ -506,33 +506,33 @@ export default function LogisticsAdminDashboard() {
               {packedInPeriod.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center">
                   <Package className="h-8 w-8 text-slate-300 dark:text-slate-600 mb-2" />
-                  <p className="text-sm" style={{ color: '#64748b' }}>No packed orders yet</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No packed orders yet</p>
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[260px] overflow-y-auto">
                   {packedInPeriod.slice(0, 8).map(order => (
-                    <div key={order.id} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <div key={order.id} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-[#1a1a1a] transition-colors">
                       <div className="h-8 w-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center flex-shrink-0">
                         <PackageCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate" style={{ color: '#0f172a' }}>
+                        <p className="text-sm font-semibold truncate text-slate-900 dark:text-white">
                           {toTitleCase(order.itemName)}
                         </p>
-                        <p className="text-xs mt-0.5" style={{ color: '#64748b' }}>
-                          Packed by <span className="font-semibold" style={{ color: '#374151' }}>{order.packedBy}</span>
+                        <p className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">
+                          Packed by <span className="font-semibold text-slate-600 dark:text-slate-300">{order.packedBy}</span>
                           {' · '}
                           {new Date(order.packedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           {', '}
                           {new Date(order.packedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                         {order.waybill && order.waybill !== order.id && (
-                          <p className="text-[10px] font-mono mt-0.5 truncate" style={{ color: '#94a3b8' }}>
+                          <p className="text-[10px] font-mono mt-0.5 truncate text-slate-400 dark:text-slate-500">
                             {order.waybill}
                           </p>
                         )}
                       </div>
-                      <span className="text-xs font-bold px-2 py-1 rounded-md flex-shrink-0" style={{ background: '#f1f5f9', color: '#475569' }}>
+                      <span className="text-xs font-bold px-2 py-1 rounded-md flex-shrink-0 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                         ×{order.quantity}
                       </span>
                     </div>
