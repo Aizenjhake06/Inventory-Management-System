@@ -95,8 +95,15 @@ export default function PackingQueuePage() {
     waybill: '',
     quantity: 0,
     totalAmount: 0,
-    dispatchNotes: ''
+    dispatchNotes: '',
+    salesChannel: ''
   })
+
+  // Track unsaved changes in edit mode
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  // Waybill duplicate check state
+  const [waybillChecking, setWaybillChecking] = useState(false)
+  const [waybillError, setWaybillError] = useState<string | null>(null)
 
   // Role detection
   const userRole = getCurrentUserRole()
@@ -381,13 +388,18 @@ export default function PackingQueuePage() {
       waybill: order.waybill || '',
       quantity: order.qty || order.quantity || 0,
       totalAmount: order.total || order.totalAmount || 0,
-      dispatchNotes: order.dispatchNotes || ''
+      dispatchNotes: order.dispatchNotes || '',
+      salesChannel: order.sales_channel || order.channel || ''
     })
     setIsEditMode(false)
+    setHasUnsavedChanges(false)
+    setWaybillError(null)
     setShowDetailsModal(true)
   }
 
   const handleEditMode = () => {
+    setHasUnsavedChanges(false)
+    setWaybillError(null)
     setIsEditMode(true)
   }
 
@@ -401,46 +413,153 @@ export default function PackingQueuePage() {
         waybill: selectedOrder.waybill || '',
         quantity: selectedOrder.qty || selectedOrder.quantity || 0,
         totalAmount: selectedOrder.total || selectedOrder.totalAmount || 0,
-        dispatchNotes: selectedOrder.dispatchNotes || ''
+        dispatchNotes: selectedOrder.dispatchNotes || '',
+        salesChannel: selectedOrder.sales_channel || selectedOrder.channel || ''
       })
     }
     setIsEditMode(false)
+    setHasUnsavedChanges(false)
+    setWaybillError(null)
   }
 
   const handleSaveEdit = async () => {
     if (!selectedOrder) return
 
+    // ── 1. Client-side validation ────────────────────────────
+    if (!editForm.customerName.trim()) {
+      toast.error('Customer name is required')
+      return
+    }
+    if (!editForm.customerPhone.trim()) {
+      toast.error('Customer phone number is required')
+      return
+    }
+    if (!editForm.customerAddress.trim()) {
+      toast.error('Delivery address is required')
+      return
+    }
+    if (!editForm.courier.trim()) {
+      toast.error('Courier is required')
+      return
+    }
+    if (!editForm.waybill.trim()) {
+      toast.error('Waybill number is required')
+      return
+    }
+    if (editForm.quantity <= 0) {
+      toast.error('Quantity must be greater than 0')
+      return
+    }
+    if (editForm.totalAmount <= 0) {
+      toast.error('Total amount must be greater than 0')
+      return
+    }
+
+    // ── 2. Waybill duplicate check (only if waybill changed) ─
+    if (editForm.waybill.trim() !== (selectedOrder.waybill || '').trim()) {
+      try {
+        setWaybillChecking(true)
+        const res = await fetch(`/api/orders/check-waybill?waybill=${encodeURIComponent(editForm.waybill.trim())}`)
+        const data = await res.json()
+        if (data.exists && data.orders?.length > 0) {
+          // Filter out the current order from duplicates
+          const otherDuplicates = data.orders.filter((o: any) => o.id !== selectedOrder.id)
+          if (otherDuplicates.length > 0) {
+            setWaybillError(`Duplicate waybill! Already used by ${otherDuplicates.length} other order(s).`)
+            setWaybillChecking(false)
+            return
+          }
+        }
+        setWaybillError(null)
+      } catch {
+        // Non-blocking — proceed if check fails
+      } finally {
+        setWaybillChecking(false)
+      }
+    }
+
+    // ── 3. Build audit diff ──────────────────────────────────
+    const changes: string[] = []
+    const fieldLabels: Record<string, string> = {
+      customerName:    'Customer Name',
+      customerPhone:   'Phone',
+      customerAddress: 'Address',
+      courier:         'Courier',
+      waybill:         'Waybill',
+      quantity:        'Quantity',
+      totalAmount:     'Total Amount',
+      salesChannel:    'Sales Channel',
+      dispatchNotes:   'Notes',
+    }
+    const originalValues: Record<string, any> = {
+      customerName:    selectedOrder.customerName || '',
+      customerPhone:   selectedOrder.customerPhone || '',
+      customerAddress: selectedOrder.customerAddress || '',
+      courier:         selectedOrder.courier || '',
+      waybill:         selectedOrder.waybill || '',
+      quantity:        selectedOrder.qty || selectedOrder.quantity || 0,
+      totalAmount:     selectedOrder.total || selectedOrder.totalAmount || 0,
+      salesChannel:    selectedOrder.sales_channel || selectedOrder.channel || '',
+      dispatchNotes:   selectedOrder.dispatchNotes || '',
+    }
+    const newValues: Record<string, any> = {
+      customerName:    editForm.customerName,
+      customerPhone:   editForm.customerPhone,
+      customerAddress: editForm.customerAddress,
+      courier:         editForm.courier,
+      waybill:         editForm.waybill,
+      quantity:        editForm.quantity,
+      totalAmount:     editForm.totalAmount,
+      salesChannel:    editForm.salesChannel,
+      dispatchNotes:   editForm.dispatchNotes,
+    }
+    for (const key of Object.keys(fieldLabels)) {
+      const orig = String(originalValues[key] || '').trim()
+      const next = String(newValues[key] || '').trim()
+      if (orig !== next) {
+        changes.push(`${fieldLabels[key]}: "${orig}" → "${next}"`)
+      }
+    }
+
+    // ── 4. Save ──────────────────────────────────────────────
     try {
       const headers = getAuthHeaders()
       const response = await fetch(`/api/orders/${selectedOrder.id}`, {
         method: 'PATCH',
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json'
-        },
+        headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customer_name: editForm.customerName,
+          customer_name:    editForm.customerName,
           customer_contact: editForm.customerPhone,
           customer_address: editForm.customerAddress,
-          courier: editForm.courier,
-          waybill: editForm.waybill,
-          qty: editForm.quantity,
-          total: editForm.totalAmount,
-          dispatch_notes: editForm.dispatchNotes
+          courier:          editForm.courier,
+          waybill:          editForm.waybill,
+          qty:              editForm.quantity,
+          total:            editForm.totalAmount,
+          dispatch_notes:   editForm.dispatchNotes,
+          sales_channel:    editForm.salesChannel,
+          // Audit metadata
+          edited_by:        currentUser?.displayName || currentUser?.username || 'Unknown',
+          edit_changes:     changes.join(' | '),
         })
       })
 
       if (!response.ok) {
-        throw new Error('Failed to update order')
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err.error || 'Failed to update order')
       }
 
-      toast.success('Order updated successfully')
+      toast.success(
+        changes.length > 0
+          ? `Order updated (${changes.length} field${changes.length > 1 ? 's' : ''} changed)`
+          : 'No changes detected'
+      )
       setIsEditMode(false)
+      setHasUnsavedChanges(false)
       setShowDetailsModal(false)
       fetchOrders()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating order:', error)
-      toast.error('Failed to update order')
+      toast.error(error.message || 'Failed to update order')
     }
   }
 
@@ -1086,7 +1205,19 @@ export default function PackingQueuePage() {
       </div>
 
       {/* Order Details Modal - Professional Design */}
-      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+      <Dialog open={showDetailsModal} onOpenChange={(open) => {
+        if (!open && isEditMode && hasUnsavedChanges) {
+          if (!window.confirm('You have unsaved changes. Are you sure you want to close?')) {
+            return
+          }
+        }
+        if (!open) {
+          setIsEditMode(false)
+          setHasUnsavedChanges(false)
+          setWaybillError(null)
+        }
+        setShowDetailsModal(open)
+      }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden p-0 gap-0 flex flex-col">
           {/* Modal Header */}
           <div className="bg-slate-900 dark:bg-slate-950 px-8 py-6 border-b border-slate-700 dark:border-slate-800 flex-shrink-0 relative">
@@ -1149,44 +1280,44 @@ export default function PackingQueuePage() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block">
-                            Full Name
+                            Full Name <span className="text-red-500">*</span>
                           </Label>
                           <Input
                             value={editForm.customerName}
-                            onChange={(e) => setEditForm({...editForm, customerName: e.target.value})}
+                            onChange={(e) => { setEditForm({...editForm, customerName: e.target.value}); setHasUnsavedChanges(true) }}
                             placeholder="Enter customer name"
                           />
                         </div>
                         <div>
                           <Label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block">
-                            Phone Number
+                            Phone Number <span className="text-red-500">*</span>
                           </Label>
                           <Input
                             value={editForm.customerPhone}
-                            onChange={(e) => setEditForm({...editForm, customerPhone: e.target.value})}
+                            onChange={(e) => { setEditForm({...editForm, customerPhone: e.target.value}); setHasUnsavedChanges(true) }}
                             placeholder="Enter contact number"
                           />
                         </div>
-                        <div>
+                        <div className="col-span-2">
                           <Label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block">
-                            Delivery Address
+                            Delivery Address <span className="text-red-500">*</span>
                           </Label>
                           <textarea
                             value={editForm.customerAddress}
-                            onChange={(e) => setEditForm({...editForm, customerAddress: e.target.value})}
+                            onChange={(e) => { setEditForm({...editForm, customerAddress: e.target.value}); setHasUnsavedChanges(true) }}
                             rows={3}
-                            className="w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm resize-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                             placeholder="Enter delivery address"
                           />
                         </div>
-                        <div>
+                        <div className="col-span-2">
                           <Label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block">
                             Dispatch Notes
                           </Label>
                           <textarea
                             value={editForm.dispatchNotes}
-                            onChange={(e) => setEditForm({...editForm, dispatchNotes: e.target.value})}
-                            rows={3}
+                            onChange={(e) => { setEditForm({...editForm, dispatchNotes: e.target.value}); setHasUnsavedChanges(true) }}
+                            rows={2}
                             className="w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm resize-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                             placeholder="Add any special instructions or notes..."
                           />
@@ -1298,6 +1429,7 @@ export default function PackingQueuePage() {
                                     quantity: newQty,
                                     totalAmount: newQty * unitPrice
                                   })
+                                  setHasUnsavedChanges(true)
                                 }
                               }}
                               className="text-sm font-semibold h-10"
@@ -1327,7 +1459,7 @@ export default function PackingQueuePage() {
                           <Input
                             type="number"
                             value={editForm.totalAmount.toFixed(2)}
-                            onChange={(e) => setEditForm({...editForm, totalAmount: parseFloat(e.target.value) || 0})}
+                            onChange={(e) => { setEditForm({...editForm, totalAmount: parseFloat(e.target.value) || 0}); setHasUnsavedChanges(true) }}
                             className="text-xl font-bold text-emerald-600 dark:text-emerald-400 h-12"
                             min="0"
                             step="0.01"
@@ -1343,9 +1475,25 @@ export default function PackingQueuePage() {
                           <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                             Sales Channel
                           </p>
-                          <Badge variant="secondary" className="text-sm font-semibold">
-                            {selectedOrder.sales_channel || selectedOrder.channel || 'N/A'}
-                          </Badge>
+                          {isEditMode && userRole === 'admin' ? (
+                            <Select
+                              value={editForm.salesChannel}
+                              onValueChange={(val) => { setEditForm({...editForm, salesChannel: val}); setHasUnsavedChanges(true) }}
+                            >
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select channel" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {['Shopee', 'Lazada', 'TikTok', 'Facebook', 'Physical Store'].map(ch => (
+                                  <SelectItem key={ch} value={ch}>{ch}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Badge variant="secondary" className="text-sm font-semibold">
+                              {selectedOrder.sales_channel || selectedOrder.channel || 'N/A'}
+                            </Badge>
+                          )}
                         </div>
                       )}
                       <div>
@@ -1373,23 +1521,38 @@ export default function PackingQueuePage() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block">
-                            Courier
+                            Courier <span className="text-red-500">*</span>
                           </Label>
                           <Input
                             value={editForm.courier}
-                            onChange={(e) => setEditForm({...editForm, courier: e.target.value})}
+                            onChange={(e) => { setEditForm({...editForm, courier: e.target.value}); setHasUnsavedChanges(true) }}
                             placeholder="Enter courier name"
                           />
                         </div>
                         <div>
                           <Label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block">
-                            Waybill Number
+                            Waybill Number <span className="text-red-500">*</span>
                           </Label>
                           <Input
                             value={editForm.waybill}
-                            onChange={(e) => setEditForm({...editForm, waybill: e.target.value})}
+                            onChange={(e) => {
+                              setEditForm({...editForm, waybill: e.target.value})
+                              setHasUnsavedChanges(true)
+                              setWaybillError(null)
+                            }}
                             placeholder="Enter waybill number"
+                            className={waybillError ? 'border-red-500 focus:ring-red-500' : ''}
                           />
+                          {waybillChecking && (
+                            <p className="text-xs text-amber-500 mt-1 flex items-center gap-1">
+                              <RefreshCw className="h-3 w-3 animate-spin" /> Checking waybill...
+                            </p>
+                          )}
+                          {waybillError && (
+                            <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                              <XCircle className="h-3 w-3" /> {waybillError}
+                            </p>
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -1569,8 +1732,8 @@ export default function PackingQueuePage() {
                       <div className="flex gap-3">
                         {selectedOrder?.is_cancelled ? (
                           <>
-                            {/* UNCANCEL button - For admin and department accounts (operations role) */}
-                            {(userRole === 'operations' || userRole === 'admin') && (
+                            {/* UNCANCEL button - For admin, dept-manager, and operations roles */}
+                            {(userRole === 'operations' || userRole === 'admin' || userRole === 'dept-manager') && (
                               <Button
                                 onClick={handleUncancelOrder}
                                 disabled={uncancelling}
@@ -1631,8 +1794,8 @@ export default function PackingQueuePage() {
                               </Button>
                             )}
                             
-                            {/* CANCEL button - For admin and department accounts (operations role) */}
-                            {(userRole === 'operations' || userRole === 'admin') && (
+                            {/* CANCEL button - For admin, dept-manager, and operations roles */}
+                            {(userRole === 'operations' || userRole === 'admin' || userRole === 'dept-manager') && (
                               <Button
                                 variant="outline"
                                 onClick={() => setShowCancelConfirm(true)}

@@ -20,6 +20,16 @@ interface CartItem {
 }
 
 export default function POSPage() {
+  // Helper: convert ALL CAPS or mixed to proper Title Case for display
+  const toDisplayName = (name: string) => {
+    if (!name) return name
+    // If already has mixed case (not all uppercase), leave it
+    if (name !== name.toUpperCase()) return name
+    // Convert ALL CAPS to Title Case
+    return name
+      .toLowerCase()
+      .replace(/\b\w/g, c => c.toUpperCase())
+  }
   const [items, setItems] = useState<InventoryItem[]>([])
   const [cart, setCart] = useState<CartItem[]>([])
   const [search, setSearch] = useState("")
@@ -490,21 +500,21 @@ export default function POSPage() {
                       </div>
 
                       {/* Text Section - Bottom */}
-                      <div className="p-2 flex flex-col gap-1 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
-                        {/* Product Name - Smaller Font Size */}
+                      <div className="p-2 flex flex-col gap-1 bg-white dark:bg-[#1a1a1a] border-t border-slate-100 dark:border-amber-500/10">
+                        {/* Product Name — Title Case, consistent 2-line height */}
                         <h3 
-                          className="text-[10px] sm:text-[11px] font-medium text-slate-900 dark:text-white line-clamp-2 leading-tight min-h-[28px]" 
+                          className="font-semibold text-slate-800 dark:text-white line-clamp-2 leading-snug min-h-[28px]" 
+                          style={{ fontSize: '13px' }}
                           title={item.name}
                         >
-                          {item.name}
+                          {toDisplayName(item.name)}
                         </h3>
                         
-                        {/* Price - Emphasized */}
+                        {/* Price */}
                         <div className="flex items-center justify-between pt-0.5">
                           <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
                             ₱{item.sellingPrice.toFixed(0)}
                           </span>
-                          {/* Hide COGS for department agents (operations and dept-manager) */}
                           {currentUserRole !== 'operations' && currentUserRole !== 'dept-manager' && (
                             <span className="text-[10px] text-slate-400 dark:text-slate-500 tabular-nums">
                               COGS ₱{item.costPrice.toFixed(0)}
@@ -554,7 +564,7 @@ export default function POSPage() {
                       className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm text-slate-900 dark:text-white truncate">{cartItem.item.name}</p>
+                        <p className="font-medium text-sm text-slate-900 dark:text-white truncate">{toDisplayName(cartItem.item.name)}</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
                           ₱{cartItem.item.sellingPrice.toFixed(2)} × {cartItem.quantity}
                         </p>

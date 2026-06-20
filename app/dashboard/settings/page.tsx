@@ -2321,6 +2321,14 @@ const MANUAL_DATA: Record<string, { label: string; icon: string; pages: Record<s
           'COGS and total are auto-calculated from cart items.',
           'Operations staff see only their assigned sales channel.',
           'Bundles can be added to cart like regular products.',
+          'Product names display in Title Case (e.g., "Build Cord" instead of "BUILD CORD").',
+          'Original database names are preserved — display only is formatted.',
+          'Product name font size is 13px for readability across the 6-column grid.',
+        ],
+        notes: [
+          'Cart is cleared after successful order submission.',
+          'Price can be edited in the order form before final submission.',
+          'If total price was edited, success modal shows the edited total.',
         ],
       },
       dispatch: {
@@ -2342,9 +2350,13 @@ const MANUAL_DATA: Record<string, { label: string; icon: string; pages: Record<s
         workflow: [
           'View all Pending orders queued for packing.',
           'Click an order to view details in the modal.',
-          'Click "EDIT" to modify customer info, courier, waybill, quantity, or amount.',
+          'Click "EDIT" to modify customer info, courier, waybill, quantity, amount, or sales channel.',
+          'Fill required fields (marked with *): Name, Phone, Address, Courier, Waybill.',
+          'System validates all fields before saving — empty required fields are rejected.',
+          'If waybill was changed, system auto-checks for duplicates before saving.',
+          'Click "SAVE CHANGES" — a toast confirms how many fields were changed.',
           'Click "MARK AS PACKED" to confirm packing — inventory is deducted.',
-          'Click "CANCEL" to mark as cancelled before packing.',
+          'Click "CANCEL" to mark as cancelled before packing (Admin, Dept. Head, and Operations).',
           'Click "DELETE" to permanently remove an order.',
           'Click "UNCANCEL" to restore a cancelled order.',
           'Packed orders move automatically to Track Orders.',
@@ -2356,11 +2368,17 @@ const MANUAL_DATA: Record<string, { label: string; icon: string; pages: Record<s
           'Multiple Product Orders: Quantity is read-only, Amount is editable.',
           'System detects multiple products by commas (,), plus (+), or ampersand (&).',
           'Edit mode auto-calculates amount when quantity changes (single products only).',
+          'Closing edit modal with unsaved changes shows a confirmation prompt.',
+          'Admin can change Sales Channel via a dropdown in edit mode.',
+          'Dept. Head (dept-manager) can now CANCEL and UNCANCEL orders.',
           'Logistics Admin has read-only access (no edit/pack/cancel buttons).',
+          'Waybill duplicate check only runs if the waybill number was changed.',
+          'Save summary toast shows: "X field(s) changed" for audit awareness.',
         ],
         notes: [
           'Packer role handles this page in the field.',
           'Cancelled orders can be restored before being deleted.',
+          'Required fields are marked with a red asterisk (*).',
         ],
       },
       'track-orders': {
@@ -2516,6 +2534,10 @@ const MANUAL_DATA: Record<string, { label: string; icon: string; pages: Record<s
           'Session validation checks every 30 seconds to ensure no duplicate logins.',
         ],
         notes: [
+          'UI Theme: Black & Gold corporate design in dark mode.',
+          'Font: Plus Jakarta Sans (headings/body) + Geist Mono (numbers/code).',
+          'Dark mode uses pure black (#111111) cards with amber gold borders.',
+          'All page titles use a gold gradient for consistency.',
           'Single-device security prevents account sharing.',
           'You will see "Account logged in on another device" if your session is invalidated.',
         ],
@@ -2609,8 +2631,11 @@ const MANUAL_DATA: Record<string, { label: string; icon: string; pages: Record<s
           'View Pending orders for your channel.',
           'Click an order to view details.',
           'Click "EDIT" to modify customer info, courier, waybill, quantity, or amount.',
+          'Fill required fields (marked with *) before saving.',
+          'If waybill is changed, system auto-checks for duplicates.',
           'Click "MARK AS PACKED" to confirm packing and deduct inventory.',
-          'Cancel orders if needed before packing.',
+          'Click "CANCEL" to mark as cancelled before packing.',
+          'Click "UNCANCEL" to restore a cancelled order.',
         ],
         guide: [
           'Packing deducts inventory immediately.',
@@ -2618,9 +2643,12 @@ const MANUAL_DATA: Record<string, { label: string; icon: string; pages: Record<s
           'Single Product Orders: Quantity and Amount are editable.',
           'Multiple Product Orders: Quantity is read-only, Amount is editable.',
           'System detects multiple products by commas (,), plus (+), or ampersand (&).',
+          'Dept. Head accounts can now cancel and restore orders.',
+          'Unsaved changes prompt appears when closing edit modal.',
         ],
         notes: [
           'Edit mode auto-calculates amount when quantity changes (single products only).',
+          'Required fields are marked with a red asterisk (*).',
         ],
       },
       dispatch: {
@@ -2971,7 +2999,7 @@ function ManualTab() {
       })
       
       doc.setFontSize(10)
-      doc.text(`Version 1.0`, pageWidth / 2, yPos, { align: 'center' })
+      doc.text(`Version 2.0`, pageWidth / 2, yPos, { align: 'center' })
       yPos += 6
       doc.text(`${formattedDate}`, pageWidth / 2, yPos, { align: 'center' })
       
@@ -3017,8 +3045,10 @@ function ManualTab() {
         'Real-Time Inventory: Automatic stock updates with low-stock alerts',
         'Order Management: Complete lifecycle from POS to delivery tracking',
         'Business Intelligence: ABC classification, turnover analysis, profit margins',
-        'Role-Based Security: Five user roles with granular permissions',
-        'Audit Trail: Complete activity logging for compliance'
+        'Role-Based Security: Six user roles with granular permissions',
+        'Audit Trail: Complete activity logging for compliance',
+        'Premium UI: Black & Gold corporate theme with Plus Jakarta Sans typography',
+        'QC Enhancements: Packing Queue edit validation, waybill duplicate check on edit, unsaved-changes guard'
       ]
       
       doc.setFontSize(9)
@@ -3086,11 +3116,13 @@ function ManualTab() {
       yPos += 8
       
       const salesFeatures = [
-        'Point of Sale with fast order creation',
-        'Packing Queue with organized fulfillment workflow',
-        'Order Tracking with complete status updates',
-        'Waybill Management with duplicate validation',
-        'Multi-Product Order handling',
+        'Point of Sale with fast order creation and Title Case product display',
+        'Packing Queue with full order editing (validation, waybill duplicate check, unsaved-changes guard)',
+        'Sales Channel correction in edit mode (Admin only)',
+        'Dept. Head can cancel and restore orders in Packing Queue',
+        'Order Tracking with complete status updates and export',
+        'Waybill Management with duplicate validation on create AND edit',
+        'Multi-Product Order handling with read-only quantity protection',
         'Cancellation & Returns with restoration options'
       ]
       
@@ -3134,6 +3166,42 @@ function ManualTab() {
       analyticsFeatures.forEach(feature => {
         checkPageBreak(6)
         doc.setFillColor(...colors.success)
+        doc.circle(margin + 2, yPos - 1.5, 1, 'F')
+        doc.setTextColor(...colors.text)
+        const lines = doc.splitTextToSize(cleanText(feature), contentWidth - 8)
+        lines.forEach((line: string) => {
+          checkPageBreak(5)
+          doc.text(line, margin + 6, yPos)
+          yPos += 5
+        })
+      })
+
+      yPos += 5
+
+      // UI/UX & Design
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...colors.accent)
+      doc.text('UI/UX & DESIGN', margin, yPos)
+      yPos += 8
+
+      const uiFeatures = [
+        'Premium Black & Gold corporate dark mode theme',
+        'Plus Jakarta Sans font (300-800 weight) for headings and body',
+        'Geist Mono for numbers, code, and time displays',
+        'Gold gradient page titles (amber 600 -> amber 400)',
+        'Responsive card hover effects with gold glow in dark mode',
+        'Smooth scroll-triggered animations with Intersection Observer',
+        'Reduced motion support for accessibility',
+        'Custom gold scrollbar in dark mode',
+        'Keyboard focus-visible gold outline for accessibility'
+      ]
+
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      uiFeatures.forEach(feature => {
+        checkPageBreak(6)
+        doc.setFillColor(...colors.accent)
         doc.circle(margin + 2, yPos - 1.5, 1, 'F')
         doc.setTextColor(...colors.text)
         const lines = doc.splitTextToSize(cleanText(feature), contentWidth - 8)
@@ -3214,6 +3282,8 @@ function ManualTab() {
         'Department dashboard and KPIs',
         'Agent performance monitoring',
         'POS and order creation',
+        'Cancel and restore orders in Packing Queue',
+        'Edit order details (customer, courier, waybill, amount)',
         'Team activity tracking',
         'Department order logs'
       ]
