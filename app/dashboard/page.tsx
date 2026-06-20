@@ -744,20 +744,20 @@ export default function DashboardPage() {
             <div className="space-y-2">
               {stats?.recentTransactions && stats.recentTransactions.length > 0 ? (
                 stats.recentTransactions.map((tx, index) => (
-                  <div key={index} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+                  <div key={index} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-[#1a1a1a] hover:bg-slate-100 dark:hover:bg-[#222] transition-colors border border-transparent hover:border-slate-200 dark:hover:border-amber-500/15">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="h-8 w-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
                         <ShoppingCart className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-xs truncate" style={{ color: '#0f172a' }}>{tx.itemName}</div>
-                        <div className="flex items-center gap-1.5 mt-0.5" style={{ color: '#64748b', fontSize: '10px' }}>
+                        <div className="font-semibold text-xs truncate text-slate-900 dark:text-white">{tx.itemName}</div>
+                        <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
                           <span>{tx.quantity} units</span>
                           {tx.staffName && <><span>·</span><span className="truncate">{tx.staffName}</span></>}
                         </div>
                       </div>
                     </div>
-                    <div className="text-sm font-bold flex-shrink-0 ml-2" style={{ color: '#059669' }}>
+                    <div className="text-sm font-bold flex-shrink-0 ml-2 text-emerald-600 dark:text-emerald-400">
                       ₱{formatNumber(tx.totalRevenue)}
                     </div>
                   </div>
@@ -785,17 +785,17 @@ export default function DashboardPage() {
             <div className="space-y-2">
               {stats?.recentRestocks && stats.recentRestocks.length > 0 ? (
                 stats.recentRestocks.map((restock, index) => (
-                  <div key={index} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+                  <div key={index} className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-[#1a1a1a] hover:bg-slate-100 dark:hover:bg-[#222] transition-colors border border-transparent hover:border-slate-200 dark:hover:border-amber-500/15">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
                         <Package className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-xs truncate" style={{ color: '#0f172a' }}>{restock.itemName}</div>
-                        <div className="mt-0.5" style={{ color: '#64748b', fontSize: '10px' }}>{restock.quantity} units added</div>
+                        <div className="font-semibold text-xs truncate text-slate-900 dark:text-white">{restock.itemName}</div>
+                        <div className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">{restock.quantity} units added</div>
                       </div>
                     </div>
-                    <div className="text-sm font-bold flex-shrink-0 ml-2" style={{ color: '#2563eb' }}>
+                    <div className="text-sm font-bold flex-shrink-0 ml-2 text-blue-600 dark:text-blue-400">
                       ₱{formatNumber(restock.totalCost)}
                     </div>
                   </div>
@@ -847,11 +847,12 @@ export default function DashboardPage() {
                           : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v4m0 4h.01" />}
                       </svg>
                     </div>
-                    <p className="text-xs font-semibold leading-relaxed" style={{
-                      color: insight.type === 'success' ? '#065f46'
-                           : insight.type === 'warning' ? '#92400e'
-                           : '#991b1b'
-                    }}>
+                    <p className={cn(
+                      "text-xs font-semibold leading-relaxed",
+                      insight.type === 'success' && "text-emerald-700 dark:text-emerald-300",
+                      insight.type === 'warning' && "text-amber-700 dark:text-amber-300",
+                      insight.type === 'error'   && "text-red-700 dark:text-red-300"
+                    )}>
                       {insight.message}
                     </p>
                   </div>
@@ -879,12 +880,12 @@ export default function DashboardPage() {
             {/* Score */}
             <div className="flex items-end justify-between mb-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#64748b' }}>Health Score</p>
+                <p className="text-xs font-semibold uppercase tracking-wider mb-1 text-slate-500 dark:text-slate-400">Health Score</p>
                 <div className="flex items-end gap-1.5">
-                  <span className="text-4xl font-black leading-none" style={{ color: '#0f172a' }}>
+                  <span className="text-4xl font-black leading-none text-slate-900 dark:text-white">
                     {stats?.inventoryHealthScore || 0}
                   </span>
-                  <span className="text-base mb-0.5" style={{ color: '#94a3b8' }}>/ 100</span>
+                  <span className="text-base mb-0.5 text-slate-400 dark:text-slate-500">/ 100</span>
                 </div>
               </div>
               {/* Circular indicator */}
@@ -928,37 +929,37 @@ export default function DashboardPage() {
             </div>
 
             {/* Metrics */}
-            <div className="space-y-2 border-t border-slate-100 dark:border-slate-800 pt-3">
-              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">
+            <div className="space-y-2 border-t border-slate-100 dark:border-amber-500/10 pt-3">
+              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1a1a1a]">
                 <div className="flex items-center gap-2">
                   <div className="h-6 w-6 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                     <Package className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <span className="text-xs font-semibold" style={{ color: '#374151' }}>Stock Levels</span>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Stock Levels</span>
                 </div>
-                <span className="text-sm font-bold" style={{ color: '#111827' }}>
+                <span className="text-sm font-bold text-slate-900 dark:text-white">
                   {Math.round(((stats?.totalItems || 0) - (stats?.outOfStockCount || 0)) / (stats?.totalItems || 1) * 100)}%
                 </span>
               </div>
-              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">
+              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1a1a1a]">
                 <div className="flex items-center gap-2">
                   <div className="h-6 w-6 rounded bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
                     <TrendingUp className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                   </div>
-                  <span className="text-xs font-semibold" style={{ color: '#374151' }}>Return Rate</span>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Return Rate</span>
                 </div>
-                <span className="text-sm font-bold" style={{ color: '#111827' }}>
+                <span className="text-sm font-bold text-slate-900 dark:text-white">
                   {(stats?.returnRate || 0).toFixed(1)}%
                 </span>
               </div>
-              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">
+              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1a1a1a]">
                 <div className="flex items-center gap-2">
                   <div className="h-6 w-6 rounded bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                     <AlertTriangle className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
                   </div>
-                  <span className="text-xs font-semibold" style={{ color: '#374151' }}>Low Stock Items</span>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Low Stock Items</span>
                 </div>
-                <span className="text-sm font-bold" style={{ color: '#111827' }}>{lowStockCount}</span>
+                <span className="text-sm font-bold text-slate-900 dark:text-white">{lowStockCount}</span>
               </div>
             </div>
           </CardContent>
