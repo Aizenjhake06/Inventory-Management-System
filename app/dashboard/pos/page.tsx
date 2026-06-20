@@ -400,7 +400,7 @@ export default function POSPage() {
   }
 
   return (
-    <div className="w-full px-4 lg:px-6 py-6">
+    <div className="w-full py-5">
       {/* Page Header */}
       <div className="mb-6">
         <h2 className="text-2xl sm:text-3xl font-bold gradient-text">Order Dispatch Overview</h2>

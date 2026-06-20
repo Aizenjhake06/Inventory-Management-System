@@ -51,10 +51,10 @@ export default function ClientLayout({
         {/* Main content - Protected by RouteGuard */}
         <main 
           id="main-content" 
-          className="flex-1 overflow-y-auto overflow-x-hidden mt-14 lg:px-6 px-3 min-w-0 w-full"
+          className="flex-1 overflow-y-auto overflow-x-hidden mt-16 min-w-0 w-full"
           role="main"
         >
-          <div className="w-full max-w-full min-w-0">
+          <div className="w-full max-w-full min-w-0 px-3 sm:px-5 lg:px-6 py-5">
             <RouteGuard>
               <ErrorBoundary>
                 {children}

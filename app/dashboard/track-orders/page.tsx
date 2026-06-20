@@ -1245,9 +1245,9 @@ export default function TrackOrdersPage() {
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 py-6 space-y-6">
+    <div className="max-w-[1600px] mx-auto py-5 space-y-6">
       {/* Page Header - Professional Style */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold gradient-text">Track Orders Overview</h2>

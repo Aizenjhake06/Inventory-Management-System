@@ -3162,3 +3162,49 @@ pre code {
 .dark .border-b.border-slate-100 {
   border-color: rgba(245, 158, 11, 0.08) !important;
 }
+
+/* ============================================
+   CONSISTENT SPACING SYSTEM
+   Standardizes gaps between sections across all pages
+   ============================================ */
+
+/* Remove double horizontal padding on dashboard pages 
+   Layout provides px-3 sm:px-5 lg:px-6
+   Pages should NOT add their own horizontal padding on the outer wrapper */
+.dashboard-page {
+  /* Vertical spacing only - horizontal handled by layout */
+  padding-top: 1.25rem;    /* py-5 */
+  padding-bottom: 2rem;
+}
+
+/* Standard section spacing */
+.section-gap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* gap-6 */
+}
+
+/* Standard page header margin */
+.page-header {
+  margin-bottom: 1.5rem; /* mb-6 */
+}
+
+/* Card grid gaps - standardized */
+.grid-cards-4 {
+  display: grid;
+  gap: 1rem; /* gap-4 */
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 640px) {
+  .grid-cards-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .grid-cards-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Navbar height compensation - consistent across all layouts */
+.main-content-offset {
+  margin-top: 4rem; /* mt-16 - matches navbar h-16 */
+}

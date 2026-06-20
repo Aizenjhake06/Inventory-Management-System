@@ -261,7 +261,7 @@ export default function AgentPerformancePage() {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-[1400px] mx-auto py-6 space-y-6">
+    <div className="max-w-[1400px] mx-auto py-5 space-y-6">
 
       {/* ── PAGE HEADER ── */}
       <div className="flex items-start justify-between gap-4 flex-wrap">

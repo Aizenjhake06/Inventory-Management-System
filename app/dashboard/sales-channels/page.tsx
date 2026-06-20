@@ -354,9 +354,9 @@ export default function SalesChannelsPage() {
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 py-6 space-y-6">
+    <div className="max-w-[1600px] mx-auto py-5 space-y-6">
       {/* Page Header - Professional Shopify Style */}
-      <div className="flex items-center justify-between gap-4 mb-8">
+      <div className="flex items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl sm:text-3xl font-bold gradient-text">
             Sales Channels Overview
