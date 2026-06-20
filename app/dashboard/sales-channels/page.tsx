@@ -577,11 +577,11 @@ export default function SalesChannelsPage() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <div className="h-5 w-1 bg-blue-500 rounded-full flex-shrink-0"></div>
-                <h2 className="text-lg font-bold tracking-tight" style={{ color: '#ffffff' }}>
+                <h2 className="text-lg font-bold tracking-tight text-white">
                   All Sales Channels ({data?.departments.length || 0})
                 </h2>
               </div>
-              <p className="text-xs ml-3" style={{ color: '#94a3b8' }}>
+              <p className="text-xs ml-3 text-slate-400">
                 View performance metrics and detailed analytics for each sales channel
               </p>
             </div>
@@ -653,7 +653,7 @@ export default function SalesChannelsPage() {
                           />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-bold text-sm leading-tight group-hover:text-blue-600 transition-colors" style={{ color: '#0f172a' }}>
+                          <h3 className="font-bold text-sm leading-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-400 transition-colors">
                             {dept.name}
                           </h3>
                           <Badge className={`${getTypeColor(dept.type)} text-[10px] mt-0.5`}>

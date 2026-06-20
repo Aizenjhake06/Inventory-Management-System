@@ -1306,7 +1306,7 @@ export default function TrackOrdersPage() {
               </div>
             </div>
             <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Total Orders</p>
-            <p className="text-2xl font-bold bg-gradient-to-br from-slate-600 to-slate-700 bg-clip-text text-transparent tabular-nums mb-2">
+            <p className="text-2xl font-bold text-slate-700 dark:text-slate-200 tabular-nums mb-2">
               {totalOrders}
             </p>
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
@@ -1613,7 +1613,7 @@ export default function TrackOrdersPage() {
               </div>
             </div>
             <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">Returned</p>
-            <p className="text-2xl font-bold bg-gradient-to-br from-slate-600 to-slate-700 bg-clip-text text-transparent tabular-nums mb-2">
+            <p className="text-2xl font-bold text-slate-700 dark:text-slate-200 tabular-nums mb-2">
               {returnedOrders}
             </p>
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">

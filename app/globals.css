@@ -3131,3 +3131,34 @@ pre code {
 .dark .dark\:text-slate-400 {
   color: #9ca3af !important;
 }
+
+/* ============================================
+   FIX: Dark gradient text that becomes invisible on dark backgrounds
+   bg-clip-text with from-slate-600/700 is unreadable in dark mode
+   ============================================ */
+
+/* Force light color for dark slate gradient text in dark mode */
+.dark .bg-gradient-to-br.from-slate-600,
+.dark .bg-gradient-to-br.from-slate-700,
+.dark [class*="from-slate-6"],
+.dark [class*="from-slate-7"] {
+  --tw-gradient-from: #cbd5e1;
+  --tw-gradient-to: #94a3b8;
+}
+
+/* Ensure bg-clip-text is readable when using dark gradient stops */
+.dark .text-transparent {
+  /* Keep transparent for gradient text - just ensure gradient stops are light */
+}
+
+/* Quick Actions card buttons in dark mode */
+.dark [data-slot="button"]:not([class*="bg-"]) {
+  color: #e2e8f0 !important;
+  border-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+/* Ensure card section dividers use gold tint */
+.dark .border-t.border-slate-100,
+.dark .border-b.border-slate-100 {
+  border-color: rgba(245, 158, 11, 0.08) !important;
+}
