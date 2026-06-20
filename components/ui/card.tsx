@@ -9,14 +9,15 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      // Light mode: clean white
-      "rounded-[16px] border bg-white text-slate-900 shadow-sm",
+      // Light mode: clean white, very subtle border, smooth hover
+      "rounded-[16px] border border-slate-200/60 bg-white text-slate-900 shadow-sm",
+      "hover:shadow-lg hover:-translate-y-0.5 hover:border-slate-300/80",
       // Dark mode: deep black with gold accent border
       "dark:bg-[#111111] dark:text-white dark:border-amber-500/10",
-      "dark:shadow-[0_4px_16px_rgba(0,0,0,0.6),0_0_0_1px_rgba(245,158,11,0.04)]",
-      // Hover — subtle gold lift
-      "hover:shadow-md dark:hover:shadow-[0_8px_28px_rgba(0,0,0,0.7),0_0_0_1px_rgba(245,158,11,0.12)]",
-      "dark:hover:border-amber-500/20",
+      "dark:shadow-[0_4px_16px_rgba(0,0,0,0.6)]",
+      // Dark hover — subtle gold lift
+      "dark:hover:shadow-[0_8px_28px_rgba(0,0,0,0.7),0_0_12px_rgba(245,158,11,0.08)]",
+      "dark:hover:border-amber-500/25",
       "transition-all duration-300",
       className
     )}
