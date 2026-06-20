@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { GeistSans } from "geist/font/sans"
+import { Plus_Jakarta_Sans } from "next/font/google"
 import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 import type { ReactNode } from "react"
@@ -9,6 +9,16 @@ import { ErrorBoundary } from "@/components/error-boundary"
 import { Toaster } from "@/components/ui/sonner"
 import { Analytics } from "@vercel/analytics/next"
 import { PWAInstaller } from "@/components/pwa-installer"
+
+// Plus Jakarta Sans — Premium corporate sans-serif
+// Clean, modern, elegant — perfect for Black & Gold enterprise UI
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
+  display: "swap",
+  preload: true,
+})
 
 export const metadata: Metadata = {
   title: "Vertex - Professional Inventory Management System",
@@ -85,7 +95,7 @@ export default function RootLayout({
         <link rel="icon" href="/Vertex-icon-3.png" type="image/png" />
         <link rel="apple-touch-icon" href="/Vertex-icon-3.png" />
       </head>
-      <body className={`min-h-screen w-full overflow-x-hidden antialiased ${GeistSans.variable} ${GeistMono.variable} font-sans`} suppressHydrationWarning>
+      <body className={`min-h-screen w-full overflow-x-hidden antialiased ${plusJakartaSans.variable} ${GeistMono.variable} font-sans`} suppressHydrationWarning>
         <ErrorBoundary>
           <QueryProvider>
             <ThemeProvider
