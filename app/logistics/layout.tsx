@@ -58,10 +58,31 @@ export default function LogisticsLayout({ children }: { children: React.ReactNod
     return () => clearInterval(interval)
   }, [])
 
-  const handleLogout = () => {
-    ['authToken','currentUser','isLoggedIn','username','userRole','displayName'].forEach(k => localStorage.removeItem(k))
-    toast.success('Logged out successfully')
-    router.push('/')
+  const handleLogout = async () => {
+    try {
+      // Get username before clearing localStorage
+      const username = typeof window !== "undefined" ? localStorage.getItem("username") : null
+      
+      // Call API to destroy session on server
+      if (username) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        })
+      }
+      
+      // Clear localStorage
+      ['authToken','currentUser','isLoggedIn','username','userRole','displayName','sessionId'].forEach(k => localStorage.removeItem(k))
+      toast.success('Logged out successfully')
+      router.push('/')
+    } catch (error) {
+      console.error('[Logout] Error:', error)
+      // Still logout locally even if API call fails
+      localStorage.clear()
+      toast.success('Logged out successfully')
+      router.push('/')
+    }
   }
 
   const handleRefresh = () => {

@@ -65,14 +65,38 @@ export function CleanSaaSHeader({ sidebarCollapsed, onMobileMenuToggle }: CleanS
 
   const breadcrumbs = getBreadcrumbs()
 
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("isLoggedIn")
-      localStorage.removeItem("username")
-      localStorage.removeItem("userRole")
-      localStorage.removeItem("displayName")
+  const handleLogout = async () => {
+    try {
+      // Get username before clearing localStorage
+      const username = typeof window !== "undefined" ? localStorage.getItem("username") : null
+      
+      // Call API to destroy session on server
+      if (username) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        })
+      }
+      
+      // Clear localStorage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("isLoggedIn")
+        localStorage.removeItem("username")
+        localStorage.removeItem("userRole")
+        localStorage.removeItem("displayName")
+        localStorage.removeItem("sessionId")
+      }
+      
+      router.push("/")
+    } catch (error) {
+      console.error('[Logout] Error:', error)
+      // Still logout locally even if API call fails
+      if (typeof window !== "undefined") {
+        localStorage.clear()
+      }
+      router.push("/")
     }
-    router.push("/")
   }
 
   return (

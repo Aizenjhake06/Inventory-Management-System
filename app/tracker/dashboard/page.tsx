@@ -61,6 +61,11 @@ export default function TrackerDashboardPage() {
   const [showReturnConfirm, setShowReturnConfirm] = useState(false)
   const [returnReason, setReturnReason] = useState('')
   const [returning, setReturning] = useState(false)
+
+  // Bulk selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkStatus, setBulkStatus] = useState<string>('')
+  const [bulkUpdating, setBulkUpdating] = useState(false)
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -72,6 +77,8 @@ export default function TrackerDashboardPage() {
 
   useEffect(() => {
     filterOrders()
+    // Clear selections when filters change
+    setSelectedIds(new Set())
   }, [searchTerm, statusFilter, salesChannelFilter, startDate, endDate, orders])
 
   const fetchOrders = async () => {
@@ -312,6 +319,61 @@ export default function TrackerDashboardPage() {
     setStartDate(null)
     setEndDate(null)
     toast.success('Filters cleared')
+  }
+
+  // ── Bulk selection helpers ─────────────────────────────────────────────────
+  const isAllSelected = paginatedOrders.length > 0 && paginatedOrders.every(o => selectedIds.has(o.id))
+  const isIndeterminate = !isAllSelected && paginatedOrders.some(o => selectedIds.has(o.id))
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(paginatedOrders.map(o => o.id)))
+    }
+  }
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  const handleBulkUpdate = async () => {
+    if (!bulkStatus || selectedIds.size === 0) return
+    try {
+      setBulkUpdating(true)
+      const ids = Array.from(selectedIds)
+
+      // Optimistic update
+      const update = (list: Order[]) =>
+        list.map(o => selectedIds.has(o.id) ? { ...o, parcelStatus: bulkStatus as any } : o)
+      setOrders(update)
+      setFilteredOrders(update)
+
+      // Sequential PATCH to preserve audit trail
+      await Promise.all(
+        ids.map(id =>
+          fetch(`/api/orders/${id}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ parcel_status: bulkStatus }),
+          })
+        )
+      )
+
+      toast.success(`${ids.length} order${ids.length > 1 ? 's' : ''} updated to "${bulkStatus}"`)
+      setSelectedIds(new Set())
+      setBulkStatus('')
+    } catch (err) {
+      console.error('Bulk update error:', err)
+      toast.error('Bulk update failed — please try again')
+      await fetchOrders()
+    } finally {
+      setBulkUpdating(false)
+    }
   }
 
   const exportToExcel = () => {
@@ -640,38 +702,89 @@ export default function TrackerDashboardPage() {
               </div>
 
               <div className="overflow-x-auto">
+                {/* Bulk Action Bar — shows when items are selected */}
+                {selectedIds.size > 0 && (
+                  <div className="flex items-center gap-3 px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-800/50">
+                    <span className="text-sm font-semibold text-amber-700 dark:text-amber-300">
+                      {selectedIds.size} order{selectedIds.size > 1 ? 's' : ''} selected
+                    </span>
+                    <div className="flex items-center gap-2 ml-auto">
+                      <select
+                        value={bulkStatus}
+                        onChange={e => setBulkStatus(e.target.value)}
+                        className="h-8 px-2 text-xs rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      >
+                        <option value="">Select new status...</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="IN TRANSIT">In Transit</option>
+                        <option value="ON DELIVERY">On Delivery</option>
+                        <option value="PICKUP">Pickup</option>
+                        <option value="DELIVERED">Delivered</option>
+                        <option value="CANCELLED">Cancelled</option>
+                        <option value="DETAINED">Detained</option>
+                        <option value="PROBLEMATIC">Problematic</option>
+                        <option value="RETURNED">Returned</option>
+                      </select>
+                      <button
+                        onClick={handleBulkUpdate}
+                        disabled={!bulkStatus || bulkUpdating}
+                        className="h-8 px-4 text-xs font-bold rounded-lg bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {bulkUpdating ? 'Updating...' : 'Apply to Selected'}
+                      </button>
+                      <button
+                        onClick={() => setSelectedIds(new Set())}
+                        className="h-8 px-3 text-xs text-amber-700 dark:text-amber-400 hover:underline"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <table className="w-full table-fixed">
                   {/* Desktop Header - Hidden on Mobile */}
                   <thead className="sticky top-0 z-10 hidden md:table-header-group">
                     <tr className="bg-slate-900 dark:bg-slate-950 border-b border-slate-700">
-                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '8%' }}>
+                      {/* Checkbox column */}
+                      <th className="py-4 px-3 text-center border-r border-slate-700/50" style={{ width: '4%' }}>
+                        <input
+                          type="checkbox"
+                          checked={isAllSelected}
+                          ref={el => { if (el) el.indeterminate = isIndeterminate }}
+                          onChange={toggleSelectAll}
+                          className="w-3.5 h-3.5 rounded accent-amber-500 cursor-pointer"
+                          title="Select all on page"
+                        />
+                      </th>
+                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '7%' }}>
                         Date
                       </th>
                       <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '10%' }}>
                         Name
                       </th>
-                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '20%' }}>
+                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '18%' }}>
                         Address
                       </th>
-                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '10%' }}>
+                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '9%' }}>
                         Contact No.
                       </th>
                       <th className="text-right py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '8%' }}>
                         Price
                       </th>
-                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '18%' }}>
+                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '16%' }}>
                         Items
                       </th>
                       <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '12%' }}>
                         Tracking
                       </th>
-                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '10%' }}>
+                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '9%' }}>
                         Payment
                       </th>
-                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '12%' }}>
+                      <th className="text-left py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '11%' }}>
                         Status
                       </th>
-                      <th className="text-center py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider" style={{ width: '12%' }}>
+                      <th className="text-center py-4 px-2 text-[11px] font-bold text-white uppercase tracking-wider" style={{ width: '11%' }}>
                         Action
                       </th>
                     </tr>
@@ -702,6 +815,15 @@ export default function TrackerDashboardPage() {
                         className="h-14 transition-all duration-200 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/30"
                       >
                         {/* Desktop View - All Columns */}
+                        {/* Checkbox - desktop only */}
+                        <td className="py-3 px-3 hidden md:table-cell text-center" onClick={e => e.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.has(order.id)}
+                            onChange={() => toggleSelect(order.id)}
+                            className="w-3.5 h-3.5 rounded accent-amber-500 cursor-pointer"
+                          />
+                        </td>
                         <td className="py-3 px-2 hidden md:table-cell">
                           <div className="flex flex-col">
                             <span className="text-[11px] font-semibold text-slate-900 dark:text-white whitespace-nowrap">

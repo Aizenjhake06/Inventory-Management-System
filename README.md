@@ -18,6 +18,7 @@ A production-ready, enterprise-grade inventory management system built with Next
 - ❌ **Cancelled Orders** - Track and manage cancelled transactions with customer info
 - 👥 **Customer Management** - Store customer details for cancelled orders
 - 🔐 **Role-Based Access** - Admin and Operations roles with permission control
+- 🔒 **Session Tracking** - Single-device login security with automatic logout (NEW!)
 - 📱 **Mobile Responsive** - Optimized for desktop, tablet, and mobile
 
 ### Enterprise Features
@@ -137,6 +138,9 @@ See [Production Readiness Checklist](docs/PRODUCTION_READINESS_CHECKLIST.md) for
 - ✅ CSRF protection
 - ✅ Rate limiting
 - ✅ Secure headers
+- ✅ **Single-device login enforcement (NEW!)**
+- ✅ **Automatic session validation every 30 seconds (NEW!)**
+- ✅ **Multi-device logout protection (NEW!)**
 
 ## 📱 Responsive Design
 

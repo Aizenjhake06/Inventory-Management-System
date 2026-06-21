@@ -23,7 +23,8 @@ import {
   Trash2,
   Plus,
   Edit,
-  Truck
+  Truck,
+  Download
 } from "lucide-react"
 import type { Log } from "@/lib/types"
 import { toast } from "sonner"
@@ -31,6 +32,7 @@ import { apiGet } from "@/lib/api-client"
 import { getCurrentUserRole } from "@/lib/role-utils"
 import { getCurrentUser } from "@/lib/auth"
 import { EnterpriseDateRangePicker } from "@/components/ui/enterprise-date-range-picker"
+import * as XLSX from 'xlsx'
 
 const ITEMS_PER_PAGE = 50
 
@@ -345,6 +347,35 @@ export default function LogPage() {
     )
   }
 
+  // ── Export Activity Logs to Excel ─────────────────────────────────────────
+  const exportLogsToExcel = () => {
+    try {
+      const dataToExport = filteredLogs.map(log => ({
+        'Date & Time': new Date(log.timestamp).toLocaleString('en-US', {
+          month: '2-digit', day: '2-digit', year: '2-digit',
+          hour: '2-digit', minute: '2-digit', hour12: false
+        }),
+        'Operation': log.operation,
+        'Staff': log.staffName || '-',
+        'Item': (log.itemName || '-').replace(/\s*\(\d+\)\s*$/, ''),
+        'Details': log.details,
+      }))
+
+      const ws = XLSX.utils.json_to_sheet(dataToExport)
+      ws['!cols'] = [{ wch: 18 }, { wch: 18 }, { wch: 20 }, { wch: 28 }, { wch: 60 }]
+
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Activity Logs')
+
+      const date = new Date().toISOString().split('T')[0]
+      XLSX.writeFile(wb, `Activity_Logs_${date}.xlsx`)
+      toast.success(`Exported ${filteredLogs.length} log entries`)
+    } catch (err) {
+      console.error('Export error:', err)
+      toast.error('Failed to export logs')
+    }
+  }
+
   return (
     <div className="max-w-[1600px] mx-auto py-5 space-y-6">
       {/* Page Header with Date Filter - Professional Style */}
@@ -354,15 +385,26 @@ export default function LogPage() {
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">View all system operations and changes</p>
         </div>
         
-        {/* Date Range Filter - Aligned with title */}
-        <EnterpriseDateRangePicker
-          startDate={startDate}
-          endDate={endDate}
-          onDateChange={(start, end) => {
-            setStartDate(start)
-            setEndDate(end)
-          }}
-        />
+        {/* Date Range + Export */}
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={exportLogsToExcel}
+            disabled={filteredLogs.length === 0}
+            size="sm"
+            className="h-9 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold gap-2 shadow-sm disabled:opacity-50"
+          >
+            <Download className="h-4 w-4" />
+            Export Excel
+          </Button>
+          <EnterpriseDateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            onDateChange={(start, end) => {
+              setStartDate(start)
+              setEndDate(end)
+            }}
+          />
+        </div>
       </div>
 
       {/* Statistics Cards - Professional Corporate Design */}

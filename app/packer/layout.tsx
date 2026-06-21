@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
+import { useSessionGuard } from '@/lib/use-session-guard'
 
 const NAV_ITEMS = [
   { href: '/packer/dashboard', label: 'Dashboard' },
@@ -27,6 +28,9 @@ export default function PackerLayout({
   const [displayName, setDisplayName] = useState('Packer')
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [initials, setInitials] = useState('P')
+
+  // Initialize session guard (single-device security)
+  useSessionGuard()
 
   useEffect(() => {
     const updateTime = () => {
@@ -53,10 +57,31 @@ export default function PackerLayout({
     return () => clearInterval(interval)
   }, [])
 
-  const handleLogout = () => {
-    ['authToken','currentUser','isLoggedIn','username','userRole','displayName'].forEach(k => localStorage.removeItem(k))
-    toast.success('Logged out successfully')
-    router.push('/')
+  const handleLogout = async () => {
+    try {
+      // Get username before clearing localStorage
+      const username = typeof window !== "undefined" ? localStorage.getItem("username") : null
+      
+      // Call API to destroy session on server
+      if (username) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        })
+      }
+      
+      // Clear localStorage
+      ['authToken','currentUser','isLoggedIn','username','userRole','displayName','sessionId'].forEach(k => localStorage.removeItem(k))
+      toast.success('Logged out successfully')
+      router.push('/')
+    } catch (error) {
+      console.error('[Logout] Error:', error)
+      // Still logout locally even if API call fails
+      localStorage.clear()
+      toast.success('Logged out successfully')
+      router.push('/')
+    }
   }
 
   const handleRefresh = () => {

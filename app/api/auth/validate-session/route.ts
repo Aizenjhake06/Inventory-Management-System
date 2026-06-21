@@ -1,11 +1,9 @@
-import { NextRequest, NextResponse } from "next/server"
-import { validateSession, updateActivity } from "@/lib/session-manager"
+import { NextRequest, NextResponse } from 'next/server'
+import { validateSession } from '@/lib/session-manager'
 
 /**
- * Session Validation API
- * 
- * Checks if the user's current session is still valid.
- * Returns 401 if session is invalid (user logged in elsewhere).
+ * POST /api/auth/validate-session
+ * Validates if a user's session is still active
  */
 export async function POST(request: NextRequest) {
   try {
@@ -22,25 +20,29 @@ export async function POST(request: NextRequest) {
     const isValid = await validateSession(username, sessionId)
 
     if (!isValid) {
-      console.log('[Session Validator] Invalid session for:', username)
       return NextResponse.json(
         { 
           valid: false, 
-          error: "Session invalid. You may have logged in on another device.",
-          shouldLogout: true
+          error: "Session invalid or expired",
+          message: "Your session has expired or you have logged in from another device. Please log in again."
         },
         { status: 401 }
       )
     }
 
-    // Update last activity
-    await updateActivity(username)
+    return NextResponse.json({ 
+      valid: true,
+      message: "Session is valid"
+    })
 
-    return NextResponse.json({ valid: true })
   } catch (error) {
-    console.error('[Session Validator] Error:', error)
+    console.error('[Validate Session] Error:', error)
     return NextResponse.json(
-      { valid: false, error: "Validation failed" },
+      { 
+        valid: false, 
+        error: "Server error during validation",
+        message: "An error occurred while validating your session. Please try again."
+      },
       { status: 500 }
     )
   }

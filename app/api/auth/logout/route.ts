@@ -1,11 +1,22 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { destroySession } from '@/lib/session-manager'
 
 /**
  * Logout API Endpoint
- * Clears all session data and returns success
+ * Destroys the session and clears all session data
  */
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    // Get username from request body
+    const body = await request.json().catch(() => ({}))
+    const { username } = body
+
+    // Destroy session if username provided
+    if (username) {
+      console.log('[Logout API] Destroying session for:', username)
+      await destroySession(username)
+    }
+
     // Create response with success message
     const response = NextResponse.json({ 
       success: true,

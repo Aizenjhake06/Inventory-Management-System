@@ -55,7 +55,23 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export function TopStoresChart({ data, loading = false }: TopStoresChartProps) {
   // Reverse for display (highest at top)
-  const chartData = data.slice().reverse()
+  let chartData: TopStore[] = []
+  
+  try {
+    // Validate data is an array
+    if (!Array.isArray(data)) {
+      console.error('[TopStoresChart] Invalid data: expected array, got:', typeof data)
+      chartData = []
+    } else {
+      chartData = data
+        .filter(item => item && typeof item.name === 'string' && typeof item.revenue === 'number')
+        .slice()
+        .reverse()
+    }
+  } catch (error) {
+    console.error('[TopStoresChart] Error processing chart data:', error)
+    chartData = []
+  }
 
   return (
     <Card className="border-0 shadow-lg">

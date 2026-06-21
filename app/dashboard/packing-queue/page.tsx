@@ -69,6 +69,7 @@ export default function PackingQueuePage() {
   const [cancellationFilter, setCancellationFilter] = useState<string>('all')
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
+  const [sortBy, setSortBy] = useState<string>('date-desc') // newest first by default
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [packing, setPacking] = useState<string | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
@@ -172,7 +173,7 @@ export default function PackingQueuePage() {
 
   useEffect(() => {
     filterOrders()
-  }, [searchTerm, salesChannelFilter, cancellationFilter, startDate, endDate, orders])
+  }, [searchTerm, salesChannelFilter, cancellationFilter, startDate, endDate, sortBy, orders])
 
   const fetchOrders = async () => {
     try {

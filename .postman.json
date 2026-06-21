@@ -2163,6 +2163,205 @@
               ]
             },
             {
+              "name": "Validate Session - Valid Session",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin\",\n  \"sessionId\": \"valid-session-id-from-login\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/validate-session",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "auth", "validate-session"]
+                },
+                "description": "Validates if a user's session is still active. Returns 200 if valid, 401 if session is expired or user logged in from another device."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Test 1: Status code should be 200 for valid session",
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "// Test 2: Response should be JSON",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.response.to.be.json;",
+                      "});",
+                      "",
+                      "// Test 3: Response has required fields",
+                      "pm.test('Response has required fields', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData).to.have.property('valid');",
+                      "    pm.expect(jsonData).to.have.property('message');",
+                      "});",
+                      "",
+                      "// Test 4: Valid is true",
+                      "pm.test('Valid is true', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.valid).to.be.true;",
+                      "});",
+                      "",
+                      "// Test 5: Message confirms session validity",
+                      "pm.test('Message confirms session is valid', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.message).to.include('valid');",
+                      "});",
+                      "",
+                      "// Test 6: Response time is acceptable",
+                      "pm.test('Response time is acceptable', function () {",
+                      "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Validate Session - Invalid/Expired Session",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin\",\n  \"sessionId\": \"invalid-or-expired-session-id\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/validate-session",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "auth", "validate-session"]
+                },
+                "description": "Test with invalid or expired session ID - should return 401 with error message"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Test 1: Status code should be 401",
+                      "pm.test('Status code is 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});",
+                      "",
+                      "// Test 2: Response should be JSON",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.response.to.be.json;",
+                      "});",
+                      "",
+                      "// Test 3: Response has required fields",
+                      "pm.test('Response has required error fields', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData).to.have.property('valid');",
+                      "    pm.expect(jsonData).to.have.property('error');",
+                      "    pm.expect(jsonData).to.have.property('message');",
+                      "});",
+                      "",
+                      "// Test 4: Valid is false",
+                      "pm.test('Valid is false', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.valid).to.be.false;",
+                      "});",
+                      "",
+                      "// Test 5: Error message is descriptive",
+                      "pm.test('Error message mentions session invalid or expired', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    const errorLower = jsonData.error.toLowerCase();",
+                      "    pm.expect(errorLower).to.satisfy(function(msg) {",
+                      "        return msg.includes('invalid') || msg.includes('expired');",
+                      "    });",
+                      "});",
+                      "",
+                      "// Test 6: Message provides user-friendly explanation",
+                      "pm.test('Message provides user-friendly explanation', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.message.length).to.be.above(20);",
+                      "    pm.expect(jsonData.message.toLowerCase()).to.satisfy(function(msg) {",
+                      "        return msg.includes('session') || msg.includes('log in');",
+                      "    });",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Validate Session - Missing Fields",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/validate-session",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "auth", "validate-session"]
+                },
+                "description": "Test with missing username or sessionId - should return 400"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Test 1: Status code should be 400",
+                      "pm.test('Status code is 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});",
+                      "",
+                      "// Test 2: Response should be JSON",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.response.to.be.json;",
+                      "});",
+                      "",
+                      "// Test 3: Response has error message",
+                      "pm.test('Response has error message', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData).to.have.property('valid');",
+                      "    pm.expect(jsonData).to.have.property('error');",
+                      "    pm.expect(jsonData.valid).to.be.false;",
+                      "});",
+                      "",
+                      "// Test 4: Error message mentions required fields",
+                      "pm.test('Error message mentions required fields', function () {",
+                      "    const jsonData = pm.response.json();",
+                      "    const errorLower = jsonData.error.toLowerCase();",
+                      "    pm.expect(errorLower).to.satisfy(function(msg) {",
+                      "        return msg.includes('required') || msg.includes('username') || msg.includes('sessionid');",
+                      "    });",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
               "name": "Forgot Password - Valid Email",
               "request": {
                 "method": "POST",
