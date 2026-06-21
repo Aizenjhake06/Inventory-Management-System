@@ -367,7 +367,7 @@ export default function LandingLoginPage() {
       {/* Premium Gold Bottom Border on Nav */}
 
       {/* Navigation Bar - Premium Black & Gold */}
-      <nav className="relative z-50 border-b border-amber-900/20 bg-black/60 backdrop-blur-xl shadow-2xl">
+      <nav className="relative z-50 border-b border-amber-900/20 bg-black/60 backdrop-blur-xl shadow-2xl animate-landing-fade-down">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo - Icon Only */}
@@ -402,15 +402,15 @@ export default function LandingLoginPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left: Hero Content */}
-            <div className="space-y-8 animate-in fade-in-0 slide-in-from-left-10 duration-1000">
+            <div className="space-y-8">
               {/* Premium Badge */}
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-900/30 to-yellow-900/30 border border-amber-500/30 text-amber-300 rounded-full text-sm font-semibold backdrop-blur-sm shadow-lg shadow-amber-900/20">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-900/30 to-yellow-900/30 border border-amber-500/30 text-amber-300 rounded-full text-sm font-semibold backdrop-blur-sm shadow-lg shadow-amber-900/20 animate-landing-fade-in" style={{ animationDelay: '200ms' }}>
                 <Sparkles className="h-4 w-4 text-amber-400" />
                 <span className="bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">Enterprise-Grade Multi-Channel Solution</span>
               </div>
 
               {/* Hero Heading - Luxurious Typography */}
-              <div className="space-y-6">
+              <div className="space-y-6 animate-landing-fade-in" style={{ animationDelay: '300ms' }}>
                 <h1 className="text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight">
                   <span className="text-white">Transform Your</span>
                   <br />
@@ -424,7 +424,7 @@ export default function LandingLoginPage() {
               </div>
 
               {/* Premium Stats - Gold Accented with Counter Animation */}
-              <div className="grid grid-cols-3 gap-6 pt-4" ref={statsRef}>
+              <div className="grid grid-cols-3 gap-6 pt-4 animate-landing-fade-in" ref={statsRef} style={{ animationDelay: '400ms' }}>
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-600/10 rounded-xl blur-xl group-hover:blur-2xl transition-all"></div>
                   <div className="relative bg-black/40 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm hover:border-amber-500/40 transition-all">
@@ -455,7 +455,7 @@ export default function LandingLoginPage() {
               </div>
 
               {/* CTA Buttons - Premium Gold */}
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex flex-wrap gap-4 pt-4 animate-landing-fade-in" style={{ animationDelay: '500ms' }}>
                 <Button
                   onClick={() => setShowLoginModal(true)}
                   size="lg"
@@ -477,7 +477,7 @@ export default function LandingLoginPage() {
             </div>
 
             {/* Right: Hero Image - Premium Frame */}
-            <div className="relative animate-in fade-in-0 slide-in-from-right-10 duration-1000 delay-300">
+            <div className="relative animate-landing-fade-in" style={{ animationDelay: '600ms' }}>
               <div className="relative group">
                 {/* Gold Glow Effect */}
                 <div className="absolute -inset-4 bg-gradient-to-r from-amber-600/30 via-yellow-500/30 to-amber-600/30 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
@@ -1087,7 +1087,7 @@ export default function LandingLoginPage() {
       <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
         <DialogContent className="sm:max-w-md bg-gradient-to-br from-slate-900 via-black to-slate-900 border-2 border-amber-500/30 shadow-2xl shadow-amber-900/50">
           <DialogHeader>
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-4 animate-modal-fade-in" style={{ animationDelay: '0ms' }}>
               <div className="relative">
                 <div className="absolute inset-0 bg-amber-500/30 blur-2xl rounded-full"></div>
                 <img 
@@ -1098,23 +1098,23 @@ export default function LandingLoginPage() {
                 />
               </div>
             </div>
-            <DialogTitle className="text-3xl font-black text-center bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 bg-clip-text text-transparent">
+            <DialogTitle className="text-3xl font-black text-center bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 bg-clip-text text-transparent animate-modal-fade-in" style={{ animationDelay: '100ms' }}>
               Welcome Back
             </DialogTitle>
-            <DialogDescription className="text-center text-slate-400 text-base">
+            <DialogDescription className="text-center text-slate-400 text-base animate-modal-fade-in" style={{ animationDelay: '200ms' }}>
               Sign in to access your elite dashboard
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleLogin} className="space-y-5 mt-4">
             {error && (
-              <Alert variant="destructive" className="bg-red-950/50 border-red-500/50">
+              <Alert variant="destructive" className="bg-red-950/50 border-red-500/50 animate-modal-fade-in">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <div className="space-y-2">
+            <div className="space-y-2 animate-modal-fade-in" style={{ animationDelay: '300ms' }}>
               <Label htmlFor="username" className="text-amber-300 font-semibold">Username</Label>
               <Input
                 id="username"
@@ -1129,7 +1129,7 @@ export default function LandingLoginPage() {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 animate-modal-fade-in" style={{ animationDelay: '400ms' }}>
               <Label htmlFor="password" className="text-amber-300 font-semibold">Password</Label>
               <div className="relative">
                 <Input
@@ -1154,7 +1154,7 @@ export default function LandingLoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between animate-modal-fade-in" style={{ animationDelay: '500ms' }}>
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -1180,9 +1180,11 @@ export default function LandingLoginPage() {
               </Button>
             </div>
 
-            <SecurityIndicator />
+            <div className="animate-modal-fade-in" style={{ animationDelay: '600ms' }}>
+              <SecurityIndicator />
+            </div>
 
-            <DialogFooter>
+            <DialogFooter className="animate-modal-fade-in" style={{ animationDelay: '700ms' }}>
               <Button 
                 type="submit" 
                 className="w-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-400 hover:to-amber-500 text-black font-bold py-6 shadow-lg shadow-amber-600/50 border border-amber-400/30" 
@@ -1209,8 +1211,8 @@ export default function LandingLoginPage() {
       <Dialog open={showForgotPasswordDialog} onOpenChange={resetForgotPasswordDialog}>
         <DialogContent className="sm:max-w-md bg-gradient-to-br from-slate-900 via-black to-slate-900 border-2 border-amber-500/30 shadow-2xl shadow-amber-900/50">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white">Reset Password</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogTitle className="text-2xl font-bold text-white animate-modal-fade-in" style={{ animationDelay: '0ms' }}>Reset Password</DialogTitle>
+            <DialogDescription className="text-slate-400 animate-modal-fade-in" style={{ animationDelay: '100ms' }}>
               Enter your email address and we'll send you a password reset link.
             </DialogDescription>
           </DialogHeader>
@@ -1218,13 +1220,13 @@ export default function LandingLoginPage() {
           {!forgotPasswordSuccess ? (
             <div className="space-y-4">
               {error && (
-                <Alert variant="destructive" className="bg-red-950/50 border-red-500/50">
+                <Alert variant="destructive" className="bg-red-950/50 border-red-500/50 animate-modal-fade-in">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-2 animate-modal-fade-in" style={{ animationDelay: '200ms' }}>
                 <Label htmlFor="email" className="text-amber-300 font-semibold">Email Address</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
@@ -1241,7 +1243,7 @@ export default function LandingLoginPage() {
                 </div>
               </div>
 
-              <DialogFooter className="flex-col sm:flex-row gap-2">
+              <DialogFooter className="flex-col sm:flex-row gap-2 animate-modal-fade-in" style={{ animationDelay: '300ms' }}>
                 <Button
                   type="button"
                   variant="outline"
@@ -1273,7 +1275,7 @@ export default function LandingLoginPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex flex-col items-center justify-center py-6 text-center">
+              <div className="flex flex-col items-center justify-center py-6 text-center animate-modal-fade-in" style={{ animationDelay: '0ms' }}>
                 <div className="mb-4 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 p-4 shadow-lg shadow-amber-600/50">
                   <CheckCircle2 className="h-10 w-10 text-black" strokeWidth={2.5} />
                 </div>
@@ -1289,7 +1291,7 @@ export default function LandingLoginPage() {
                 </p>
               </div>
 
-              <DialogFooter>
+              <DialogFooter className="animate-modal-fade-in" style={{ animationDelay: '200ms' }}>
                 <Button
                   type="button"
                   onClick={resetForgotPasswordDialog}
@@ -1358,12 +1360,59 @@ export default function LandingLoginPage() {
           50% { opacity: 0.9; }
           100% { transform: translateY(-120px) translateX(30px) rotate(180deg); opacity: 0; }
         }
+        @keyframes modalFadeIn {
+          from { 
+            opacity: 0; 
+            transform: translateY(20px) scale(0.95); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+          }
+        }
+        @keyframes landingFadeIn {
+          from { 
+            opacity: 0; 
+            transform: translateY(30px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        @keyframes landingFadeDown {
+          from { 
+            opacity: 0; 
+            transform: translateY(-20px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
 
         .animate-float { animation: float 3s ease-in-out infinite; will-change: transform; }
         .animate-float-delay { animation: float 3s ease-in-out 0.5s infinite; will-change: transform; }
         .animate-float-slow { animation: float-slow 8s ease-in-out infinite; will-change: transform; }
         .animate-float-slower { animation: float-slower 10s ease-in-out infinite; will-change: transform; }
         .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+
+        /* Modal smooth transition animation */
+        .animate-modal-fade-in {
+          animation: modalFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          opacity: 0;
+        }
+
+        /* Landing page smooth entrance animations */
+        .animate-landing-fade-in {
+          animation: landingFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          opacity: 0;
+        }
+
+        .animate-landing-fade-down {
+          animation: landingFadeDown 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          opacity: 0;
+        }
 
         /* Shimmer border effect on cards */
         .shimmer-border {
@@ -1436,6 +1485,9 @@ export default function LandingLoginPage() {
           .animate-float, .animate-float-delay, .animate-float-slow,
           .animate-float-slower, .animate-pulse-slow { animation: none !important; }
           .shimmer-border { animation: none !important; }
+          .animate-modal-fade-in { animation: none !important; opacity: 1 !important; }
+          .animate-landing-fade-in { animation: none !important; opacity: 1 !important; }
+          .animate-landing-fade-down { animation: none !important; opacity: 1 !important; }
         }
 
         html { scroll-behavior: smooth; }
