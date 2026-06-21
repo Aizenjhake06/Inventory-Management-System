@@ -240,7 +240,7 @@ export default function BusinessContactsPage() {
 
 
   return (
-    <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 py-6 space-y-6">
+    <div className="max-w-[1400px] mx-auto px-2 sm:px-4 lg:px-6 py-6 space-y-6">
       {/* Page Header - Professional Style */}
       <div className="mb-8">
         <h2 className="text-2xl sm:text-3xl font-bold gradient-text">Business Contacts Overview</h2>

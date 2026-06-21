@@ -151,7 +151,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto py-5 space-y-6">
+    <div className="max-w-[1400px] mx-auto py-5 space-y-6">
       {/* Page Header - Professional */}
       <div className="flex items-start justify-between gap-4">
         <div>

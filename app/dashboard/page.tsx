@@ -104,7 +104,7 @@ export default function DashboardPage() {
   // Show loading state — skeleton layout instead of full-page spinner
   if (loading) {
     return (
-      <div className="max-w-[1600px] mx-auto py-5 space-y-6 animate-pulse">
+      <div className="max-w-[1400px] mx-auto py-5 space-y-6 animate-pulse">
         {/* Header skeleton */}
         <div className="flex items-center justify-between mb-6">
           <div className="space-y-2">
@@ -202,7 +202,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto py-5 space-y-6">
+    <div className="max-w-[1400px] mx-auto py-5 space-y-6">
       {/* Page Header - Professional Shopify Style */}
       <div className="flex items-center justify-between gap-4 mb-6">
         <div>

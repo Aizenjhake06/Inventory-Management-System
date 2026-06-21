@@ -202,7 +202,7 @@ export default function OperationsDashboardPage() {
   }, [orders])
 
   return (
-    <div className="max-w-[1600px] mx-auto py-5 space-y-6">
+    <div className="max-w-[1400px] mx-auto py-5 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between animate-in fade-in-0 slide-in-from-top-4 duration-700">
         <div>

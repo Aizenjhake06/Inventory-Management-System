@@ -497,7 +497,7 @@ export default function TrackerDashboardPage() {
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto space-y-4 sm:space-y-6 pt-4 sm:pt-6 px-2 sm:px-4 lg:px-6 pb-6 sm:pb-8">
+    <div className="max-w-[1400px] mx-auto space-y-4 sm:space-y-6 pt-4 sm:pt-6 px-2 sm:px-4 lg:px-6 pb-6 sm:pb-8">
       {/* Page Header - Mobile Responsive */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
         <div>

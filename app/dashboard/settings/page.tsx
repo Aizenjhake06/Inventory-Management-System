@@ -773,7 +773,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto py-5 space-y-6">
+    <div className="max-w-[1400px] mx-auto py-5 space-y-6">
       {/* Page Header - Professional */}
       <div className="space-y-1">
         <h2 className="text-2xl sm:text-3xl font-bold gradient-text mb-1">

@@ -232,7 +232,7 @@ export default function LogisticsAdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 py-6 space-y-6">
+      <div className="max-w-[1400px] mx-auto px-2 sm:px-4 lg:px-6 py-6 space-y-6">
 
         {/* DATE + CHANNEL FILTER */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

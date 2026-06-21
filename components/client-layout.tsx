@@ -91,7 +91,7 @@ export default function ClientLayout({
           className="flex-1 overflow-y-auto overflow-x-hidden mt-16 min-w-0 w-full"
           role="main"
         >
-          <div className="w-full max-w-full min-w-0 px-3 sm:px-5 lg:px-6 py-5">
+          <div className="w-full max-w-full min-w-0 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-5">
             <RouteGuard>
               <ErrorBoundary>
                 {children}
