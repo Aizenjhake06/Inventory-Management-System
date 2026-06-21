@@ -3208,3 +3208,72 @@ pre code {
 .main-content-offset {
   margin-top: 4rem; /* mt-16 - matches navbar h-16 */
 }
+
+/* ============================================
+   MOBILE TABLE SCROLL INDICATOR
+   Shows fade gradient on right edge to hint scrollability
+   ============================================ */
+
+/* Wrapper that shows the right-edge fade hint */
+.table-scroll-container {
+  position: relative;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Right-edge gradient fade on mobile — hidden on desktop */
+.table-scroll-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.06));
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* Hide the indicator when fully scrolled right */
+.table-scroll-container.scrolled-right::after {
+  opacity: 0;
+}
+
+/* Dark mode version */
+.dark .table-scroll-container::after {
+  background: linear-gradient(to right, transparent, rgba(245, 158, 11, 0.06));
+}
+
+/* Only show on mobile */
+@media (min-width: 768px) {
+  .table-scroll-container::after {
+    display: none;
+  }
+}
+
+/* Swipe hint text for mobile tables */
+.mobile-scroll-hint {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-scroll-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: linear-gradient(to right, #eff6ff, #eef2ff);
+    border-bottom: 1px solid #bfdbfe;
+    font-size: 11px;
+    font-weight: 600;
+    color: #3730a3;
+  }
+
+  .dark .mobile-scroll-hint {
+    background: linear-gradient(to right, rgba(245,158,11,0.08), rgba(217,119,6,0.08));
+    border-bottom-color: rgba(245,158,11,0.2);
+    color: #fbbf24;
+  }
+}

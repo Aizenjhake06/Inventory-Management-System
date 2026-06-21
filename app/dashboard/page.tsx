@@ -101,13 +101,55 @@ export default function DashboardPage() {
     fetchData()
   }, [timePeriod, startDate, endDate]) // Refetch when tab OR date filter changes
 
-  // Show loading state
+  // Show loading state — skeleton layout instead of full-page spinner
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center min-h-[600px]">
-        <div className="text-center">
-          <BrandLoader size="lg" />
-          <p className="text-slate-600 dark:text-slate-400 mt-6 text-sm font-medium">Loading dashboard...</p>
+      <div className="max-w-[1600px] mx-auto py-5 space-y-6 animate-pulse">
+        {/* Header skeleton */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="space-y-2">
+            <div className="h-8 w-64 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+            <div className="h-4 w-80 bg-slate-100 dark:bg-slate-800/60 rounded" />
+          </div>
+          <div className="h-10 w-48 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+        </div>
+        {/* KPI cards skeleton - Row 1 */}
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-700 flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-2.5 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
+                  <div className="h-7 w-28 bg-slate-200 dark:bg-slate-700 rounded" />
+                  <div className="h-2 w-24 bg-slate-100 dark:bg-slate-700/60 rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* KPI cards skeleton - Row 2 */}
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-700 flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-2.5 w-20 bg-slate-200 dark:bg-slate-700 rounded" />
+                  <div className="h-7 w-28 bg-slate-200 dark:bg-slate-700 rounded" />
+                  <div className="h-2 w-24 bg-slate-100 dark:bg-slate-700/60 rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Chart skeleton */}
+        <div className="h-72 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700" />
+        {/* Bottom cards skeleton */}
+        <div className="grid gap-5 grid-cols-1 lg:grid-cols-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-64 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700" />
+          ))}
         </div>
       </div>
     )

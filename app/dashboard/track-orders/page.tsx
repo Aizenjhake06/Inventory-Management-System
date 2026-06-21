@@ -1766,10 +1766,28 @@ export default function TrackOrdersPage() {
               <div className="p-4 rounded-full bg-slate-100 dark:bg-slate-800">
                 <Package className="h-12 w-12 text-slate-400 dark:text-slate-600" />
               </div>
-              <p className="text-lg font-semibold text-slate-600 dark:text-slate-400">No orders found</p>
-              <p className="text-sm text-slate-500 dark:text-slate-500">
-                Orders will appear here when packed from Transaction History
+              <p className="text-lg font-semibold text-slate-600 dark:text-slate-400">
+                {searchTerm || statusFilter !== 'all' || salesChannelFilter !== 'all' || startDate || endDate
+                  ? 'No orders match your filters'
+                  : 'No orders found'}
               </p>
+              <p className="text-sm text-slate-500 dark:text-slate-500 text-center max-w-xs">
+                {searchTerm || statusFilter !== 'all' || salesChannelFilter !== 'all' || startDate || endDate
+                  ? 'Try adjusting your search, status filter, or date range'
+                  : 'Orders will appear here when packed from the Packing Queue'}
+              </p>
+              {(searchTerm || statusFilter !== 'all' || salesChannelFilter !== 'all') && (
+                <button
+                  onClick={() => {
+                    setSearchTerm('')
+                    setStatusFilter('all')
+                    setChannelFilter('all')
+                  }}
+                  className="text-xs text-amber-600 dark:text-amber-400 underline hover:no-underline mt-1"
+                >
+                  Clear all filters
+                </button>
+              )}
             </div>
           ) : (
             <div className="overflow-x-auto">

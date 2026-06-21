@@ -308,6 +308,12 @@ export default function POSPage() {
       return
     }
 
+    // Address min-length validation
+    if (orderForm.customerAddress.trim().length < 10) {
+      toast.error('Delivery address is too short — please enter a complete address (min. 10 characters)')
+      return
+    }
+
     setLoading(true)
     try {
       // Prepare order items for detailed tracking

@@ -282,7 +282,9 @@ export default function PackingQueuePage() {
         (order.store || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (order.waybill || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (order.product || order.itemName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (order.customerName || '').toLowerCase().includes(searchTerm.toLowerCase())
+        (order.customerName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (order.customerPhone || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (order.courier || '').toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
     
@@ -1048,10 +1050,28 @@ export default function PackingQueuePage() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 mb-4">
                 <Package className="h-8 w-8 text-slate-400" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">No orders in queue</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-500">
-                All orders have been packed
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                {searchTerm || salesChannelFilter !== 'all' || cancellationFilter !== 'all' || startDate || endDate
+                  ? 'No orders match your filters'
+                  : 'No orders in queue'}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {searchTerm || salesChannelFilter !== 'all' || cancellationFilter !== 'all' || startDate || endDate
+                  ? 'Try adjusting your search or filters'
+                  : 'All orders have been packed — great work! 🎉'}
               </p>
+              {(searchTerm || salesChannelFilter !== 'all' || cancellationFilter !== 'all') && (
+                <button
+                  onClick={() => {
+                    setSearchTerm('')
+                    setChannelFilter('all')
+                    setCancellationFilter('all')
+                  }}
+                  className="mt-3 text-xs text-amber-600 dark:text-amber-400 underline hover:no-underline"
+                >
+                  Clear filters
+                </button>
+              )}
             </div>
           ) : (
             <>
@@ -1064,7 +1084,7 @@ export default function PackingQueuePage() {
                 </p>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="table-scroll-container">
                 <table className="w-full table-fixed min-w-[1200px]">
                   <thead className="sticky top-0 z-10">
                     <tr className="bg-black dark:bg-black">

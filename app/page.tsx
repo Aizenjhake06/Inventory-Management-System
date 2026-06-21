@@ -283,6 +283,9 @@ export default function LandingLoginPage() {
       const data = await response.json()
 
       if (!response.ok || !data.success) {
+        if (response.status === 429) {
+          throw new Error(data.error || "Too many login attempts. Please wait before trying again.")
+        }
         throw new Error(data.error || "Invalid credentials")
       }
 
