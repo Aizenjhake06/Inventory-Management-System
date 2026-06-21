@@ -1191,7 +1191,6 @@ export default function InventoryPage() {
             )}>
               {/* Total Items - Indigo Gradient */}
               <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 rounded-full -mr-16 -mt-16" />
                 <div className="relative">
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30">
@@ -1212,7 +1211,6 @@ export default function InventoryPage() {
 
               {/* Total Quantity - Blue Gradient (Excludes Bundles) */}
               <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-full -mr-16 -mt-16" />
                 <div className="relative">
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
@@ -1233,7 +1231,6 @@ export default function InventoryPage() {
 
               {/* Total Value - Green Gradient */}
               <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-full -mr-16 -mt-16" />
                 <div className="relative">
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
@@ -1255,7 +1252,6 @@ export default function InventoryPage() {
               {/* Total COGS - Orange Gradient - Hidden for Department Agents */}
               {!isDepartment && (
                 <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-full -mr-16 -mt-16" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-2">
                       <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">

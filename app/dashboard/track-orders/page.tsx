@@ -1301,7 +1301,6 @@ export default function TrackOrdersPage() {
         {/* Row 1 */}
         {/* Total Orders */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-slate-500/10 to-slate-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50">
@@ -1335,7 +1334,6 @@ export default function TrackOrdersPage() {
 
         {/* Pending */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/30">
@@ -1369,7 +1367,6 @@ export default function TrackOrdersPage() {
 
         {/* In Transit */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30">
@@ -1403,7 +1400,6 @@ export default function TrackOrdersPage() {
 
         {/* On Delivery */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
@@ -1437,7 +1433,6 @@ export default function TrackOrdersPage() {
 
         {/* Pickup */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-purple-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
@@ -1472,7 +1467,6 @@ export default function TrackOrdersPage() {
         {/* Row 2 */}
         {/* Delivered */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
@@ -1506,7 +1500,6 @@ export default function TrackOrdersPage() {
 
         {/* Cancelled */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-500/10 to-red-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
@@ -1540,7 +1533,6 @@ export default function TrackOrdersPage() {
 
         {/* Detained */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
@@ -1574,7 +1566,6 @@ export default function TrackOrdersPage() {
 
         {/* Problematic */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-500/10 to-pink-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-pink-100 dark:bg-pink-900/30">
@@ -1608,7 +1599,6 @@ export default function TrackOrdersPage() {
 
         {/* Returned */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-slate-500/10 to-slate-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">

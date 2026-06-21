@@ -406,7 +406,6 @@ export default function CustomersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 delay-100">
         {/* Total Customers - Blue */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
@@ -422,7 +421,6 @@ export default function CustomersPage() {
 
         {/* New This Month - Emerald */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
@@ -438,7 +436,6 @@ export default function CustomersPage() {
 
         {/* VIP Customers - Purple */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-purple-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
@@ -454,7 +451,6 @@ export default function CustomersPage() {
 
         {/* Total Revenue - Green */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
@@ -470,7 +466,6 @@ export default function CustomersPage() {
 
         {/* Avg Spent - Orange */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
@@ -486,7 +481,6 @@ export default function CustomersPage() {
 
         {/* Avg Orders - Indigo */}
         <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 rounded-full -mr-16 -mt-16" />
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30">

@@ -213,7 +213,6 @@ export default function LogisticsProductsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             {/* Total Items */}
             <div className="relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-700">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 rounded-full -mr-12 -mt-12" />
               <div className="relative">
                 <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 inline-block mb-2">
                   <Package className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
@@ -226,7 +225,6 @@ export default function LogisticsProductsPage() {
             </div>
             {/* In Stock */}
             <div className="relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-700">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-full -mr-12 -mt-12" />
               <div className="relative">
                 <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30 inline-block mb-2">
                   <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
@@ -237,7 +235,6 @@ export default function LogisticsProductsPage() {
             </div>
             {/* Low Stock */}
             <div className="relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-700">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-500/10 to-amber-600/5 rounded-full -mr-12 -mt-12" />
               <div className="relative">
                 <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 inline-block mb-2">
                   <Package className="h-4 w-4 text-amber-600 dark:text-amber-400" />
@@ -248,7 +245,6 @@ export default function LogisticsProductsPage() {
             </div>
             {/* Out of Stock */}
             <div className="relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-700">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-red-500/10 to-red-600/5 rounded-full -mr-12 -mt-12" />
               <div className="relative">
                 <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 inline-block mb-2">
                   <Package className="h-4 w-4 text-red-600 dark:text-red-400" />
