@@ -134,6 +134,31 @@ export default function DashboardPage() {
     count: store.count,
   })) || []
 
+  // Period comparison helper — compares today vs yesterday
+  const revenueChange = stats?.revenueToday !== undefined && stats?.yesterdaySales !== undefined && stats.yesterdaySales > 0
+    ? ((stats.revenueToday - stats.yesterdaySales) / stats.yesterdaySales) * 100
+    : null
+
+  const salesChange = stats?.itemsSoldToday !== undefined && stats?.yesterdayQuantity !== undefined && stats.yesterdayQuantity > 0
+    ? ((stats.itemsSoldToday - stats.yesterdayQuantity) / stats.yesterdayQuantity) * 100
+    : null
+
+  // Small comparison badge component
+  const ComparisonBadge = ({ pct }: { pct: number | null }) => {
+    if (pct === null) return null
+    const isUp = pct >= 0
+    return (
+      <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1 ${
+        isUp
+          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+          : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+      }`}>
+        {isUp ? <ArrowUpRight className="h-2.5 w-2.5" /> : <ArrowDownRight className="h-2.5 w-2.5" />}
+        {Math.abs(pct).toFixed(1)}%
+      </span>
+    )
+  }
+
   return (
     <div className="max-w-[1600px] mx-auto py-5 space-y-6">
       {/* Page Header - Professional Shopify Style */}
@@ -169,11 +194,16 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Sold</p>
-              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
-                <AnimatedNumber value={stats?.totalSales || 0} duration={1500} />
-              </p>
+              <div className="flex items-center gap-1">
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
+                  <AnimatedNumber value={stats?.totalSales || 0} duration={1500} />
+                </p>
+                <ComparisonBadge pct={salesChange} />
+              </div>
               <p className="text-xs text-blue-600 dark:text-blue-500 flex items-center gap-1 mt-0.5">
-                All-time quantity
+                {stats?.itemsSoldToday !== undefined && stats.itemsSoldToday > 0
+                  ? `${stats.itemsSoldToday} units today`
+                  : 'All-time quantity'}
               </p>
             </div>
           </div>
@@ -187,28 +217,21 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold text-green-700 dark:text-green-400 uppercase tracking-wider">Total Revenue</p>
-              <p className="text-2xl font-bold text-green-900 dark:text-green-100 tabular-nums">
-                ₱<AnimatedNumber value={stats?.totalRevenue || 0} duration={1500} />
-              </p>
+              <div className="flex items-center gap-1">
+                <p className="text-2xl font-bold text-green-900 dark:text-green-100 tabular-nums">
+                  ₱<AnimatedNumber value={stats?.totalRevenue || 0} duration={1500} />
+                </p>
+                {!startDate && !endDate && <ComparisonBadge pct={revenueChange} />}
+              </div>
               <p className="text-xs text-green-600 dark:text-green-500 flex items-center gap-1 mt-0.5">
                 {startDate || endDate ? (
                   stats?.totalRevenue && stats.totalRevenue > 0 ? (
-                    <>
-                      <ArrowUpRight className="h-3 w-3" />
-                      Filtered period
-                    </>
-                  ) : (
-                    "No sales in period"
-                  )
+                    <><ArrowUpRight className="h-3 w-3" />Filtered period</>
+                  ) : "No sales in period"
                 ) : (
                   stats?.revenueToday !== undefined && stats.revenueToday > 0 ? (
-                    <>
-                      <ArrowUpRight className="h-3 w-3" />
-                      ₱{formatNumber(stats.revenueToday)} today
-                    </>
-                  ) : (
-                    "No sales today yet"
-                  )
+                    <><ArrowUpRight className="h-3 w-3" />₱{formatNumber(stats.revenueToday)} today</>
+                  ) : "No sales today yet"
                 )}
               </p>
             </div>

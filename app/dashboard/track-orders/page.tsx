@@ -976,7 +976,10 @@ export default function TrackOrdersPage() {
         order.orderNumber.toLowerCase().includes(search) ||
         (order.trackingNumber && order.trackingNumber.toLowerCase().includes(search)) ||
         (order.customerName && order.customerName.toLowerCase().includes(search)) ||
+        (order.customerPhone && order.customerPhone.toLowerCase().includes(search)) ||
+        (order.customerAddress && order.customerAddress.toLowerCase().includes(search)) ||
         (order.itemName && order.itemName.toLowerCase().includes(search)) ||
+        (order.courier && order.courier.toLowerCase().includes(search)) ||
         (order.storeName && order.storeName.toLowerCase().includes(search))
       )
     }
@@ -1647,7 +1650,7 @@ export default function TrackOrdersPage() {
               <div className="relative group">
                 <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                 <Input
-                  placeholder="Search by order no. or waybill no..."
+                  placeholder="Search by order no., waybill, customer name, phone or courier..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-11 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg font-medium placeholder:text-slate-400 transition-all"

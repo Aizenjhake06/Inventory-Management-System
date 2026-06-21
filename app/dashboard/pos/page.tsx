@@ -31,8 +31,18 @@ export default function POSPage() {
       .replace(/\b\w/g, c => c.toUpperCase())
   }
   const [items, setItems] = useState<InventoryItem[]>([])
-  const [cart, setCart] = useState<CartItem[]>([])
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    // Restore cart from localStorage on mount
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('pos_cart_draft')
+        if (saved) return JSON.parse(saved)
+      } catch {}
+    }
+    return []
+  })
   const [search, setSearch] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState<string>("all")
   const [loading, setLoading] = useState(false)
   const [stores, setStores] = useState<Array<{id: string, store_name: string, sales_channel: string}>>([])
   const [staffName, setStaffName] = useState('')
@@ -81,6 +91,21 @@ export default function POSPage() {
 
   const total = useMemo(() => cart.reduce((sum, cartItem) => sum + cartItem.item.sellingPrice * cartItem.quantity, 0), [cart])
 
+  // Persist cart to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('pos_cart_draft', JSON.stringify(cart))
+      } catch {}
+    }
+  }, [cart])
+
+  // Get unique categories for filter chips
+  const categories = useMemo(() => {
+    const cats = new Set(items.map(i => i.category).filter(Boolean))
+    return Array.from(cats).sort()
+  }, [items])
+
   const filteredItems = useMemo(() => {
     let filtered = items
 
@@ -92,8 +117,18 @@ export default function POSPage() {
       )
     }
 
+    if (categoryFilter !== "all") {
+      filtered = filtered.filter(item => item.category === categoryFilter)
+    }
+
     return filtered
-  }, [search, items])
+  }, [search, categoryFilter, items])
+
+  // Clear entire cart
+  function clearCart() {
+    setCart([])
+    toast.info('Cart cleared', { duration: 1500 })
+  }
 
   useEffect(() => {
     // Get current logged-in user using the auth helper
@@ -266,6 +301,13 @@ export default function POSPage() {
       return
     }
 
+    // Phone number validation — must be numeric, 10-13 digits
+    const phoneDigits = orderForm.customerContact.replace(/[\s\-\+\(\)]/g, '')
+    if (!/^\d{10,13}$/.test(phoneDigits)) {
+      toast.error('Contact number must be 10-13 digits (numbers only)')
+      return
+    }
+
     setLoading(true)
     try {
       // Prepare order items for detailed tracking
@@ -326,6 +368,7 @@ export default function POSPage() {
       }
       
       setCart([])
+      localStorage.removeItem('pos_cart_draft')
       fetchItems()
       setOrderFormOpen(false)
       setSuccessModalOpen(true)
@@ -440,6 +483,36 @@ export default function POSPage() {
                   />
                 </div>
               </div>
+              {/* Category Filter Chips */}
+              {categories.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  <button
+                    onClick={() => setCategoryFilter("all")}
+                    className={cn(
+                      "px-3 py-1 rounded-full text-xs font-semibold transition-all",
+                      categoryFilter === "all"
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    )}
+                  >
+                    All
+                  </button>
+                  {categories.map(cat => (
+                    <button
+                      key={cat}
+                      onClick={() => setCategoryFilter(cat === categoryFilter ? "all" : cat)}
+                      className={cn(
+                        "px-3 py-1 rounded-full text-xs font-semibold transition-all",
+                        categoryFilter === cat
+                          ? "bg-blue-600 text-white shadow-sm"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                      )}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
@@ -530,8 +603,22 @@ export default function POSPage() {
               {filteredItems.length === 0 && (
                 <div className="text-center py-12">
                   <Package className="h-12 w-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-500 dark:text-slate-400">No products found</p>
-                  <p className="text-sm text-slate-400 dark:text-slate-500">Try adjusting your search</p>
+                  <p className="text-slate-500 dark:text-slate-400 font-semibold">
+                    {search || categoryFilter !== "all" ? "No products match your filters" : "No products available"}
+                  </p>
+                  <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
+                    {search || categoryFilter !== "all"
+                      ? "Try clearing your search or category filter"
+                      : "Add products in Inventory to get started"}
+                  </p>
+                  {(search || categoryFilter !== "all") && (
+                    <button
+                      onClick={() => { setSearch(""); setCategoryFilter("all") }}
+                      className="mt-3 text-xs text-blue-600 dark:text-amber-400 underline hover:no-underline"
+                    >
+                      Clear filters
+                    </button>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -546,7 +633,19 @@ export default function POSPage() {
             <CardHeader className="pb-3 flex-shrink-0">
               <CardTitle className="text-base font-semibold text-slate-900 dark:text-white flex items-center justify-between">
                 <span>Cart Summary</span>
-                <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">₱{total.toFixed(2)}</span>
+                <div className="flex items-center gap-2">
+                  {cart.length > 0 && (
+                    <button
+                      onClick={clearCart}
+                      className="text-xs text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 font-medium transition-colors flex items-center gap-1"
+                      title="Clear all items"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Clear
+                    </button>
+                  )}
+                  <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">₱{total.toFixed(2)}</span>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 overflow-hidden flex flex-col">
@@ -859,9 +958,16 @@ export default function POSPage() {
                     <Label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Customer Contact Number *</Label>
                     <Input
                       value={orderForm.customerContact}
-                      onChange={(e) => setOrderForm({...orderForm, customerContact: e.target.value})}
-                      placeholder="Enter contact number (e.g., 09123456789)"
+                      onChange={(e) => {
+                        // Allow only numbers, spaces, dashes, plus, parentheses
+                        const val = e.target.value.replace(/[^0-9\s\-\+\(\)]/g, '')
+                        setOrderForm({...orderForm, customerContact: val})
+                      }}
+                      type="tel"
+                      inputMode="numeric"
+                      placeholder="09123456789"
                       className="mt-2 h-11 border-2"
+                      maxLength={15}
                     />
                   </div>
                   <div>
