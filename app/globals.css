@@ -121,7 +121,7 @@
   --background: #000000;
   --background-secondary: #0a0a0a;
   --background-tertiary: #141414;
-  --background-card: #1a1a1a;
+  --background-card: #1e1e1e; /* Unified card color - same for all cards */
   
   /* Text colors - Crisp white on black */
   --foreground: #ffffff;
@@ -501,10 +501,7 @@ h6 { font-size: 1rem;     font-weight: 600; letter-spacing: -0.01em; }
 
 /* Enhanced dark mode cards */
 .dark .card-premium {
-  background: linear-gradient(135deg, 
-    rgba(26, 26, 26, 0.95) 0%, 
-    rgba(20, 20, 20, 0.95) 100%
-  );
+  background: var(--background-card); /* Solid unified color */
   border: 1px solid rgba(245, 158, 11, 0.08);
   box-shadow: 
     0 4px 6px rgba(0, 0, 0, 0.5),
@@ -536,10 +533,7 @@ h6 { font-size: 1rem;     font-weight: 600; letter-spacing: -0.01em; }
 
 /* Enhanced dark mode elevated cards */
 .dark .card-premium-elevated {
-  background: linear-gradient(135deg, 
-    rgba(28, 28, 28, 0.95) 0%, 
-    rgba(20, 20, 20, 0.95) 100%
-  );
+  background: var(--background-card); /* Solid unified color */
   border: 1px solid rgba(245, 158, 11, 0.10);
   box-shadow: 
     0 8px 16px rgba(0, 0, 0, 0.6),
@@ -972,14 +966,12 @@ h6 { font-size: 1rem;     font-weight: 600; letter-spacing: -0.01em; }
 }
 
 .dark .card-elegant {
-  background: linear-gradient(to bottom right, 
-    rgba(15, 23, 42, 0.95), 
-    rgba(30, 41, 59, 0.95)
-  );
-  border: 1px solid rgba(51, 65, 85, 0.8);
+  background: var(--background-card); /* Solid unified color */
+  border: 1px solid rgba(245, 158, 11, 0.08);
 }
 
 .dark .card-elegant:hover {
+  border-color: rgba(245, 158, 11, 0.20);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
 }
 
@@ -1063,10 +1055,10 @@ h6 { font-size: 1rem;     font-weight: 600; letter-spacing: -0.01em; }
 }
 
 .dark .glass-card {
-  background: rgba(26, 31, 46, 0.7);
+  background: var(--background-card); /* Solid unified color */
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.08);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
