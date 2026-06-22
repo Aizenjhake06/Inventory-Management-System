@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabase"
 import { getInventoryItems, getRestocks } from "@/lib/supabase-db"
 import { getCachedData } from "@/lib/cache"
 import type { DashboardStats, InventoryItem } from "@/lib/types"
@@ -110,11 +110,11 @@ export async function GET(request: Request) {
       return NextResponse.json(emptyDashboardStats())
     }
 
-    // Fetch orders from orders table (Track Orders data source ONLY)
-    let ordersQuery = supabase
+    // Fetch orders from orders table - Include BOTH Dispatched (from POS) and Packed (from Track Orders)
+    let ordersQuery = supabaseAdmin
       .from('orders')
       .select('*')
-      .eq('status', 'Packed') // CRITICAL: Only fetch Track Orders (status='Packed'), exclude Packing Queue (status='Pending')
+      .in('status', ['Dispatched', 'Packed']) // Include both POS dispatches and packed orders
 
     // DEPARTMENT FILTERING: Operations users only see their department's orders
     if (userRole === 'operations' && assignedChannel) {
@@ -523,7 +523,7 @@ export async function GET(request: Request) {
 
     // NEW: Cancelled orders in Packing Queue (status='Pending' AND is_cancelled=true)
     // These are orders cancelled BEFORE packing started
-    let cancelledPackingQueueQuery = supabase
+    let cancelledPackingQueueQuery = supabaseAdmin
       .from('orders')
       .select('id', { count: 'exact' })
       .eq('status', 'Pending')
@@ -554,7 +554,7 @@ export async function GET(request: Request) {
 
     // NEW: Total Delivered orders (status='Packed' AND parcel_status='DELIVERED')
     // Count all delivered orders
-    let deliveredOrdersQuery = supabase
+    let deliveredOrdersQuery = supabaseAdmin
       .from('orders')
       .select('id, qty', { count: 'exact' })
       .eq('status', 'Packed')

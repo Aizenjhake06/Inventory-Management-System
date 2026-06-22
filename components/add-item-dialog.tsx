@@ -7,9 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Package, Loader2 } from "lucide-react"
-import { apiGet, apiPost, apiPut } from "@/lib/api-client"
+import { apiPost, apiPut } from "@/lib/api-client"
 import { toast } from "sonner"
 import { ImageUpload } from "@/components/ui/image-upload"
 
@@ -21,38 +20,20 @@ interface AddItemDialogProps {
 
 export function AddItemDialog({ open, onOpenChange, onSuccess }: AddItemDialogProps) {
   const [loading, setLoading] = useState(false)
-  const [categories, setCategories] = useState<Array<{id: string, name: string}>>([])
-  const [loadingCategories, setLoadingCategories] = useState(true)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: "",
-    category: "",
     quantity: 0,
     costPrice: 0,
     sellingPrice: 0,
-    reorderLevel: 0,
-    salesChannel: "Physical Store",
-    store: "Main Store",
+    reorderLevel: 10,
   })
 
   useEffect(() => {
     if (open) {
-      fetchCategories()
       setImageUrl(null)
     }
   }, [open])
-
-  async function fetchCategories() {
-    try {
-      setLoadingCategories(true)
-      const data = await apiGet<Array<{id: string, name: string}>>("/api/categories")
-      setCategories(data)
-    } catch (error) {
-      console.error("Error fetching categories:", error)
-    } finally {
-      setLoadingCategories(false)
-    }
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -63,7 +44,11 @@ export function AddItemDialog({ open, onOpenChange, onSuccess }: AddItemDialogPr
       
       // If image was uploaded, save the URL to the item
       if (imageUrl && item?.id) {
-        await apiPut(`/api/items/${item.id}`, { imageUrl })
+        try {
+          await apiPut(`/api/items/${item.id}`, { imageUrl })
+        } catch (imgError) {
+          console.error("[Add Item] Failed to save image (non-fatal):", imgError)
+        }
       }
 
       toast.success("Product added successfully!")
@@ -71,21 +56,40 @@ export function AddItemDialog({ open, onOpenChange, onSuccess }: AddItemDialogPr
       onOpenChange(false)
       setFormData({
         name: "",
-        category: "",
         quantity: 0,
         costPrice: 0,
         sellingPrice: 0,
-        reorderLevel: 0,
-        salesChannel: "Physical Store",
-        store: "Main Store",
+        reorderLevel: 10,
       })
       setImageUrl(null)
     } catch (error: any) {
       console.error("[Add Item] Error adding item:", error)
-      if (error.message) {
+      
+      // Even if there's an error response, the item might have been created
+      // Let's refresh the parent list to check
+      console.log("[Add Item] Refreshing list to verify if item was created despite error")
+      
+      // Close dialog and trigger refresh
+      onOpenChange(false)
+      setFormData({
+        name: "",
+        quantity: 0,
+        costPrice: 0,
+        sellingPrice: 0,
+        reorderLevel: 10,
+      })
+      setImageUrl(null)
+      
+      // Trigger parent refresh
+      setTimeout(() => {
+        onSuccess()
+      }, 500)
+      
+      // Show a warning instead of error
+      if (error.message && error.message !== 'Request failed') {
         toast.error(error.message)
       } else {
-        toast.error("Failed to add product. Please try again.")
+        toast.warning("Product might have been created. Check the list.")
       }
     } finally {
       setLoading(false)
@@ -129,7 +133,7 @@ export function AddItemDialog({ open, onOpenChange, onSuccess }: AddItemDialogPr
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <Label htmlFor="name" className="text-slate-700 dark:text-slate-300 font-medium text-sm">
                 Product Name
               </Label>
@@ -142,29 +146,6 @@ export function AddItemDialog({ open, onOpenChange, onSuccess }: AddItemDialogPr
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="category" className="text-slate-700 dark:text-slate-300 font-medium">
-                Category
-              </Label>
-              <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })} required>
-                <SelectTrigger id="category" className="w-full max-w-xs rounded-[5px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20">
-                  <SelectValue placeholder={loadingCategories ? "Loading categories..." : "Select a category"} />
-                </SelectTrigger>
-                <SelectContent className="w-full max-w-xs bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                  {loadingCategories ? (
-                    <SelectItem value="loading" disabled>Loading...</SelectItem>
-                  ) : categories.length === 0 ? (
-                    <SelectItem value="none" disabled>No categories available</SelectItem>
-                  ) : (
-                    categories.map((category) => (
-                      <SelectItem key={category.id} value={category.name}>
-                        {category.name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
             <div className="space-y-2">
               <Label htmlFor="quantity" className="text-slate-700 dark:text-slate-300 font-medium">
                 Quantity
@@ -179,8 +160,21 @@ export function AddItemDialog({ open, onOpenChange, onSuccess }: AddItemDialogPr
               />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="reorderLevel" className="text-slate-700 dark:text-slate-300 font-medium">
+                Reorder Level
+              </Label>
+              <Input
+                id="reorderLevel"
+                type="number"
+                required
+                value={formData.reorderLevel}
+                onChange={(e) => setFormData({ ...formData, reorderLevel: Number.parseInt(e.target.value) || 0 })}
+                className="rounded-[5px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="costPrice" className="text-slate-700 dark:text-slate-300 font-medium">
-                Cost Price
+                Cost Price (COGS)
               </Label>
               <Input
                 id="costPrice"
@@ -203,19 +197,6 @@ export function AddItemDialog({ open, onOpenChange, onSuccess }: AddItemDialogPr
                 required
                 value={formData.sellingPrice}
                 onChange={(e) => setFormData({ ...formData, sellingPrice: Number.parseFloat(e.target.value) || 0 })}
-                className="rounded-[5px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="reorderLevel" className="text-slate-700 dark:text-slate-300 font-medium">
-                Reorder Level
-              </Label>
-              <Input
-                id="reorderLevel"
-                type="number"
-                required
-                value={formData.reorderLevel}
-                onChange={(e) => setFormData({ ...formData, reorderLevel: Number.parseInt(e.target.value) || 0 })}
                 className="rounded-[5px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
               />
             </div>

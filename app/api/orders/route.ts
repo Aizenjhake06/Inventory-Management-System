@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET /api/orders - Get orders with optional status filter
 export async function GET(request: NextRequest) {
@@ -9,89 +9,39 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
     
-    // Get user from headers (set by API client)
-    const userRole = request.headers.get('x-user-role')
-    const assignedChannel = request.headers.get('x-assigned-channel')
+    console.log('[Orders API] Fetching orders with filters:', { status, startDate, endDate })
     
-    console.log('[Orders API] ===== DEPARTMENT FILTERING DEBUG =====')
-    console.log('[Orders API] User Role:', userRole)
-    console.log('[Orders API] Assigned Channel:', assignedChannel)
-    console.log('[Orders API] Date Filter:', { startDate, endDate })
-    console.log('[Orders API] All Headers:', Object.fromEntries(request.headers.entries()))
-    console.log('[Orders API] ===== END DEBUG =====')
-    
-    let query = supabase
+    let query = supabaseAdmin
       .from('orders')
       .select('*')
       .is('deleted_at', null)
     
-    // DEPARTMENT FILTERING: Operations users only see their department's orders
-    if (userRole === 'operations' && assignedChannel) {
-      console.log('[Orders API] 🔒 FILTERING ORDERS by channel:', assignedChannel)
-      query = query.eq('sales_channel', assignedChannel)
-    } else {
-      console.log('[Orders API] ✅ NO FILTERING - Admin or no assigned channel')
-      console.log('[Orders API] Reason:', {
-        isOperations: userRole === 'operations',
-        hasChannel: !!assignedChannel,
-        userRole,
-        assignedChannel
-      })
-    }
-    // Admin sees all orders
-    
     // Filter by date range if provided
-    // For Packed orders: filter by packed_at (when order was packed)
-    // For Pending orders: filter by created_at (when order was dispatched)
     if (startDate) {
-      if (status === 'Packed') {
-        query = query.gte('packed_at', startDate)
-        console.log('[Orders API] 📅 Filtering packed orders from (packed_at):', startDate)
-      } else {
-        query = query.gte('created_at', startDate)
-        console.log('[Orders API] 📅 Filtering from (created_at):', startDate)
-      }
+      query = query.gte('created_at', startDate)
+      console.log('[Orders API] 📅 Filtering from (created_at):', startDate)
     }
     if (endDate) {
-      if (status === 'Packed') {
-        query = query.lte('packed_at', endDate)
-        console.log('[Orders API] 📅 Filtering packed orders to (packed_at):', endDate)
-      } else {
-        query = query.lte('created_at', endDate)
-        console.log('[Orders API] 📅 Filtering to (created_at):', endDate)
-      }
+      query = query.lte('created_at', endDate)
+      console.log('[Orders API] 📅 Filtering to (created_at):', endDate)
     }
     
     // Filter by status if provided
     if (status) {
-      if (status === 'Pending') {
-        query = query.eq('status', 'Pending')
-      } else if (status === 'Packed') {
-        query = query.in('status', ['Packed', 'Shipped', 'Delivered'])
+      if (status === 'Dispatched') {
+        query = query.eq('status', 'Dispatched')
+      } else if (status === 'Shipped') {
+        query = query.in('status', ['Shipped', 'Delivered'])
       }
     }
     
-    // Sort by appropriate timestamp based on status
-    // For Packed orders: sort by packed_at (latest packed first)
-    // For Pending orders: sort by created_at (latest created first)
-    if (status === 'Packed') {
-      query = query.order('packed_at', { ascending: false })
-    } else {
-      query = query.order('created_at', { ascending: false })
-    }
+    // Sort by created_at (latest first)
+    query = query.order('created_at', { ascending: false })
     
     const { data, error } = await query
     
     console.log('[Orders API] 📊 Query Results:')
     console.log('[Orders API] Total orders returned:', data?.length || 0)
-    if (data && data.length > 0) {
-      console.log('[Orders API] Orders by channel:', 
-        data.reduce((acc: any, order: any) => {
-          acc[order.sales_channel] = (acc[order.sales_channel] || 0) + 1
-          return acc
-        }, {})
-      )
-    }
     
     if (error) {
       console.error('[API] Error fetching orders:', error)
@@ -108,31 +58,23 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/orders - Create new order
+// POST /api/orders - Create new order with IMMEDIATE inventory deduction
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const {
       date,
-      salesChannel,
-      store,
-      courier,
-      waybill,
       qty,
       cogs,
       total,
       product,
       dispatchedBy,
-      agentUsername,
-      customerName,
-      customerAddress,
-      customerContact,
       notes,
       orderItems = []
     } = body
     
-    // Validate required fields
-    if (!date || !salesChannel || !store || !courier || !waybill || !qty || !cogs || !total || !product || !dispatchedBy) {
+    // Validate required fields (simplified - no more store, channel, customer info)
+    if (!date || !qty || !cogs || !total || !product || !dispatchedBy) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -143,7 +85,6 @@ export async function POST(request: NextRequest) {
     const orderId = `ORD-${Date.now()}`
     
     // Get current Manila time for created_at
-    // Format: YYYY-MM-DD HH:mm:ss (without timezone, as Philippine time)
     const now = new Date()
     const manilaTimeString = now.toLocaleString('en-US', { 
       timeZone: 'Asia/Manila',
@@ -161,28 +102,234 @@ export async function POST(request: NextRequest) {
     const [month, day, year] = datePart.split('/')
     const createdAt = `${year}-${month}-${day} ${timePart}`
     
-    // Insert order
-    const { data: order, error: orderError } = await supabase
+    // ============================================
+    // AUTO INVENTORY DEDUCTION ON DISPATCH
+    // ============================================
+    console.log('[POS API] 🔥 AUTO DEDUCTING INVENTORY ON DISPATCH')
+    console.log('[POS API] Order Items:', orderItems)
+    
+    // Process each item in the order
+    if (orderItems && orderItems.length > 0) {
+      for (const orderItem of orderItems) {
+        const { itemId, itemName, quantity } = orderItem
+        
+        console.log('[POS API] Processing item:', { itemId, itemName, quantity })
+        
+        // Try to find inventory item by ID first (more reliable)
+        let { data: inventoryItemById, error: idError } = await supabaseAdmin
+          .from('inventory')
+          .select('quantity, name, id')
+          .eq('id', itemId)
+          .maybeSingle()
+        
+        let inventoryItem = inventoryItemById
+        let inventoryError = idError
+        
+        // If ID lookup fails, try by name
+        if (!inventoryItem) {
+          console.log('[POS API] ID lookup failed, trying name lookup for:', itemName)
+          
+          // First, let's see what items exist (for debugging)
+          const { data: allItems } = await supabaseAdmin
+            .from('inventory')
+            .select('id, name')
+            .limit(10)
+          console.log('[POS API] Sample inventory items in DB:', allItems)
+          
+          // Try exact match (get first result if multiple exist)
+          const { data: exactMatches, error: exactError } = await supabaseAdmin
+            .from('inventory')
+            .select('quantity, name, id')
+            .eq('name', itemName)
+            .limit(1)
+          
+          console.log('[POS API] Exact match query:', { itemName, exactMatches, exactError })
+          
+          if (exactMatches && exactMatches.length > 0) {
+            inventoryItem = exactMatches[0]
+            inventoryError = null
+            console.log('[POS API] Found exact match:', inventoryItem.name)
+          } else {
+            // Try case-insensitive match with ILIKE
+            const ilikePattern = `%${itemName}%`
+            const { data: items, error: ilikeError } = await supabaseAdmin
+              .from('inventory')
+              .select('quantity, name, id')
+              .ilike('name', ilikePattern)
+              .limit(1)
+            
+            console.log('[POS API] ILIKE match query:', { ilikePattern, items, ilikeError })
+            
+            if (items && items.length > 0) {
+              inventoryItem = items[0]
+              inventoryError = null
+              console.log('[POS API] Found case-insensitive match:', inventoryItem.name)
+            }
+          }
+        }
+        
+        if (inventoryError || !inventoryItem) {
+          console.error('[POS API] ❌ Inventory item not found:', {
+            itemId,
+            itemName,
+            error: inventoryError?.message
+          })
+          return NextResponse.json({ 
+            error: `Inventory item not found: ${itemName}`,
+            details: 'Cannot dispatch order - product not found in inventory'
+          }, { status: 404 })
+        }
+        
+        // Check if enough stock available
+        if (inventoryItem.quantity < quantity) {
+          console.error('[POS API] ❌ Insufficient stock:', {
+            product: inventoryItem.name,
+            available: inventoryItem.quantity,
+            requested: quantity
+          })
+          return NextResponse.json({ 
+            error: `Insufficient stock for ${inventoryItem.name}`,
+            details: `Available: ${inventoryItem.quantity}, Requested: ${quantity}`
+          }, { status: 400 })
+        }
+        
+        const newQuantity = inventoryItem.quantity - quantity
+        
+        console.log('[POS API] Updating inventory:', {
+          product: inventoryItem.name,
+          currentQty: inventoryItem.quantity,
+          orderQty: quantity,
+          newQty: newQuantity
+        })
+        
+        const { error: updateError } = await supabaseAdmin
+          .from('inventory')
+          .update({ 
+            quantity: newQuantity,
+            last_updated: createdAt
+          })
+          .eq('id', inventoryItem.id)
+        
+        if (updateError) {
+          console.error('[POS API] ❌ Error updating inventory:', updateError)
+          return NextResponse.json({ 
+            error: 'Failed to update inventory',
+            details: updateError.message 
+          }, { status: 500 })
+        }
+        
+        console.log(`[POS API] ✅ Inventory deducted: ${inventoryItem.name} -${quantity} (New: ${newQuantity})`)
+      }
+    } else {
+      // Fallback: old method using product string (for backwards compatibility)
+      console.log('[POS API] No orderItems array, using fallback method with product string')
+      
+      // Clean product name (remove quantity suffix like "(1)")
+      const cleanProductName = product.replace(/\s*\(\d+\)\s*$/, '').trim()
+      
+      console.log('[POS API] Attempting to deduct inventory:', {
+        originalProduct: product,
+        cleanProductName,
+        quantity: qty
+      })
+      
+      // Try exact match first (by name only - no store/channel)
+      const { data: exactMatches } = await supabaseAdmin
+        .from('inventory')
+        .select('quantity, name, id')
+        .eq('name', cleanProductName)
+        .limit(1)
+      
+      let inventoryItem = null
+      let inventoryError = null
+      
+      if (exactMatches && exactMatches.length > 0) {
+        inventoryItem = exactMatches[0]
+        console.log('[POS API] Found exact match:', inventoryItem.name)
+      } else {
+        // Try case-insensitive match
+        console.log('[POS API] Exact match failed, trying case-insensitive match...')
+        const { data: items } = await supabaseAdmin
+          .from('inventory')
+          .select('quantity, name, id')
+          .ilike('name', cleanProductName)
+          .limit(1)
+        
+        if (items && items.length > 0) {
+          inventoryItem = items[0]
+          console.log('[POS API] Found case-insensitive match:', inventoryItem.name)
+        } else {
+          inventoryError = { message: 'No matching inventory item found' }
+        }
+      }
+      
+      if (inventoryError) {
+        console.error('[POS API] ❌ Inventory item not found:', {
+          searchedFor: cleanProductName,
+          error: inventoryError.message
+        })
+        return NextResponse.json({ 
+          error: `Inventory item not found: ${cleanProductName}`,
+          details: 'Cannot dispatch order - product not found in inventory'
+        }, { status: 404 })
+      }
+      
+      if (inventoryItem) {
+        // Check if enough stock available
+        if (inventoryItem.quantity < qty) {
+          console.error('[POS API] ❌ Insufficient stock:', {
+            product: inventoryItem.name,
+            available: inventoryItem.quantity,
+            requested: qty
+          })
+          return NextResponse.json({ 
+            error: `Insufficient stock for ${inventoryItem.name}`,
+            details: `Available: ${inventoryItem.quantity}, Requested: ${qty}`
+          }, { status: 400 })
+        }
+        
+        const newQuantity = inventoryItem.quantity - qty
+        
+        console.log('[POS API] Updating inventory:', {
+          product: inventoryItem.name,
+          currentQty: inventoryItem.quantity,
+          orderQty: qty,
+          newQty: newQuantity
+        })
+        
+        const { error: updateError } = await supabaseAdmin
+          .from('inventory')
+          .update({ 
+            quantity: newQuantity,
+            last_updated: createdAt
+          })
+          .eq('id', inventoryItem.id)
+        
+        if (updateError) {
+          console.error('[POS API] ❌ Error updating inventory:', updateError)
+          return NextResponse.json({ 
+            error: 'Failed to update inventory',
+            details: updateError.message 
+          }, { status: 500 })
+        }
+        
+        console.log(`[POS API] ✅ Inventory deducted: ${inventoryItem.name} -${qty} (New: ${newQuantity})`)
+      }
+    }
+    
+    // Insert order with status 'Dispatched' (not Pending)
+    const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
       .insert({
         id: orderId,
-        date,
-        sales_channel: salesChannel,
-        store,
-        courier,
-        waybill,
+        date: createdAt, // Use dispatch time as sale date
         qty,
         cogs,
         total,
         product,
-        status: 'Pending',
-        parcel_status: 'PENDING',
+        status: 'Dispatched', // AUTO-DISPATCHED
         dispatched_by: dispatchedBy,
-        agent_username: agentUsername || null,
-        customer_name: customerName || null,
-        customer_address: customerAddress || null,
-        customer_contact: customerContact || null,
-        dispatch_notes: notes || null,
+        notes: notes || null,
         created_at: createdAt,
         updated_at: createdAt
       })
@@ -194,42 +341,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: orderError.message }, { status: 500 })
     }
     
-    // Log the dispatch action as "to-be-packed"
+    // Log the dispatch action as "sale"
     try {
       const { addLog } = await import('@/lib/supabase-db')
       await addLog({
-        operation: 'to-be-packed',
+        operation: 'sale',
         itemName: product,
-        details: `Order dispatched to ${salesChannel} by ${dispatchedBy}. Waybill: ${waybill}, Qty: ${qty}, Total: ₱${total.toLocaleString()}. Awaiting packing.`
+        details: `Order dispatched by ${dispatchedBy}. Qty: ${qty}, Total: ₱${total.toLocaleString()}. Inventory auto-deducted: -${qty}`
       })
     } catch (logError) {
-      console.error('[API] Error logging to-be-packed:', logError)
+      console.error('[API] Error logging sale:', logError)
       // Don't fail the request if logging fails
-    }
-    
-    // Insert order items if provided
-    if (orderItems.length > 0) {
-      const orderItemsData = orderItems.map((item: any) => ({
-        id: `ORDITEM-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        order_id: orderId,
-        item_id: item.itemId,
-        item_name: item.itemName,
-        quantity: item.quantity,
-        cost_price: item.costPrice,
-        selling_price: item.sellingPrice,
-        total_cost: item.quantity * item.costPrice,
-        total_revenue: item.quantity * item.sellingPrice,
-        created_at: createdAt
-      }))
-      
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItemsData)
-      
-      if (itemsError) {
-        console.error('[API] Error creating order items:', itemsError)
-        // Don't fail the whole request, just log the error
-      }
     }
     
     return NextResponse.json(order, { status: 201 })

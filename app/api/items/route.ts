@@ -90,12 +90,18 @@ export const POST = withRoles(['admin', 'operations', 'logistics-admin', 'dept-m
       
       // Invalidate cache after creating new item
       invalidateCachePattern('inventory')    
-      await addLog({
-        operation: "create",
-        itemId: item.id,
-        itemName: item.name,
-        details: `Added "${item.name}" by ${user.displayName} - Qty: ${item.quantity}, Cost: ₱${item.costPrice.toFixed(2)}, Sell: ₱${item.sellingPrice.toFixed(2)}`
-      })
+      
+      // Log creation (don't fail the request if logging fails)
+      try {
+        await addLog({
+          operation: "create",
+          itemId: item.id,
+          itemName: item.name,
+          details: `Added "${item.name}" by ${user.displayName} - Qty: ${item.quantity}, Cost: ₱${item.costPrice.toFixed(2)}, Sell: ₱${item.sellingPrice.toFixed(2)}`
+        })
+      } catch (logError) {
+        console.error('[Items API] Failed to log item creation (non-fatal):', logError)
+      }
       
       return NextResponse.json(item)
     } catch (dbError: any) {

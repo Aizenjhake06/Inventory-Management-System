@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabase"
 import { getCachedData } from "@/lib/cache"
 import type { SalesReport, DailySales, MonthlySales } from "@/lib/types"
 import { 
@@ -36,11 +36,11 @@ export async function GET(request: NextRequest) {
     const userRole = request.headers.get('x-user-role')
     const assignedChannel = request.headers.get('x-assigned-channel')
 
-    // Fetch orders from orders table (Track Orders ONLY - status='Packed')
-    let ordersQuery = supabase
+    // Fetch orders from orders table - Include BOTH Dispatched (from POS) and Packed (from Track Orders)
+    let ordersQuery = supabaseAdmin
       .from('orders')
       .select('*')
-      .eq('status', 'Packed') // CRITICAL: Only fetch Track Orders, exclude Packing Queue
+      .in('status', ['Dispatched', 'Packed']) // Include both POS dispatches and packed orders
 
     // DEPARTMENT FILTERING: Operations users only see their department's orders
     if (userRole === 'operations' && assignedChannel) {

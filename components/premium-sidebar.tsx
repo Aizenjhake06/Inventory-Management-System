@@ -57,13 +57,8 @@ const getNavigation = (lowStockCount: number = 0, outOfStockCount: number = 0): 
   {
     section: "Main",
     items: [
-      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard }, // Admin only
-      { name: "Operations Dashboard", href: "/dashboard/operations", icon: LayoutDashboard }, // Operations + dept-manager
+      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
       { name: "Point of Sale (POS)", href: "/dashboard/pos", icon: ShoppingCart },
-      { name: "Packing Queue", href: "/dashboard/packing-queue", icon: Package },
-      { name: "Track Orders", href: "/dashboard/track-orders", icon: ShoppingCart },
-      { name: "Internal Usage", href: "/dashboard/internal-usage", icon: Users },
-      { name: "Team Performance", href: "/dashboard/agent-performance", icon: BarChart2 }, // dept-manager only
     ],
   },
   {
@@ -89,20 +84,13 @@ const getNavigation = (lowStockCount: number = 0, outOfStockCount: number = 0): 
   {
     section: "Analytics",
     items: [
-      { name: "Sales Channels", href: "/dashboard/sales-channels", icon: TrendingUp },
-      { name: "Sales Analytics", href: "/dashboard/analytics", icon: TrendingUp },
-      { name: "Business Insights", href: "/dashboard/insights", icon: Brain },
+      { name: "Sales Analytics", href: "/dashboard/analytics", icon: TrendingUp }, // Admin only
     ],
-  },
-  {
-    section: "CRM",
-    items: [{ name: "Business Contacts", href: "/dashboard/business-contacts", icon: Users }],
   },
   {
     section: "System",
     items: [
       { name: "Activity Logs", href: "/dashboard/log", icon: FileText },
-      { name: "Settings", href: "/dashboard/settings", icon: Settings }, // Admin only
     ],
   },
 ]

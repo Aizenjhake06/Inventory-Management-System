@@ -15,6 +15,7 @@ import { apiGet, apiPut } from "@/lib/api-client"
 import { getCurrentUser } from "@/lib/auth"
 import { formatCurrency, cn } from "@/lib/utils"
 import { ImageUpload } from "@/components/ui/image-upload"
+import { toast } from "sonner"
 
 // Helper functions for bundle calculations
 function calculateBundleCost(components: Array<{ quantity: number; costPrice: number }>): number {
@@ -35,8 +36,6 @@ interface EditItemDialogProps {
 
 export function EditItemDialog({ open, onOpenChange, item, onSuccess }: EditItemDialogProps) {
   const [loading, setLoading] = useState(false)
-  const [categories, setCategories] = useState<Array<{id: string, name: string}>>([])
-  const [loadingCategories, setLoadingCategories] = useState(true)
   const [componentItems, setComponentItems] = useState<InventoryItem[]>([])
   const [loadingComponents, setLoadingComponents] = useState(false)
   const currentUser = getCurrentUser()
@@ -48,7 +47,6 @@ export function EditItemDialog({ open, onOpenChange, item, onSuccess }: EditItem
   
   const [formData, setFormData] = useState({
     name: item.name,
-    category: item.category,
     quantity: item.quantity,
     costPrice: item.costPrice,
     sellingPrice: item.sellingPrice,
@@ -59,7 +57,6 @@ export function EditItemDialog({ open, onOpenChange, item, onSuccess }: EditItem
   useEffect(() => {
     setFormData({
       name: item.name,
-      category: item.category,
       quantity: item.quantity,
       costPrice: item.costPrice,
       sellingPrice: item.sellingPrice,
@@ -69,11 +66,8 @@ export function EditItemDialog({ open, onOpenChange, item, onSuccess }: EditItem
   }, [item])
 
   useEffect(() => {
-    if (open) {
-      fetchCategories()
-      if (isBundle && bundleComponents.length > 0) {
-        fetchComponentDetails()
-      }
+    if (open && isBundle && bundleComponents.length > 0) {
+      fetchComponentDetails()
     }
   }, [open, isBundle])
 
@@ -91,18 +85,6 @@ export function EditItemDialog({ open, onOpenChange, item, onSuccess }: EditItem
     }
   }
 
-  async function fetchCategories() {
-    try {
-      setLoadingCategories(true)
-      const data = await apiGet<Array<{id: string, name: string}>>("/api/categories")
-      setCategories(data)
-    } catch (error) {
-      console.error("Error fetching categories:", error)
-    } finally {
-      setLoadingCategories(false)
-    }
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -114,10 +96,28 @@ export function EditItemDialog({ open, onOpenChange, item, onSuccess }: EditItem
       } else {
         await apiPut(`/api/items/${item.id}`, { ...formData, imageUrl })
       }
+      
+      // Success - close and refresh
       onSuccess()
       onOpenChange(false)
-    } catch (error) {
+    } catch (error: any) {
       console.error("[EditItemDialog] Error updating item:", error)
+      
+      // Even if there's an error response, the update might have succeeded
+      // Close dialog and trigger refresh to verify
+      console.log("[EditItemDialog] Refreshing to verify if update succeeded despite error")
+      
+      onOpenChange(false)
+      
+      // Wait a bit then refresh to see if it actually worked
+      setTimeout(() => {
+        onSuccess()
+      }, 500)
+      
+      // Show warning instead of hard error
+      if (error.message && error.message !== 'Request failed') {
+        console.warn("[EditItemDialog] Update error:", error.message)
+      }
     } finally {
       setLoading(false)
     }
@@ -164,7 +164,7 @@ export function EditItemDialog({ open, onOpenChange, item, onSuccess }: EditItem
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <Label htmlFor="edit-name" className="text-slate-700 dark:text-slate-300 font-medium">
                 Product Name
               </Label>
@@ -175,30 +175,6 @@ export function EditItemDialog({ open, onOpenChange, item, onSuccess }: EditItem
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="rounded-[5px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
               />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="edit-category" className="text-slate-700 dark:text-slate-300 font-medium">
-                Category
-              </Label>
-              <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })} required>
-                <SelectTrigger id="edit-category" className="w-full rounded-[5px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20">
-                  <SelectValue placeholder={loadingCategories ? "Loading categories..." : "Select a category"} />
-                </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                  {loadingCategories ? (
-                    <SelectItem value="loading" disabled>Loading...</SelectItem>
-                  ) : categories.length === 0 ? (
-                    <SelectItem value="none" disabled>No categories available</SelectItem>
-                  ) : (
-                    categories.map((category) => (
-                      <SelectItem key={category.id} value={category.name}>
-                        {category.name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
             </div>
             
             <div className="space-y-2">

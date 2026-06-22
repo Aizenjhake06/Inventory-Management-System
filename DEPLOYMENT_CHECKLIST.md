@@ -1,371 +1,302 @@
-# ✅ DEPLOYMENT CHECKLIST - v2.1.0
+# 🚀 DEPLOYMENT CHECKLIST
 
-**Use this as your step-by-step guide**
+## Pre-Deployment Steps
+
+### 1. Backup Current System (If Needed)
+- [ ] Export existing Supabase data (if you want to keep historical records)
+- [ ] Download copy of current `.env.local` file
+- [ ] Save screenshots of current system configuration
+
+### 2. Verify Environment Variables
+Check `.env.local` file contains:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
 
 ---
 
-## 🎯 **PHASE 1: PRE-DEPLOYMENT** (15 mins)
+## Database Migration
 
-### **1. Verify Everything is Ready**
-- [x] Session tracking implemented
-- [x] Error boundaries added
-- [x] System audit complete
-- [x] Documentation created
-- [x] All files committed
-- [ ] Database backup created ⚠️ **DO THIS NOW**
+### Step 1: Open Supabase SQL Editor
+1. Go to https://app.supabase.com
+2. Select your project
+3. Navigate to **SQL Editor** (left sidebar)
+4. Click **+ New Query**
 
-### **2. Create Database Backup**
-```bash
-# Supabase backup
-pg_dump -h [your-supabase-host].supabase.co -U postgres -d postgres > backup_pre_v2.1.0_$(date +%Y%m%d_%H%M%S).sql
+### Step 2: Run Migration Script
+1. Open file: `supabase/migrations/100_system_restructure_two_accounts.sql`
+2. Copy entire contents
+3. Paste into Supabase SQL Editor
+4. Click **Run** button
+5. Wait for success message
 
-# Save this file somewhere safe!
-```
-**Status:** [ ] DONE
-
-### **3. Notify Team**
-```
-Subject: 🚀 v2.1.0 Deployment Starting
-
-Team,
-
-We're deploying v2.1.0 in the next 30 minutes.
-
-🔒 New Feature: Single-device login security
-⏰ Expected downtime: None
-📊 Estimated time: 30 minutes
-
-You may need to re-login if you're on multiple devices.
-
-Thanks!
-Tech Team
-```
-**Status:** [ ] DONE
-
----
-
-## 🗄️ **PHASE 2: DATABASE MIGRATION** (5 mins)
-
-### **1. Connect to Production Database**
-```bash
-# Supabase
-psql -h [your-host].supabase.co -U postgres -d postgres
-
-# You should see:
-# postgres=>
-```
-**Status:** [ ] CONNECTED
-
-### **2. Run Migration**
+### Step 3: Verify Migration
+Run this query to verify:
 ```sql
--- Copy and paste this entire file content:
-\i supabase/migrations/051_add_session_tracking.sql
+-- Check accounts created
+SELECT username, role, display_name FROM users;
 
--- Or manually run:
-ALTER TABLE users ADD COLUMN IF NOT EXISTS active_session_id TEXT;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS session_created_at TIMESTAMP;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS last_activity TIMESTAMP;
+-- Should see:
+-- admin     | admin            | Main Administrator
+-- logistic  | logistics-admin  | Logistics Admin
 
-COMMENT ON COLUMN users.active_session_id IS 'Current active session ID - only one session allowed per user';
-COMMENT ON COLUMN users.session_created_at IS 'When the current session was created';
-COMMENT ON COLUMN users.last_activity IS 'Last time the user was active in this session';
+-- Check tables are clean
+SELECT 
+  (SELECT COUNT(*) FROM orders) as orders_count,
+  (SELECT COUNT(*) FROM inventory) as inventory_count,
+  (SELECT COUNT(*) FROM users) as users_count;
+
+-- Should see:
+-- orders_count: 0
+-- inventory_count: 0  
+-- users_count: 2
 ```
-**Status:** [ ] EXECUTED
 
-### **3. Verify Migration**
+### Step 4: Test Password Login (Optional)
+If login fails, run this to reset passwords:
 ```sql
-SELECT column_name, data_type, is_nullable
-FROM information_schema.columns 
-WHERE table_name = 'users' 
-AND column_name IN ('active_session_id', 'session_created_at', 'last_activity')
-ORDER BY column_name;
-```
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-**Expected Output:**
+UPDATE users 
+SET password = crypt('admin123', gen_salt('bf'))
+WHERE username = 'admin';
+
+UPDATE users 
+SET password = crypt('logistic123', gen_salt('bf'))
+WHERE username = 'logistic';
 ```
-      column_name      | data_type |  is_nullable 
------------------------+-----------+-------------
- active_session_id     | text      | YES
- last_activity         | timestamp | YES
- session_created_at    | timestamp | YES
-(3 rows)
-```
-**Status:** [ ] VERIFIED
 
 ---
 
-## 🚀 **PHASE 3: CODE DEPLOYMENT** (10 mins)
+## Application Deployment
 
-### **1. Final Code Check**
+### Step 1: Install Dependencies
 ```bash
-# Check git status
-git status
-
-# Should show modified/new files
-# All related to v2.1.0
+npm install
 ```
-**Status:** [ ] CHECKED
 
-### **2. Commit All Changes**
+### Step 2: Start Development Server
 ```bash
-# Add all changes
-git add .
-
-# Commit with prepared message
-git commit -F COMMIT_MESSAGE.txt
-
-# Or use this shorter version:
-git commit -m "feat: v2.1.0 - session tracking, error boundaries, full audit"
+npm run dev
 ```
-**Status:** [ ] COMMITTED
 
-### **3. Tag Release**
-```bash
-git tag -a v2.1.0 -m "Production release v2.1.0 - Session Tracking & Security"
-```
-**Status:** [ ] TAGGED
-
-### **4. Push to Production**
-```bash
-# Push code
-git push origin main
-
-# Push tag
-git push origin v2.1.0
-```
-**Status:** [ ] PUSHED
-
-### **5. Monitor Deployment**
-- **Vercel:** https://vercel.com/dashboard
-- **Watch build logs**
-- **Wait for "Deployment Ready" message**
-**Status:** [ ] DEPLOYED
+### Step 3: Open Application
+Navigate to: **http://localhost:3000**
 
 ---
 
-## ✅ **PHASE 4: VERIFICATION** (15 mins)
+## Testing Procedures
 
-### **Test 1: Application Accessible**
-1. Open production URL
-2. Page loads without errors
-**Status:** [ ] PASS
+### ✅ Login Tests
+- [ ] Login as **admin** (admin/admin123)
+  - Expected: Redirects to `/dashboard`
+  - Shows: Dashboard with sales metrics
+- [ ] Login as **logistic** (logistic/logistic123)
+  - Expected: Redirects to `/dashboard/pos`
+  - Shows: POS page
+- [ ] Try old credentials (operations, packer, etc.)
+  - Expected: Login fails with "Invalid credentials"
 
-### **Test 2: Login Works**
-1. Login with admin account
-2. Redirects to dashboard
-**Status:** [ ] PASS
+### ✅ Navigation Tests (Admin Account)
+- [ ] Dashboard page loads
+- [ ] POS page accessible
+- [ ] Products page accessible
+- [ ] Sales Analytics page accessible
+- [ ] Business Contacts page accessible
+- [ ] Activity Logs page accessible
+- [ ] Navigation shows only 6 items:
+  - Dashboard
+  - POS
+  - Products (+ Low Stock, Out of Stock)
+  - Sales Analytics
+  - Business Contacts
+  - Activity Logs
 
-### **Test 3: Session Tracking (CRITICAL)**
-**Browser 1 (Chrome):**
-1. Login with test account
-2. Note: You're logged in
+### ✅ Navigation Tests (Logistics Admin Account)
+- [ ] POS page accessible
+- [ ] Products page accessible
+- [ ] Navigation shows only 2 items:
+  - POS
+  - Products (+ Low Stock, Out of Stock)
+- [ ] Cannot access Dashboard
+- [ ] Cannot access Sales Analytics
+- [ ] Cannot access Business Contacts
 
-**Browser 2 (Firefox):**
-1. Login with SAME account
-2. Note: Login successful
+### ✅ Inventory & POS Tests
+1. **Create Test Product**
+   - [ ] Go to Products page
+   - [ ] Click "Add Product"
+   - [ ] Fill details:
+     - Name: Test Product
+     - Category: Electronics
+     - Store: Main Warehouse
+     - Sales Channel: Shopee
+     - Quantity: 20
+     - Cost Price: 100
+     - Selling Price: 150
+   - [ ] Click Save
+   - [ ] Product appears in list
 
-**Back to Browser 1:**
-1. Wait 30 seconds
-2. Should see: "Your account has been logged in on another device"
-3. Should auto-redirect to login page
-**Status:** [ ] PASS
+2. **Create Order in POS**
+   - [ ] Go to POS page
+   - [ ] Search and add "Test Product"
+   - [ ] Set quantity: 5
+   - [ ] Fill customer details:
+     - Name: Test Customer
+     - Contact: 09123456789
+     - Address: Test Address
+   - [ ] Select:
+     - Sales Channel: Shopee
+     - Store: Main Warehouse
+     - Courier: J&T Express
+   - [ ] Enter waybill: TEST123456
+   - [ ] Click "Dispatch Order"
+   - [ ] Success message appears
 
-### **Test 4: All Roles Work**
-Test each role can login:
-- [ ] Admin → /dashboard
-- [ ] Operations → /dashboard/operations
-- [ ] Packer → /packer/dashboard
-- [ ] Tracker → /tracker/dashboard
-- [ ] Logistics → /logistics/dashboard
-- [ ] Dept-Manager → /dashboard/operations
+3. **Verify Inventory Deduction**
+   - [ ] Go back to Products page
+   - [ ] Find "Test Product"
+   - [ ] **Verify quantity is now 15** (20 - 5 = 15)
+   - [ ] This confirms auto-deduction works!
 
-**Status:** [ ] ALL PASS
+4. **Check Order Created**
+   - [ ] Go to Dashboard
+   - [ ] Check "Total Sales" card shows: 5
+   - [ ] Check "Total Revenue" shows: ₱750
+   - [ ] Check "Gross Profit" shows: ₱250
 
-### **Test 5: Session Validation**
-1. Stay logged in
-2. Open browser console (F12)
-3. Wait 30 seconds
-4. Should see POST to `/api/auth/validate-session`
-5. Should return `{ valid: true }`
-**Status:** [ ] PASS
+5. **Verify Activity Logs**
+   - [ ] Go to Activity Logs page
+   - [ ] Find latest entry
+   - [ ] Should say: "Order dispatched to Shopee... Inventory auto-deducted: -5"
 
-### **Test 6: No Errors**
-Check logs for errors:
-- Supabase logs: [ ] CLEAN
-- Vercel logs: [ ] CLEAN
-- Browser console: [ ] CLEAN
-**Status:** [ ] PASS
+### ✅ Error Handling Tests
+1. **Insufficient Stock**
+   - [ ] Try to order 30 units of "Test Product" (only 15 available)
+   - [ ] Expected: Error message "Insufficient stock"
+   - [ ] Order not created
 
----
+2. **Non-existent Product**
+   - [ ] Try to manually create order for product not in inventory
+   - [ ] Expected: Error message "Inventory item not found"
+   - [ ] Order not created
 
-## 📊 **PHASE 5: MONITORING** (1 hour)
-
-### **Watch These Metrics:**
-
-**First 15 Minutes:**
-- [ ] Login success rate: 100%
-- [ ] No error spikes
-- [ ] Session validation working
-
-**First Hour:**
-- [ ] API response time: <100ms
-- [ ] No user complaints
-- [ ] Session tracking stable
-
-**First 24 Hours:**
-- [ ] Error rate: <1%
-- [ ] Uptime: 100%
-- [ ] Performance good
-
----
-
-## 📧 **PHASE 6: COMMUNICATION**
-
-### **1. Send Success Email**
-```
-Subject: ✅ v2.1.0 Deployed Successfully!
-
-Team,
-
-Version 2.1.0 is now LIVE! 🎉
-
-🔒 New Security Feature:
-• Single-device login protection
-• Auto-logout from other devices
-• Real-time session monitoring
-
-✅ What You'll Notice:
-• You can only be logged in on ONE device at a time
-• If you login elsewhere, you'll be logged out automatically
-• You'll see a notification when this happens
-
-📱 How It Works:
-1. Login on your device
-2. Session is created
-3. If you login elsewhere, previous session ends
-4. Clear notification shown
-
-🛡️ Why This Matters:
-• Better account security
-• Prevents unauthorized access
-• Protects company data
-
-Questions? Contact IT support.
-
-Enjoy the enhanced security!
-Tech Team
-```
-**Status:** [ ] SENT
-
-### **2. Update Internal Docs**
-- [ ] Update wiki
-- [ ] Update training materials
-- [ ] Update FAQ
-**Status:** [ ] DONE
+### ✅ Data Accuracy Tests
+- [ ] Dashboard metrics match actual data
+- [ ] Sales Analytics shows correct revenue
+- [ ] Inventory quantities are accurate
+- [ ] Activity logs show all operations
 
 ---
 
-## 🎉 **PHASE 7: CELEBRATION**
+## Common Issues & Solutions
 
-### **Deployment Success!**
-- [x] v2.1.0 deployed
-- [x] Session tracking working
-- [x] All tests passed
-- [x] Team notified
-- [x] Monitoring active
-
-### **🎊 CONGRATULATIONS!**
-
-You successfully deployed:
-✅ Major security enhancement
-✅ Error boundaries
-✅ Full system audit
-✅ Comprehensive documentation
-
-**Rating improved:** 8.5 → 9.2 (+8.2%)
-
-**Take a break! You earned it! ☕**
-
----
-
-## 📝 **POST-DEPLOYMENT LOG**
-
-**Deployment Date:** _______________  
-**Deployment Time:** _______________  
-**Deployed By:** _______________  
-**Database Migration:** [ ] Success  
-**Code Deployment:** [ ] Success  
-**Verification:** [ ] All Pass  
-**Issues Found:** _______________  
-**Resolution:** _______________  
-
----
-
-## 🆘 **IF SOMETHING GOES WRONG**
-
-### **Rollback Procedure:**
-
-**1. Revert Code (2 mins)**
-```bash
-git revert HEAD
-git push origin main
-```
-
-**2. Rollback Database (3 mins)**
+### Issue: Can't login
+**Solution:**
 ```sql
-ALTER TABLE users DROP COLUMN IF EXISTS active_session_id;
-ALTER TABLE users DROP COLUMN IF EXISTS session_created_at;
-ALTER TABLE users DROP COLUMN IF EXISTS last_activity;
+-- Reset passwords in Supabase SQL Editor:
+UPDATE users 
+SET password = crypt('admin123', gen_salt('bf'))
+WHERE username = 'admin';
+
+UPDATE users 
+SET password = crypt('logistic123', gen_salt('bf'))
+WHERE username = 'logistic';
 ```
 
-**3. Restore Backup (5 mins)**
-```bash
-psql -h [host] -U postgres -d postgres < backup_pre_v2.1.0_*.sql
+### Issue: Old pages still showing
+**Solution:**
+```javascript
+// Clear browser cache - Run in browser console:
+localStorage.clear();
+sessionStorage.clear();
+location.reload();
 ```
 
-**4. Notify Team**
-```
-Subject: ⚠️ Rollback: v2.1.0 → v2.0.x
+### Issue: Inventory not deducting
+**Solution:**
+1. Check browser console for errors
+2. Verify product name exactly matches
+3. Verify store and sales_channel match
+4. Check sufficient stock available
 
-Team,
+### Issue: Migration fails
+**Solution:**
+1. Check Supabase logs for error details
+2. Ensure pgcrypto extension is enabled:
+   ```sql
+   CREATE EXTENSION IF NOT EXISTS pgcrypto;
+   ```
+3. Re-run migration
 
-We've rolled back to the previous version due to [reason].
-
-Everything is back to normal. We'll reschedule the deployment.
-
-Sorry for any inconvenience.
-Tech Team
-```
+### Issue: Navigation broken
+**Solution:**
+- Hard refresh browser: `Ctrl + Shift + R` (Windows) or `Cmd + Shift + R` (Mac)
+- Clear browser cache
+- Restart dev server
 
 ---
 
-## 📞 **EMERGENCY CONTACTS**
+## Production Deployment (Optional)
 
-**On-Call Engineer:** _______________  
-**Database Admin:** _______________  
-**DevOps Team:** _______________  
-**Project Manager:** _______________  
+### If deploying to Vercel/Production:
 
-**Emergency Hotline:** _______________  
-**Slack Channel:** #deployment-v2-1-0  
+1. **Update Environment Variables**
+   ```bash
+   NEXT_PUBLIC_APP_URL=https://your-domain.com
+   ```
+
+2. **Run Build Test**
+   ```bash
+   npm run build
+   ```
+
+3. **Deploy**
+   ```bash
+   git add .
+   git commit -m "System restructure: 2 accounts (admin + logistics)"
+   git push origin main
+   ```
+
+4. **Verify Production**
+   - [ ] Test login on production URL
+   - [ ] Test POS order creation
+   - [ ] Test inventory deduction
+   - [ ] Check all pages load correctly
 
 ---
 
-## ✅ **FINAL SIGN-OFF**
+## Final Verification
 
-Once ALL phases complete:
+Before marking as complete, ensure:
+- [x] Database migration successful
+- [x] 2 accounts created and working
+- [x] Navigation shows correct pages
+- [x] POS auto-deducts inventory
+- [x] Orders created with "Dispatched" status
+- [x] Dashboard shows sales metrics
+- [x] No packing queue or track orders references
+- [x] All old role logins fail
+- [x] Activity logs working correctly
+
+---
+
+## Sign-Off
 
 **Deployed By:** _________________  
 **Date:** _________________  
-**Time:** _________________  
-**Status:** ✅ SUCCESS / ❌ ROLLBACK  
+**Verified By:** _________________  
+**Status:** ☐ SUCCESS  ☐ ISSUES (describe below)
 
-**Signature:** _________________
+**Notes:**
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
 
 ---
 
-**🚀 YOU'RE READY TO DEPLOY!**
+**🎉 SYSTEM RESTRUCTURE COMPLETE!**
 
-*Follow this checklist step-by-step and you'll have a smooth deployment!*
-
-**Good luck! 🎉**
+Your inventory management system is now simplified to 2 accounts with streamlined sales workflow.

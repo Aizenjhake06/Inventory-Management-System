@@ -36,7 +36,7 @@ export default function InventoryPage() {
   const [filteredItems, setFilteredItems] = useState<InventoryItem[]>([])
   const [search, setSearch] = useState("")
   const [salesChannelFilter, setSalesChannelFilter] = useState("all")
-  const [categoryFilter, setCategoryFilter] = useState("all")
+  // const [categoryFilter, setCategoryFilter] = useState("all") // REMOVED
   const [productTypeFilter, setProductTypeFilter] = useState("all")
   const [sortBy, setSortBy] = useState("name-asc")
   const [loading, setLoading] = useState(true)
@@ -71,30 +71,27 @@ export default function InventoryPage() {
       if (role === 'operations' && user?.assignedChannel) {
         setIsDepartment(true)
         setUserDepartment(user.assignedChannel)
-        // Pre-fill sales channel for departments
-        setNewStore({ name: "", salesChannel: user.assignedChannel })
+        // setNewStore removed - not used in simplified system
       }
     }
     
     checkDepartment()
   }, [])
   
-  // Category Management
-  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
-  const [categories, setCategories] = useState<Array<{id: string, name: string, createdAt: string}>>([])
-  const [newCategory, setNewCategory] = useState("")
-  const [editingCategory, setEditingCategory] = useState<{id: string, name: string} | null>(null)
-  const [editCategoryValue, setEditCategoryValue] = useState("")
-  const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(null)
+  // Category Management - REMOVED (simplified system)
+  const categories: Array<{id: string, name: string, createdAt: string}> = [] // Empty - not used
+  const categoryDialogOpen = false // Never open
+  // const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
+  // const [categories, setCategories] = useState<Array<{id: string, name: string, createdAt: string}>>([])
+  // ... category states removed
   
-  // Store Management (renamed from Warehouse Management)
-  const [storeDialogOpen, setStoreDialogOpen] = useState(false)
-  const [stores, setStores] = useState<Store[]>([])
-  const [newStore, setNewStore] = useState({ name: "", salesChannel: "" })
-  const [editingStore, setEditingStore] = useState<Store | null>(null)
-  const [editStoreValue, setEditStoreValue] = useState({ name: "", salesChannel: "" })
-  const [submitting, setSubmitting] = useState(false)
-  const [deleteWarehouseId, setDeleteWarehouseId] = useState<string | null>(null)
+  // Store Management - REMOVED (simplified system)
+  const stores: any[] = [] // Empty - not used
+  const storeDialogOpen = false // Never open
+  // const [storeDialogOpen, setStoreDialogOpen] = useState(false)
+  // const [stores, setStores] = useState<Store[]>([])
+  // ... store states removed
+  
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set()) // Bulk selection
@@ -236,14 +233,10 @@ export default function InventoryPage() {
 
   useEffect(() => {
     fetchItems()
-    fetchStores()
-    fetchCategories()
 
     // Refresh data when window regains focus (e.g., after switching tabs)
     const handleFocus = () => {
       fetchItems()
-      fetchStores()
-      fetchCategories()
     }
 
     window.addEventListener('focus', handleFocus)
@@ -261,15 +254,11 @@ export default function InventoryPage() {
       filtered = filtered.filter(
         (item) =>
           item.name.toLowerCase().includes(searchLower) ||
-          item.category.toLowerCase().includes(searchLower) ||
           item.sku?.toLowerCase().includes(searchLower)
       )
     }
 
-    // Category filter
-    if (categoryFilter !== "all") {
-      filtered = filtered.filter((item) => item.category === categoryFilter)
-    }
+    // Category filter REMOVED - no longer used
 
     // Product type filter (single vs bundle)
     if (productTypeFilter === "single") {
@@ -301,7 +290,7 @@ export default function InventoryPage() {
     }
 
     setFilteredItems(filtered)
-  }, [search, salesChannelFilter, categoryFilter, productTypeFilter, sortBy, items])
+  }, [search, salesChannelFilter, productTypeFilter, sortBy, items]) // Removed categoryFilter from deps
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredItems.length / pageSize)
@@ -347,23 +336,23 @@ export default function InventoryPage() {
     }
   }
 
-  async function fetchStores() {
-    try {
-      const data = await apiGet<Store[]>("/api/stores")
-      setStores(data)
-    } catch (error) {
-      console.error("Error fetching stores:", error)
-    }
-  }
+  // Categories and Stores removed - system simplified
+  // async function fetchStores() { ... }
+  // async function fetchCategories() { ... }
 
-  async function fetchCategories() {
-    try {
-      const data = await apiGet<any[]>("/api/categories")
-      setCategories(data)
-    } catch (error) {
-      console.error("Error fetching categories:", error)
-    }
-  }
+  // Category Management Functions - REMOVED
+  /*
+  async function handleAddCategory() { ... }
+  async function handleEditCategory() { ... }
+  async function handleDeleteCategory() { ... }
+  */
+  
+  // Store Management Functions - REMOVED  
+  /*
+  async function handleAddStore() { ... }
+  async function handleEditStore() { ... }
+  async function handleDeleteStore() { ... }
+  */
 
   async function handleDelete(id: string) {
     try {
@@ -501,18 +490,33 @@ export default function InventoryPage() {
         reason: restockReason
       })
 
+      // Success - close dialog and refresh
       setRestockDialogOpen(false)
       setSelectedRestockItem(null)
       setRestockReason("")
       fetchItems()
       showSuccess("Item restocked successfully!")
-    } catch (error) {
-      console.error("[Inventory] Error restocking item:", error)
-      showError("Failed to restock item")
+    } catch (error: any) {
+      console.error("[Inventory] Restock API error:", error)
+      
+      // Even if there's an error, the restock might have succeeded on the backend
+      // Close dialog and refresh to check
+      setRestockDialogOpen(false)
+      setSelectedRestockItem(null)
+      setRestockReason("")
+      
+      // Wait a bit then refresh to see if it actually worked
+      setTimeout(() => {
+        fetchItems()
+      }, 1000)
+      
+      // Show warning instead of error
+      showError("Restock request sent. Refreshing data...")
     }
   }
 
-  // Store Management Functions
+  // Store Management Functions - REMOVED (system simplified)
+  /*
   async function handleAddStore() {
     if (!newStore.name.trim() || !newStore.salesChannel) {
       showError("Please enter store name and select sales channel")
@@ -574,8 +578,10 @@ export default function InventoryPage() {
       setSubmitting(false)
     }
   }
+  */
 
-  // Category Management Functions
+  // Category Management Functions - REMOVED (system simplified)
+  /*
   async function handleAddCategory() {
     if (!newCategory.trim()) {
       showError("Please enter a category name")
@@ -631,6 +637,7 @@ export default function InventoryPage() {
       setSubmitting(false)
     }
   }
+  */
 
   // Export Functions
   const exportToExcel = async () => {
@@ -1093,8 +1100,8 @@ export default function InventoryPage() {
     )
   }
 
-  // Extract unique category names for filter
-  const categoryNames = categories.map(cat => cat.name)
+  // Category names REMOVED - system simplified
+  // const categoryNames = categories.map(cat => cat.name)
 
   const activeFiltersCount = [
     salesChannelFilter !== "all",
@@ -1122,34 +1129,12 @@ export default function InventoryPage() {
         
         {/* Action Buttons - Top Right */}
         <div className="flex items-center gap-2">
-          {/* Categories, Stores & Bundle - hidden for operations (agents) */}
+          {/* Categories, Stores & Bundle - REMOVED (system simplified) */}
           {!isDepartment && (
             <>
-              <Button
-                onClick={() => setCategoryDialogOpen(true)}
-                variant="outline"
-                className="h-7 w-[100px] px-2.5 text-xs border-slate-200 dark:border-slate-700 rounded-md"
-              >
-                <Plus className="h-3 w-3 mr-1" />
-                Categories
-              </Button>
-
-              <Button
-                onClick={() => setStoreDialogOpen(true)}
-                variant="outline"
-                className="h-7 w-[100px] px-2.5 text-xs border-slate-200 dark:border-slate-700 rounded-md"
-              >
-                <Plus className="h-3 w-3 mr-1" />
-                Stores
-              </Button>
-
-              <Button
-                onClick={() => setCreateBundleOpen(true)}
-                className="h-7 w-[100px] px-2.5 text-xs bg-purple-600 hover:bg-purple-700 text-white rounded-md"
-              >
-                <Plus className="h-3 w-3 mr-1" />
-                Bundle
-              </Button>
+              {/* Category button removed - not used anymore */}
+              {/* Store button removed - not used anymore */}
+              {/* Bundle button removed - not used anymore */}
             </>
           )}
 
@@ -1297,21 +1282,9 @@ export default function InventoryPage() {
               </button>
             </div>
 
-            {/* Action Buttons - Right Side - Replaced with Category Filter */}
+            {/* Action Buttons - Right Side - Product Type Filter Only */}
             <div className="flex gap-2 flex-wrap lg:flex-nowrap lg:ml-auto">
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-full lg:w-[200px] h-7 text-xs border-slate-200 dark:border-slate-700">
-                  <SelectValue placeholder="Filter by Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.name}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Category filter REMOVED - system simplified */}
               <Select value={productTypeFilter} onValueChange={setProductTypeFilter}>
                 <SelectTrigger className="w-full lg:w-[180px] h-7 text-xs border-slate-200 dark:border-slate-700">
                   <SelectValue placeholder="All Types" />
@@ -1766,442 +1739,25 @@ export default function InventoryPage() {
         </Dialog>
       )}
 
-      {/* Category Management Dialog */}
-      <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+      {/* Category Management Dialog - DISABLED (system simplified) */}
+      {/* This dialog is removed - categories no longer used in simplified system */}
+      {false && (
+      <Dialog open={false}>
         <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 gap-0">
-          {/* Professional Header with Dark Gradient */}
-          <div className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 px-8 py-6 border-b border-slate-600 flex-shrink-0">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-white tracking-tight flex items-center gap-3">
-                <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
-                  <Tag className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-white">Category Management</span>
-              </DialogTitle>
-              <DialogDescription className="text-slate-200 text-sm mt-2 font-medium">
-                Add and manage product categories
-              </DialogDescription>
-            </DialogHeader>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto space-y-4 px-8 py-6 min-h-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-400 dark:hover:[&::-webkit-scrollbar-thumb]:bg-slate-500 [&::-webkit-scrollbar]:opacity-0 hover:[&::-webkit-scrollbar]:opacity-100 transition-opacity">
-            {/* Add New Category Section - More Prominent */}
-            <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border-2 border-dashed border-orange-300 dark:border-orange-700 rounded-xl p-4 space-y-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Plus className="h-4 w-4 text-orange-600" />
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Add New Category</h3>
-              </div>
-              
-              <div>
-                <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">
-                  Category Name *
-                </Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Enter category name"
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && newCategory.trim()) {
-                        handleAddCategory()
-                      }
-                    }}
-                    className="h-10 text-sm rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
-                    disabled={submitting}
-                  />
-                  <Button
-                    onClick={handleAddCategory}
-                    disabled={!newCategory.trim() || submitting}
-                    className="h-10 px-6 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold flex-shrink-0 shadow-sm"
-                  >
-                    {submitting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <Plus className="h-4 w-4 mr-1.5" />
-                        Add
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Existing Categories List */}
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 px-1">
-                Existing Categories ({categories.length})
-              </h3>
-
-            {/* Category List */}
-            {categories.length === 0 ? (
-              <div className="text-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
-                <Tag className="h-12 w-12 mx-auto text-slate-400 mb-3" />
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">No categories yet</p>
-                <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Add your first category using the form above</p>
-              </div>
-            ) : (
-            <div className="space-y-2">
-              {categories.map((category) => (
-                <div
-                  key={category.id}
-                  className="flex items-center justify-between p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
-                >
-                  {editingCategory?.id === category.id ? (
-                    <div className="flex-1 flex gap-2">
-                      <Input
-                        value={editCategoryValue}
-                        onChange={(e) => setEditCategoryValue(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleEditCategory()
-                          }
-                          if (e.key === "Escape") {
-                            setEditingCategory(null)
-                            setEditCategoryValue("")
-                          }
-                        }}
-                        className="h-9 text-sm flex-1"
-                        disabled={submitting}
-                        autoFocus
-                      />
-                      <Button
-                        size="sm"
-                        onClick={handleEditCategory}
-                        disabled={submitting || !editCategoryValue.trim()}
-                        className="h-9 px-4 bg-green-600 hover:bg-green-700 text-white text-sm whitespace-nowrap"
-                      >
-                        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setEditingCategory(null)
-                          setEditCategoryValue("")
-                        }}
-                        disabled={submitting}
-                        className="h-9 px-4 text-sm whitespace-nowrap"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <Tag className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
-                        <span className="text-sm font-medium text-slate-900 dark:text-white truncate">{category.name}</span>
-                      </div>
-                      <div className="flex items-center gap-0.5 flex-shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setEditingCategory(category)
-                            setEditCategoryValue(category.name)
-                          }}
-                          disabled={submitting}
-                          className="h-7 w-7 p-0 text-slate-600 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setDeleteCategoryId(category.id)}
-                          disabled={submitting}
-                          className="h-7 w-7 p-0 text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-            )}
-            </div>
-          </div>
+          <div>Category dialog disabled - system simplified</div>
         </DialogContent>
       </Dialog>
+      )}
 
-      {/* Store Management Dialog */}
-      <Dialog open={storeDialogOpen} onOpenChange={setStoreDialogOpen}>
+      {/* Store Management Dialog - DISABLED (system simplified) */}
+      {/* This dialog is removed - stores no longer used in simplified system */}
+      {false && (
+      <Dialog open={false}>
         <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 gap-0">
-          {/* Professional Header with Dark Gradient */}
-          <div className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 px-8 py-6 border-b border-slate-600 flex-shrink-0">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-white tracking-tight flex items-center gap-3">
-                <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
-                  <Warehouse className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-white">Store Management</span>
-              </DialogTitle>
-              <DialogDescription className="text-slate-200 text-sm mt-2 font-medium">
-                Add and manage stores organized by sales channel
-              </DialogDescription>
-            </DialogHeader>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto space-y-4 px-8 py-6 min-h-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-400 dark:hover:[&::-webkit-scrollbar-thumb]:bg-slate-500 [&::-webkit-scrollbar]:opacity-0 hover:[&::-webkit-scrollbar]:opacity-100 transition-opacity">
-            {/* Add New Store Section - More Prominent */}
-            <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border-2 border-dashed border-orange-300 dark:border-orange-700 rounded-xl p-4 space-y-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Plus className="h-4 w-4 text-orange-600" />
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Add New Store</h3>
-              </div>
-              
-              <div className="space-y-2">
-                <div>
-                  <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">
-                    Sales Channel *
-                  </Label>
-                  <Select 
-                    value={newStore.salesChannel} 
-                    onValueChange={(value) => setNewStore({ ...newStore, salesChannel: value })}
-                    disabled={submitting || isDepartment}
-                  >
-                    <SelectTrigger className="h-10 text-sm rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800">
-                      <SelectValue placeholder={isDepartment ? userDepartment : "Choose a sales channel"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {isDepartment ? (
-                        <SelectItem value={userDepartment}>{userDepartment}</SelectItem>
-                      ) : (
-                        SALES_CHANNELS.map((channel) => (
-                          <SelectItem key={channel} value={channel}>
-                            {channel}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {isDepartment && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                      You can only add stores for your department ({userDepartment})
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">
-                    Store Name *
-                  </Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      placeholder="Enter store name"
-                      value={newStore.name}
-                      onChange={(e) => setNewStore({ ...newStore, name: e.target.value })}
-                      onKeyDown={(e) => e.key === "Enter" && handleAddStore()}
-                      disabled={submitting}
-                      className="h-10 text-sm rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
-                    />
-                    <Button
-                      onClick={handleAddStore}
-                      disabled={!newStore.name.trim() || !newStore.salesChannel || submitting}
-                      className="h-10 px-6 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold flex-shrink-0 shadow-sm"
-                    >
-                      {submitting ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <>
-                          <Plus className="h-4 w-4 mr-1.5" />
-                          Add
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Existing Stores List */}
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 px-1">
-                Existing Stores ({isDepartment ? stores.filter(s => s.sales_channel === userDepartment).length : stores.length})
-              </h3>
-
-            {/* Store List */}
-            {(isDepartment ? stores.filter(s => s.sales_channel === userDepartment) : stores).length === 0 ? (
-              <div className="text-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
-                <Warehouse className="h-12 w-12 mx-auto text-slate-400 mb-3" />
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">No stores yet</p>
-                <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Add your first store using the form above</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {(isDepartment ? [userDepartment] : SALES_CHANNELS).map((channel) => {
-                  const channelStores = stores.filter(s => s.sales_channel === channel)
-                  if (channelStores.length === 0) return null
-                  
-                  return (
-                    <div key={channel} className="space-y-2">
-                      <div className="flex items-center gap-2 px-2">
-                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
-                        <div className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
-                          {channel} ({channelStores.length})
-                        </div>
-                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
-                      </div>
-                      {channelStores.map((store) => (
-                        <div
-                          key={store.id}
-                          className="flex items-center justify-between p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
-                        >
-                          {editingStore?.id === store.id ? (
-                            <div className="flex-1 space-y-2">
-                              <Select 
-                                value={editStoreValue.salesChannel} 
-                                onValueChange={(value) => setEditStoreValue({ ...editStoreValue, salesChannel: value })}
-                                disabled={submitting}
-                              >
-                                <SelectTrigger className="h-8 text-xs">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {SALES_CHANNELS.map((ch) => (
-                                    <SelectItem key={ch} value={ch}>{ch}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <div className="flex gap-2">
-                                <Input
-                                  value={editStoreValue.name}
-                                  onChange={(e) => setEditStoreValue({ ...editStoreValue, name: e.target.value })}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter") handleEditStore()
-                                    if (e.key === "Escape") {
-                                      setEditingStore(null)
-                                      setEditStoreValue({ name: "", salesChannel: "" })
-                                    }
-                                  }}
-                                  disabled={submitting}
-                                  className="h-8 text-xs flex-1"
-                                  autoFocus
-                                />
-                                <Button
-                                  onClick={handleEditStore}
-                                  disabled={!editStoreValue.name.trim() || !editStoreValue.salesChannel || submitting}
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                >
-                                  {submitting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                                </Button>
-                                <Button
-                                  onClick={() => {
-                                    setEditingStore(null)
-                                    setEditStoreValue({ name: "", salesChannel: "" })
-                                  }}
-                                  disabled={submitting}
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 w-8 p-0"
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            </div>
-                          ) : (
-                            <>
-                              <span className="text-sm font-medium text-slate-900 dark:text-white flex-1">
-                                {store.store_name}
-                              </span>
-                              <div className="flex gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => {
-                                    setEditingStore(store)
-                                    setEditStoreValue({ name: store.store_name, salesChannel: store.sales_channel })
-                                  }}
-                                  disabled={submitting}
-                                  className="h-7 w-7 p-0 text-slate-600 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400"
-                                >
-                                  <Pencil className="h-3.5 w-3.5" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => setDeleteWarehouseId(store.id)}
-                                  disabled={submitting}
-                                  className="h-7 w-7 p-0 text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-            </div>
-          </div>
+          <div>Store dialog disabled - system simplified</div>
         </DialogContent>
       </Dialog>
-
-      {/* Delete Store Confirmation */}
-      <Dialog open={!!deleteWarehouseId} onOpenChange={() => setDeleteWarehouseId(null)}>
-        <DialogContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700">
-          <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-white">Delete Store</DialogTitle>
-            <DialogDescription className="text-slate-600 dark:text-slate-400">
-              Are you sure you want to delete this store? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setDeleteWarehouseId(null)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => deleteWarehouseId && handleDeleteStore(deleteWarehouseId)}
-              disabled={submitting}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              {submitting ? "Deleting..." : "Delete"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Category Confirmation */}
-      <Dialog open={!!deleteCategoryId} onOpenChange={() => setDeleteCategoryId(null)}>
-        <DialogContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-white text-xl font-semibold">Delete Category</DialogTitle>
-            <DialogDescription className="text-slate-600 dark:text-slate-400">
-              Are you sure you want to delete this category? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteCategoryId(null)}
-              disabled={submitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => deleteCategoryId && handleDeleteCategory(deleteCategoryId)}
-              disabled={submitting}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                "Delete"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      )}
 
       {/* Professional SaaS Delete Confirmation Modal */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

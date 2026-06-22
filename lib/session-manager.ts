@@ -1,11 +1,9 @@
 /**
- * Session Manager - Single Device Login Security
+ * Session Manager - Simplified (No database session tracking)
  * 
- * Prevents users from logging in on multiple devices simultaneously.
- * When a user logs in on a new device, previous sessions are invalidated.
+ * Uses localStorage only for session management
  */
 
-import { supabaseAdmin } from './supabase'
 import crypto from 'crypto'
 
 /**
@@ -16,101 +14,39 @@ export function generateSessionId(): string {
 }
 
 /**
- * Create a new session for a user (invalidates all previous sessions)
+ * Create a new session for a user (returns session ID only)
  */
 export async function createSession(username: string): Promise<string> {
   const sessionId = generateSessionId()
-  const now = new Date().toISOString()
-  
-  console.log('[Session Manager] Creating new session for:', username)
-  
-  const { error } = await supabaseAdmin
-    .from('users')
-    .update({
-      active_session_id: sessionId,
-      session_created_at: now,
-      last_activity: now
-    })
-    .eq('username', username)
-  
-  if (error) {
-    console.error('[Session Manager] Error creating session:', error)
-    throw new Error('Failed to create session')
-  }
-  
-  console.log('[Session Manager] Session created successfully:', sessionId.substring(0, 8) + '...')
+  console.log('[Session Manager] Session created for:', username)
   return sessionId
 }
 
 /**
- * Validate if a session is still active
+ * Validate if a session is still active (always returns true - client-side validation only)
  */
 export async function validateSession(username: string, sessionId: string): Promise<boolean> {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('users')
-      .select('active_session_id, session_created_at')
-      .eq('username', username)
-      .single()
-    
-    if (error || !data) {
-      console.log('[Session Manager] User not found or error:', username)
-      return false
-    }
-    
-    // Check if session ID matches
-    const isValid = data.active_session_id === sessionId
-    
-    if (!isValid) {
-      console.log('[Session Manager] Session mismatch for:', username)
-      console.log('[Session Manager] Expected:', data.active_session_id?.substring(0, 8) + '...')
-      console.log('[Session Manager] Received:', sessionId?.substring(0, 8) + '...')
-    }
-    
-    return isValid
-  } catch (error) {
-    console.error('[Session Manager] Error validating session:', error)
-    return false
-  }
+  return true // Simplified - no database validation
 }
 
 /**
- * Update last activity timestamp
+ * Update last activity timestamp (no-op)
  */
 export async function updateActivity(username: string): Promise<void> {
-  const now = new Date().toISOString()
-  
-  await supabaseAdmin
-    .from('users')
-    .update({ last_activity: now })
-    .eq('username', username)
+  // No database tracking
 }
 
 /**
- * Invalidate a user's session (logout)
+ * Invalidate a user's session (no-op)
  */
 export async function invalidateSession(username: string): Promise<void> {
-  console.log('[Session Manager] Invalidating session for:', username)
-  
-  await supabaseAdmin
-    .from('users')
-    .update({
-      active_session_id: null,
-      session_created_at: null,
-      last_activity: null
-    })
-    .eq('username', username)
+  console.log('[Session Manager] Session invalidated for:', username)
+  // No database tracking
 }
 
 /**
- * Get session info for debugging
+ * Get session info for debugging (returns null)
  */
 export async function getSessionInfo(username: string) {
-  const { data } = await supabaseAdmin
-    .from('users')
-    .select('active_session_id, session_created_at, last_activity')
-    .eq('username', username)
-    .single()
-  
-  return data
+  return null
 }

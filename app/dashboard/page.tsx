@@ -288,87 +288,57 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Row 2: Order Status Metrics (4 cards) */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Cancelled (Packing Queue) */}
+      {/* Row 2: Sales Performance Metrics (3 cards) */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Total Sales Volume */}
         <Card className="p-5 border-0 shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-rose-600 shadow-lg shadow-rose-500/30 flex-shrink-0">
-              <PackageX className="h-5 w-5 text-white" />
+            <div className="p-2.5 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/30 flex-shrink-0">
+              <ShoppingCart className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">Cancelled (Packing)</p>
-              <p className="text-2xl font-bold text-rose-900 dark:text-rose-100 tabular-nums">
-                <AnimatedNumber value={stats?.cancelledPackingQueue || 0} duration={1500} />
+              <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Sales</p>
+              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
+                <AnimatedNumber value={stats?.totalSold || 0} duration={1500} />
               </p>
-              <p className="text-xs text-rose-600 dark:text-rose-500 flex items-center gap-1 mt-0.5">
-                Before packing
+              <p className="text-xs text-blue-600 dark:text-blue-500 flex items-center gap-1 mt-0.5">
+                Items sold
               </p>
             </div>
           </div>
         </Card>
 
-        {/* Cancelled (Track Orders) */}
+        {/* Average Order Value */}
         <Card className="p-5 border-0 shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-pink-600 shadow-lg shadow-pink-500/30 flex-shrink-0">
-              <PackageX className="h-5 w-5 text-white" />
+            <div className="p-2.5 rounded-xl bg-purple-600 shadow-lg shadow-purple-500/30 flex-shrink-0">
+              <TrendingUp className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-pink-700 dark:text-pink-400 uppercase tracking-wider">Cancelled (Tracked)</p>
-              <p className="text-2xl font-bold text-pink-900 dark:text-pink-100 tabular-nums">
-                <AnimatedNumber value={stats?.cancelledTrackOrders || 0} duration={1500} />
+              <p className="text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">Avg Order Value</p>
+              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 tabular-nums">
+                ₱<AnimatedNumber value={stats?.totalSold > 0 ? (stats?.totalRevenue || 0) / stats.totalSold : 0} duration={1500} decimals={0} />
               </p>
-              <p className="text-xs text-pink-600 dark:text-pink-500 flex items-center gap-1 mt-0.5">
-                After packing
+              <p className="text-xs text-purple-600 dark:text-purple-500 flex items-center gap-1 mt-0.5">
+                Per order
               </p>
             </div>
           </div>
         </Card>
 
-        {/* Total Delivered */}
+        {/* Total Orders */}
         <Card className="p-5 border-0 shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-600 shadow-lg shadow-emerald-500/30 flex-shrink-0">
-              <CheckCircle className="h-5 w-5 text-white" />
+            <div className="p-2.5 rounded-xl bg-cyan-600 shadow-lg shadow-cyan-500/30 flex-shrink-0">
+              <Package className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Total Delivered</p>
-              <p className="text-2xl font-bold text-emerald-900 dark:text-emerald-100 tabular-nums">
-                <AnimatedNumber value={stats?.totalDelivered || 0} duration={1500} />
+              <p className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">Total Orders</p>
+              <p className="text-2xl font-bold text-cyan-900 dark:text-cyan-100 tabular-nums">
+                <AnimatedNumber value={stats?.totalSold || 0} duration={1500} />
               </p>
-              <p className="text-xs text-emerald-600 dark:text-emerald-500 flex items-center gap-1 mt-0.5">
-                {stats?.deliveredPercentage !== undefined ? (
-                  <>
-                    <AnimatedNumber value={stats.deliveredPercentage} decimals={1} duration={1500} />% of total orders
-                  </>
-                ) : (
-                  "No deliveries yet"
-                )}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Total Returns */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-orange-600 shadow-lg shadow-orange-500/30 flex-shrink-0">
-              <RotateCcw className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-orange-700 dark:text-orange-400 uppercase tracking-wider">Total Returns</p>
-              <p className="text-2xl font-bold text-orange-900 dark:text-orange-100 tabular-nums">
-                <AnimatedNumber value={stats?.totalReturns || 0} duration={1500} />
-              </p>
-              <p className="text-xs text-orange-600 dark:text-orange-500 flex items-center gap-1 mt-0.5">
-                {stats?.returnRate !== undefined && stats.returnRate > 0 ? (
-                  <>
-                    <AnimatedNumber value={stats.returnRate} decimals={1} duration={1500} />% of delivered
-                  </>
-                ) : (
-                  "No returns yet"
-                )}
+              <p className="text-xs text-cyan-600 dark:text-cyan-500 flex items-center gap-1 mt-0.5">
+                Dispatched
               </p>
             </div>
           </div>
@@ -517,7 +487,7 @@ export default function DashboardPage() {
       />
 
       {/* Performance Analytics */}
-      <div className="grid gap-5 grid-cols-1 lg:grid-cols-3">
+      <div className="grid gap-5 grid-cols-1 lg:grid-cols-1">
         {/* Top Products Chart */}
         <Card className="overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
@@ -564,190 +534,6 @@ export default function DashboardPage() {
                 <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">No sales data yet</p>
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        {/* Top Categories Chart */}
-        <Card className="overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-1 bg-purple-500 rounded-full flex-shrink-0"></div>
-              <h3 className="text-slate-900 dark:text-white text-sm font-bold tracking-tight">Top Categories</h3>
-            </div>
-            <p className="text-slate-600 dark:text-slate-400 text-xs mt-0.5 ml-3">Units sold by category</p>
-          </div>
-          <CardContent className="pt-4 pb-2">
-            {stats?.topCategories && stats.topCategories.length > 0 ? (
-              <>
-                <ResponsiveContainer width="100%" height={Math.max(160, stats.topCategories.slice(0,5).length * 52)}>
-                  <BarChart
-                    data={stats.topCategories.slice(0, 5).map((c: any) => ({ ...c, name: c.name.length > 18 ? c.name.substring(0, 18) + '…' : c.name }))}
-                    layout="vertical"
-                    margin={{ left: 10, right: 10, top: 5, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.07} horizontal={false} vertical={true} />
-                    <XAxis type="number" fontSize={10} tickLine={false} axisLine={false} tick={{ fill: '#94a3b8' }} />
-                    <YAxis type="category" dataKey="name" fontSize={10} tickLine={false} axisLine={false} width={100} tick={{ fill: '#64748b' }} />
-                    <Tooltip
-                      content={<ChartTooltip formatter={(value) => [value.toString(), 'Units Sold']} />}
-                      cursor={{ fill: 'rgba(168,85,247,0.06)' }}
-                    />
-                    <Bar dataKey="sales" fill="#A855F7" radius={[0, 6, 6, 0]} maxBarSize={28} />
-                  </BarChart>
-                </ResponsiveContainer>
-                <div className="mt-2 space-y-1.5 border-t border-slate-100 dark:border-slate-800 pt-3">
-                  {stats.topCategories.slice(0, 5).map((c: any, i: number) => (
-                    <div key={c.name} className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs ${i === 0 ? 'bg-purple-50 dark:bg-purple-900/20' : 'bg-slate-50 dark:bg-slate-800/50'}`}>
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className={`h-5 w-5 rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 ${i === 0 ? 'bg-purple-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>{i + 1}</span>
-                        <span className="font-semibold text-slate-900 dark:text-white truncate">{c.name}</span>
-                      </div>
-                      <span className="font-bold text-slate-700 dark:text-slate-300 flex-shrink-0">{c.sales}x</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-16">
-                <BarChart2 className="h-10 w-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">No category data yet</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Return Count by Sales Channel */}
-        <Card className="overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-1 bg-red-500 rounded-full flex-shrink-0"></div>
-              <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Return Count by Sales Channel</h3>
-            </div>
-            <p className="text-xs mt-0.5 ml-3 text-slate-600 dark:text-slate-400">Returned orders per channel</p>
-          </div>
-          <CardContent className="pt-4 pb-2">
-            {stats?.cancelledOrdersByChannel && Object.keys(stats.cancelledOrdersByChannel).length > 0 ? (
-              <>
-                {(() => {
-                  const returnData = Object.entries(stats.cancelledOrdersByChannel).map(([name, data]) => ({
-                    name: name.length > 18 ? name.substring(0, 18) + '…' : name,
-                    count: typeof data === 'object' ? (data as any).count : data
-                  }))
-                  return (
-                    <>
-                      <ResponsiveContainer width="100%" height={Math.max(160, returnData.slice(0,5).length * 52)}>
-                        <BarChart data={returnData.slice(0, 5)} layout="vertical" margin={{ left: 10, right: 10, top: 5, bottom: 5 }}>
-                          <CartesianGrid strokeDasharray="3 3" opacity={0.07} horizontal={false} vertical={true} />
-                          <XAxis type="number" fontSize={10} tickLine={false} axisLine={false} tick={{ fill: '#94a3b8' }} />
-                          <YAxis type="category" dataKey="name" fontSize={10} tickLine={false} axisLine={false} width={100} tick={{ fill: '#64748b' }} />
-                          <Tooltip
-                            content={<ChartTooltip formatter={(value) => [value.toString(), 'Returns']} />}
-                            cursor={{ fill: 'rgba(239,68,68,0.06)' }}
-                          />
-                          <Bar dataKey="count" fill="#EF4444" radius={[0, 6, 6, 0]} maxBarSize={28} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                      <div className="mt-2 space-y-1.5 border-t border-slate-100 dark:border-slate-800 pt-3">
-                        {returnData.slice(0, 5).map((r, i) => (
-                          <div key={r.name} className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs ${i === 0 ? 'bg-red-50 dark:bg-red-900/20' : 'bg-slate-50 dark:bg-slate-800/50'}`}>
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className={`h-5 w-5 rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 ${i === 0 ? 'bg-red-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>{i + 1}</span>
-                              <span className="font-semibold text-slate-900 dark:text-white truncate">{r.name}</span>
-                            </div>
-                            <span className="font-bold text-red-600 dark:text-red-400 flex-shrink-0">{r.count} returns</span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )
-                })()}
-              </>
-            ) : (
-              <div className="text-center py-16">
-                <RotateCcw className="h-10 w-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">No returns yet</p>
-                <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Returned orders by channel will appear here</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Stock Distribution */}
-      <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
-        {/* Department Performance Chart */}
-        <Card className="overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-1 bg-blue-500 rounded-full flex-shrink-0"></div>
-              <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Department Performance</h3>
-            </div>
-            <p className="text-xs mt-0.5 ml-3 text-slate-600 dark:text-slate-400">Revenue by sales channel / department</p>
-          </div>
-          <CardContent className="pt-4 pb-2">
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={stocksCountByStoreData} margin={{ top: 10, bottom: 20, left: 0, right: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.07} horizontal={true} vertical={false} />
-                <XAxis dataKey="name" fontSize={10} tickLine={false} axisLine={false} interval={0} tick={{ fill: '#64748b' }} />
-                <YAxis fontSize={10} tickLine={false} axisLine={false} width={48} tickFormatter={(v) => `₱${(v/1000).toFixed(0)}k`} tick={{ fill: '#94a3b8' }} />
-                <Tooltip
-                  content={<ChartTooltip formatter={(value) => [`₱${formatNumber(value as number)}`, 'Revenue']} />}
-                  cursor={{ fill: 'rgba(59,130,246,0.06)' }}
-                />
-                <Bar dataKey="count" fill="#3B82F6" radius={[6, 6, 0, 0]} maxBarSize={52}>
-                  {stocksCountByStoreData.map((_: any, index: number) => (
-                    <cell key={`cell-${index}`} fill={index === 0 ? '#2563EB' : '#3B82F6'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="mt-2 space-y-1.5 border-t border-slate-100 dark:border-slate-800 pt-3">
-              {stocksCountByStoreData.slice(0, 4).map((d: any, i: number) => (
-                <div key={d.name} className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs ${i === 0 ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-slate-50 dark:bg-slate-800/50'}`}>
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className={`h-5 w-5 rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 ${i === 0 ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>{i + 1}</span>
-                    <span className="font-semibold text-slate-900 dark:text-white truncate">{d.name}</span>
-                  </div>
-                  <span className="font-bold text-slate-700 dark:text-slate-300 flex-shrink-0">₱{formatNumber(d.count)}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Store Performance Chart */}
-        <Card className="overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-1 bg-emerald-500 rounded-full flex-shrink-0"></div>
-              <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Store Performance</h3>
-            </div>
-            <p className="text-xs mt-0.5 ml-3 text-slate-600 dark:text-slate-400">Revenue by store / warehouse</p>
-          </div>
-          <CardContent className="pt-4 pb-2">
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={storePerformanceData} margin={{ top: 10, bottom: 20, left: 0, right: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.07} horizontal={true} vertical={false} />
-                <XAxis dataKey="name" fontSize={10} tickLine={false} axisLine={false} interval={0} tick={{ fill: '#64748b' }} />
-                <YAxis fontSize={10} tickLine={false} axisLine={false} width={48} tickFormatter={(v) => `₱${(v/1000).toFixed(0)}k`} tick={{ fill: '#94a3b8' }} />
-                <Tooltip
-                  content={<ChartTooltip formatter={(value) => [`₱${formatNumber(value as number)}`, 'Revenue']} />}
-                  cursor={{ fill: 'rgba(16,185,129,0.06)' }}
-                />
-                <Bar dataKey="count" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={52} />
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="mt-2 space-y-1.5 border-t border-slate-100 dark:border-slate-800 pt-3">
-              {storePerformanceData.slice(0, 4).map((d: any, i: number) => (
-                <div key={d.name} className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs ${i === 0 ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-slate-50 dark:bg-slate-800/50'}`}>
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className={`h-5 w-5 rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 ${i === 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>{i + 1}</span>
-                    <span className="font-semibold text-slate-900 dark:text-white truncate">{d.name}</span>
-                  </div>
-                  <span className="font-bold text-slate-700 dark:text-slate-300 flex-shrink-0">₱{formatNumber(d.count)}</span>
-                </div>
-              ))}
-            </div>
           </CardContent>
         </Card>
       </div>

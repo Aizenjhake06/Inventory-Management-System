@@ -32,53 +32,44 @@ const generateId = (prefix: string) => `${prefix}-${Date.now()}`
 // ==================== INVENTORY ====================
 
 export async function getInventoryItems(): Promise<InventoryItem[]> {
-  // Fetch from unified view that includes both inventory items AND bundles
+  // Fetch from inventory table (simplified - no categories, stores, or sales channels)
   const { data, error } = await supabaseAdmin
-    .from('products_unified')
+    .from('inventory')
     .select('*')
     .order('name', { ascending: true })
 
   if (error) {
-    console.error('Error fetching products (inventory + bundles):', error)
-    throw new Error(`Failed to fetch products: ${error.message}`)
+    console.error('Error fetching inventory items:', error)
+    throw new Error(`Failed to fetch inventory items: ${error.message}`)
   }
 
   return (data || []).map(item => ({
     id: item.id,
     name: item.name,
-    category: item.category,
-    store: item.store,
-    salesChannel: item.salesChannel,
     quantity: item.quantity,
-    totalCOGS: item.quantity * item.costPrice, // Calculate from quantity * cost
-    costPrice: item.costPrice,
-    sellingPrice: item.sellingPrice,
-    reorderLevel: item.reorderLevel,
-    lastUpdated: item.lastUpdated,
-    imageUrl: item.imageUrl || null,  // FIXED: Use camelCase to match view alias
-    productType: item.productType,  // ADDED: Include productType to detect bundles
+    costPrice: item.cost_price,
+    sellingPrice: item.selling_price,
+    reorderLevel: item.reorder_level || 10,
+    lastUpdated: item.last_updated,
+    imageUrl: item.image_url || null,
   }))
 }
 
 export async function addInventoryItem(item: Omit<InventoryItem, "id" | "lastUpdated">): Promise<InventoryItem> {
   const id = generateId('ITEM')
   const lastUpdated = formatTimestamp()
-  const totalCOGS = item.quantity * item.costPrice
 
-  const { data, error } = await supabaseAdmin
+  const { data, error} = await supabaseAdmin
     .from('inventory')
     .insert({
       id,
       name: item.name,
-      category: item.category,
-      store: item.store, // Changed from storage_room
-      sales_channel: item.salesChannel, // NEW
       quantity: item.quantity,
-      total_cogs: totalCOGS,
       cost_price: item.costPrice,
       selling_price: item.sellingPrice,
-      reorder_level: item.reorderLevel,
+      reorder_level: item.reorderLevel || 10,
       last_updated: lastUpdated,
+      image_url: (item as any).imageUrl || null,
     })
     .select()
     .single()
@@ -88,7 +79,16 @@ export async function addInventoryItem(item: Omit<InventoryItem, "id" | "lastUpd
     throw new Error(`Failed to add inventory item: ${error.message}`)
   }
 
-  return { ...item, id, lastUpdated, totalCOGS }
+  return {
+    id,
+    name: item.name,
+    quantity: item.quantity,
+    costPrice: item.costPrice,
+    sellingPrice: item.sellingPrice,
+    reorderLevel: item.reorderLevel || 10,
+    lastUpdated,
+    imageUrl: (item as any).imageUrl || null
+  } as InventoryItem
 }
 
 export async function updateInventoryItem(id: string, updates: Partial<InventoryItem>): Promise<void> {
@@ -100,29 +100,11 @@ export async function updateInventoryItem(id: string, updates: Partial<Inventory
   }
 
   if (updates.name !== undefined) updateData.name = updates.name
-  if (updates.category !== undefined) updateData.category = updates.category
-  if (updates.store !== undefined) updateData.store = updates.store // Changed from storageRoom
-  if (updates.salesChannel !== undefined) updateData.sales_channel = updates.salesChannel // NEW
   if (updates.quantity !== undefined) updateData.quantity = updates.quantity
   if (updates.costPrice !== undefined) updateData.cost_price = updates.costPrice
   if (updates.sellingPrice !== undefined) updateData.selling_price = updates.sellingPrice
   if (updates.reorderLevel !== undefined) updateData.reorder_level = updates.reorderLevel
   if (updates.imageUrl !== undefined) updateData.image_url = updates.imageUrl || null
-
-  // Recalculate totalCOGS if quantity or costPrice changed
-  if (updates.quantity !== undefined || updates.costPrice !== undefined) {
-    const { data: currentItem } = await supabaseAdmin
-      .from('inventory')
-      .select('quantity, cost_price')
-      .eq('id', id)
-      .single()
-
-    if (currentItem) {
-      const newQuantity = updates.quantity ?? currentItem.quantity
-      const newCostPrice = updates.costPrice ?? currentItem.cost_price
-      updateData.total_cogs = newQuantity * newCostPrice
-    }
-  }
 
   const { error } = await supabaseAdmin
     .from('inventory')

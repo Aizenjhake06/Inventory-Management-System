@@ -92,8 +92,23 @@ export async function apiPost<T = any>(url: string, data: any): Promise<T> {
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Request failed' }))
-    throw new Error(error.error || error.details || `HTTP ${response.status}`)
+    // Try to get detailed error message
+    let errorMessage = `HTTP ${response.status}`
+    try {
+      const error = await response.json()
+      errorMessage = error.error || error.details || error.message || errorMessage
+      console.error(`[API Client] POST ${url} failed:`, response.status, error)
+    } catch (parseError) {
+      // Response is not JSON, try to get text
+      try {
+        const errorText = await response.text()
+        console.error(`[API Client] POST ${url} failed with non-JSON response:`, errorText)
+        if (errorText) errorMessage = errorText
+      } catch {
+        console.error(`[API Client] POST ${url} failed and could not parse error`)
+      }
+    }
+    throw new Error(errorMessage)
   }
 
   return response.json()
@@ -109,8 +124,23 @@ export async function apiPut<T = any>(url: string, data: any): Promise<T> {
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Request failed' }))
-    throw new Error(error.error || error.details || `HTTP ${response.status}`)
+    // Try to get detailed error message
+    let errorMessage = `HTTP ${response.status}`
+    try {
+      const error = await response.json()
+      errorMessage = error.error || error.details || error.message || errorMessage
+      console.error(`[API Client] PUT ${url} failed:`, response.status, error)
+    } catch (parseError) {
+      // Response is not JSON, try to get text
+      try {
+        const errorText = await response.text()
+        console.error(`[API Client] PUT ${url} failed with non-JSON response:`, errorText)
+        if (errorText) errorMessage = errorText
+      } catch {
+        console.error(`[API Client] PUT ${url} failed and could not parse error`)
+      }
+    }
+    throw new Error(errorMessage)
   }
 
   return response.json()
