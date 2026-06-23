@@ -32,6 +32,7 @@ function emptyDashboardStats(): DashboardStats {
     totalTransactions: 0,
     salesOverTime: [],
     topProducts: [],
+    topReturns: [], // NEW
     recentTransactions: [],
     topCategories: [],
     totalCategories: 0,
@@ -478,10 +479,10 @@ export async function GET(request: Request) {
       .map(([name, revenue]) => ({ name, count: revenue as number }))
       .sort((a, b) => b.count - a.count)
 
-    // Return metrics from Track Orders (orders with parcel_status = 'RETURNED') (for KPI cards)
-    const returnedOrders = filteredOrdersForKPIs.filter(o => o.parcel_status === 'RETURNED')
-    const totalReturns = returnedOrders.reduce((sum, o) => sum + (o.qty || 0), 0)
-    const returnValue = returnedOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+    // Return metrics - Now using restocks table (Customer Return) instead of orders
+    const customerReturnsForKPI = restockHistory.filter(r => r.reason === 'Customer Return')
+    const totalReturns = customerReturnsForKPI.reduce((sum, r) => sum + (r.quantity || 0), 0)
+    const returnValue = customerReturnsForKPI.reduce((sum, r) => sum + (r.total_cost || 0), 0)
     
     // Calculate return rate based on total orders (not just active orders) (for KPI cards)
     const totalOrdersQuantity = filteredOrdersForKPIs.reduce((sum, o) => sum + (o.qty || 0), 0)
@@ -500,6 +501,18 @@ export async function GET(request: Request) {
     const recentRestocks = restockHistory
       .filter(r => r.reason !== 'supplier-return')
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 5)
+
+    // Top Returns - from restocks table where reason = 'Customer Return'
+    const customerReturns = restockHistory.filter(r => r.reason === 'Customer Return')
+    const returnsGrouped = customerReturns.reduce((acc: { [key: string]: number }, r) => {
+      const itemName = r.item_name || 'Unknown'
+      acc[itemName] = (acc[itemName] || 0) + (r.quantity_added || r.quantity || 0)
+      return acc
+    }, {})
+    const topReturns = Object.entries(returnsGrouped)
+      .map(([name, returns]) => ({ name, returns }))
+      .sort((a, b) => b.returns - a.returns)
       .slice(0, 5)
 
     // Cancelled orders metrics (for KPI cards)
@@ -587,16 +600,8 @@ export async function GET(request: Request) {
     // Update return rate calculation to use (returns / delivered * 100)
     const returnRateByDelivered = totalDelivered > 0 ? (totalReturns / totalDelivered) * 100 : 0
 
-    // Return Count by Sales Channel (for KPI cards)
-    const returnedOrdersByChannel = returnedOrders.reduce((acc: { [key: string]: { count: number; value: number } }, order) => {
-      const channel = order.sales_channel || 'Unknown'
-      if (!acc[channel]) {
-        acc[channel] = { count: 0, value: 0 }
-      }
-      acc[channel].count += 1 // Count orders
-      acc[channel].value += order.total || 0 // Sum total value
-      return acc
-    }, {})
+    // Return Count by Sales Channel - Not applicable for restocks, return empty
+    const returnedOrdersByChannel = {}
 
     // Average order value
     const averageOrderValue = financialMetrics.totalOrders > 0 
@@ -673,6 +678,7 @@ export async function GET(request: Request) {
       totalTransactions: allOrdersMapped.length, // ALL orders in Track Orders
       salesOverTime,
       topProducts,
+      topReturns, // NEW: Top 5 items with highest returns
       recentTransactions,
       topCategories,
       totalCategories,

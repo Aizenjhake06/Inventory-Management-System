@@ -136,6 +136,7 @@ export interface DashboardStats {
   totalTransactions: number
   salesOverTime: { date: string; purchases: number; sales: number; quantity: number }[]
   topProducts: { name: string; sales: number; revenue: number }[]
+  topReturns?: { name: string; returns: number }[] // NEW: Top 5 items with highest returns
   recentTransactions: Transaction[]
   topCategories: { name: string; sales: number }[]
   totalCategories: number

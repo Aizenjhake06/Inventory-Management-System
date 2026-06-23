@@ -288,8 +288,8 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Row 2: Sales Performance Metrics (3 cards) */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Row 2: Sales Performance Metrics (4 cards - added Returns) */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Sales Volume */}
         <Card className="p-5 border-0 shadow-lg">
           <div className="flex items-center gap-3">
@@ -339,6 +339,24 @@ export default function DashboardPage() {
               </p>
               <p className="text-xs text-cyan-600 dark:text-cyan-500 flex items-center gap-1 mt-0.5">
                 Dispatched
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Total Returns - NEW */}
+        <Card className="p-5 border-0 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-red-600 shadow-lg shadow-red-500/30 flex-shrink-0">
+              <RotateCcw className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-bold text-red-700 dark:text-red-400 uppercase tracking-wider">Total Returns</p>
+              <p className="text-2xl font-bold text-red-900 dark:text-red-100 tabular-nums">
+                <AnimatedNumber value={stats?.totalReturns || 0} duration={1500} />
+              </p>
+              <p className="text-xs text-red-600 dark:text-red-500 flex items-center gap-1 mt-0.5">
+                {stats?.returnRate !== undefined ? `${stats.returnRate.toFixed(1)}% return rate` : 'Customer returns'}
               </p>
             </div>
           </div>
@@ -487,7 +505,7 @@ export default function DashboardPage() {
       />
 
       {/* Performance Analytics */}
-      <div className="grid gap-5 grid-cols-1 lg:grid-cols-1">
+      <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
         {/* Top Products Chart */}
         <Card className="overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
@@ -532,6 +550,55 @@ export default function DashboardPage() {
               <div className="text-center py-16">
                 <TrendingUp className="h-10 w-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
                 <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">No sales data yet</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Returns - NEW SECTION */}
+        <Card className="overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-amber-500/10">
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-1 bg-red-500 rounded-full flex-shrink-0"></div>
+              <h3 className="text-slate-900 dark:text-white text-sm font-bold tracking-tight">Returns</h3>
+            </div>
+            <p className="text-slate-600 dark:text-slate-400 text-xs mt-0.5 ml-3">Top items with highest returns</p>
+          </div>
+          <CardContent className="pt-4 pb-2">
+            {stats?.topReturns && stats.topReturns.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={Math.max(160, stats.topReturns.slice(0,5).length * 52)}>
+                  <BarChart
+                    data={stats.topReturns.slice(0, 5).map((r: any) => ({ ...r, name: r.name.length > 18 ? r.name.substring(0, 18) + '…' : r.name }))}
+                    layout="vertical"
+                    margin={{ left: 10, right: 10, top: 5, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.07} horizontal={false} vertical={true} />
+                    <XAxis type="number" fontSize={10} tickLine={false} axisLine={false} tick={{ fill: '#94a3b8' }} />
+                    <YAxis type="category" dataKey="name" fontSize={10} tickLine={false} axisLine={false} width={100} tick={{ fill: '#64748b' }} />
+                    <Tooltip
+                      content={<ChartTooltip formatter={(value, name) => [value.toString(), 'Returns']} />}
+                      cursor={{ fill: 'rgba(239,68,68,0.06)' }}
+                    />
+                    <Bar dataKey="returns" fill="#EF4444" radius={[0, 6, 6, 0]} maxBarSize={28} />
+                  </BarChart>
+                </ResponsiveContainer>
+                <div className="mt-2 space-y-1.5 border-t border-slate-100 dark:border-slate-800 pt-3">
+                  {stats.topReturns.slice(0, 5).map((r: any, i: number) => (
+                    <div key={r.name} className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs ${i === 0 ? 'bg-red-50 dark:bg-red-900/20' : 'bg-slate-50 dark:bg-slate-800/50'}`}>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`h-5 w-5 rounded flex items-center justify-center text-[10px] font-black flex-shrink-0 ${i === 0 ? 'bg-red-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>{i + 1}</span>
+                        <span className="font-semibold text-slate-900 dark:text-white truncate">{r.name}</span>
+                      </div>
+                      <span className="font-bold text-red-600 dark:text-red-400 flex-shrink-0">{r.returns}x</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-16">
+                <RotateCcw className="h-10 w-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">No returns data yet</p>
               </div>
             )}
           </CardContent>
