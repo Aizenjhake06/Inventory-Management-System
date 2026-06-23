@@ -91,6 +91,7 @@ const getNavigation = (lowStockCount: number = 0, outOfStockCount: number = 0): 
     section: "System",
     items: [
       { name: "Activity Logs", href: "/dashboard/log", icon: FileText },
+      { name: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
   },
 ]
