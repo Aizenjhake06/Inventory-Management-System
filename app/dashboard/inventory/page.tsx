@@ -1341,43 +1341,37 @@ export default function InventoryPage() {
                       </th>
                       <th className={cn(
                         "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        !isDepartment ? "w-[20%]" : "w-[25%]"
+                        !isDepartment ? "w-[25%]" : "w-[30%]"
                       )}>
                         Product
                       </th>
                       <th className={cn(
                         "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        !isDepartment ? "w-[16%]" : "w-[15%]"
-                      )}>
-                        Category
-                      </th>
-                      <th className={cn(
-                        "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        !isDepartment ? "w-[9%]" : "w-[10%]"
+                        !isDepartment ? "w-[12%]" : "w-[15%]"
                       )}>
                         Status
                       </th>
                       <th className={cn(
                         "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        !isDepartment ? "w-[11%]" : "w-[15%]"
+                        !isDepartment ? "w-[15%]" : "w-[18%]"
                       )}>
                         Stock
                       </th>
                       {/* Hide Cost column for department agents (operations role) */}
                       {!isDepartment && (
-                        <th className="py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50 w-[10%]">
+                        <th className="py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50 w-[12%]">
                           Cost
                         </th>
                       )}
                       <th className={cn(
                         "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        !isDepartment ? "w-[10%]" : "w-[12%]"
+                        !isDepartment ? "w-[12%]" : "w-[15%]"
                       )}>
                         Price
                       </th>
                       <th className={cn(
                         "py-2.5 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50",
-                        isDepartment ? "w-[12%]" : "w-[8%]"
+                        isDepartment ? "w-[12%]" : "w-[10%]"
                       )}>
                         Margin
                       </th>
@@ -1452,21 +1446,6 @@ export default function InventoryPage() {
                                 </p>
                               </div>
                             </div>
-                          </td>
-
-                          {/* Category */}
-                          <td className="py-2 px-3">
-                            <span 
-                              className={cn(
-                                "text-xs block break-words",
-                                isSelected 
-                                  ? "text-blue-900 dark:text-blue-100 font-medium" 
-                                  : "text-slate-600 dark:text-slate-400"
-                              )}
-                              title={item.category}
-                            >
-                              {item.category}
-                            </span>
                           </td>
 
                           {/* Stock Status */}
