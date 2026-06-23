@@ -60,10 +60,9 @@ interface Account {
   id: string
   username: string
   password: string
-  role: 'admin' | 'operations' | 'packer' | 'tracker' | 'logistics-admin' | 'dept-manager'
-  assignedChannel?: string // Legacy field, no longer used
+  role: 'admin' | 'logistics-admin'
   displayName: string
-  profileImage?: string // Profile image URL
+  profileImage?: string
   createdAt: string
 }
 
@@ -110,9 +109,8 @@ export default function SettingsPage() {
     username: '',
     password: '',
     displayName: '',
-    role: 'operations' as 'admin' | 'operations' | 'packer' | 'tracker' | 'logistics-admin',
-    assignedChannel: '', // Legacy field, no longer used
-    profileImage: '' // Profile image URL
+    role: 'admin' as 'admin' | 'logistics-admin',
+    profileImage: ''
   })
 
   // Edit user form
@@ -121,11 +119,10 @@ export default function SettingsPage() {
     username: '',
     originalUsername: '', // Store original username for comparison
     displayName: '',
-    role: 'operations' as 'admin' | 'operations' | 'packer' | 'tracker' | 'logistics-admin',
-    assignedChannel: '', // Legacy field, no longer used
+    role: 'admin' as 'admin' | 'logistics-admin',
     newPassword: '',
     confirmPassword: '',
-    profileImage: '' // Profile image URL
+    profileImage: ''
   })
 
   // System settings
@@ -407,12 +404,6 @@ export default function SettingsPage() {
       return
     }
 
-    // Validate that Operations Staff has an assigned channel
-    if ((newUserForm.role === 'operations' || newUserForm.role === 'dept-manager') && !newUserForm.assignedChannel) {
-      toast.error('Please select a sales channel for Operations Staff')
-      return
-    }
-
     if (newUserForm.password.length < 6) {
       toast.error('Password must be at least 6 characters')
       return
@@ -424,7 +415,7 @@ export default function SettingsPage() {
         ...newUserForm
       })
       toast.success('User created successfully')
-      setNewUserForm({ username: '', password: '', displayName: '', role: 'operations', assignedChannel: '', profileImage: '' })
+      setNewUserForm({ username: '', password: '', displayName: '', role: 'admin', profileImage: '' })
       setShowNewUserForm(false)
       fetchAccounts()
     } catch (error: any) {
@@ -439,7 +430,6 @@ export default function SettingsPage() {
       originalUsername: account.username, // Store original
       displayName: account.displayName,
       role: account.role,
-      assignedChannel: account.assignedChannel || '',
       newPassword: '',
       confirmPassword: '',
       profileImage: account.profileImage || ''
@@ -488,7 +478,6 @@ export default function SettingsPage() {
         action: 'updateDisplayName',
         username: editUserForm.username,
         displayName: editUserForm.displayName,
-        assignedChannel: editUserForm.assignedChannel || null,
         profileImage: editUserForm.profileImage || null
       })
 
@@ -525,8 +514,7 @@ export default function SettingsPage() {
       username: '',
       originalUsername: '',
       displayName: '',
-      role: 'operations',
-      assignedChannel: '',
+      role: 'admin',
       newPassword: '',
       confirmPassword: '',
       profileImage: ''
@@ -1368,11 +1356,6 @@ export default function SettingsPage() {
                                     <div className="min-w-0">
                                       <div className="flex items-center gap-1.5 flex-wrap">
                                         <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">{account.displayName}</p>
-                                        {account.assignedChannel && (
-                                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-400 flex-shrink-0">
-                                            {account.assignedChannel}
-                                          </Badge>
-                                        )}
                                       </div>
                                       <p className="text-[10px] text-slate-500 dark:text-slate-400">@{account.username}</p>
                                     </div>
@@ -2029,39 +2012,14 @@ export default function SettingsPage() {
                 <select
                   id="modalRole"
                   value={newUserForm.role}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value as any, assignedChannel: '' })}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value as any })}
                   className="flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-background px-3 py-2 text-sm"
                 >
                   <option value="admin">Administrator</option>
-                  <option value="operations">Operations Staff (Agent)</option>
-                  <option value="dept-manager">Dept. Head</option>
-                  <option value="packer">Packer</option>
-                  <option value="tracker">Tracker</option>
                   <option value="logistics-admin">Logistics Admin</option>
                 </select>
               </div>
             </div>
-
-            {/* Sales Channel Dropdown - Show for Operations and Dept Manager */}
-            {(newUserForm.role === 'operations' || newUserForm.role === 'dept-manager') && (
-              <div className="space-y-2">
-                <Label htmlFor="modalChannel" className="text-sm font-medium">Assigned Department *</Label>
-                <select
-                  id="modalChannel"
-                  value={newUserForm.assignedChannel}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, assignedChannel: e.target.value })}
-                  className="flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-background px-3 py-2 text-sm"
-                >
-                  <option value="">Select department...</option>
-                  <option value="Shopee">Shopee</option>
-                  <option value="Lazada">Lazada</option>
-                  <option value="TikTok">TikTok</option>
-                  <option value="Facebook">Facebook</option>
-                  <option value="Physical Store">Physical Store</option>
-                </select>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Required for Operations Staff and Dept. Heads</p>
-              </div>
-            )}
 
             {/* Profile Image Upload */}
             <div className="space-y-2">
@@ -2083,7 +2041,7 @@ export default function SettingsPage() {
               variant="outline" 
               onClick={() => {
                 setShowNewUserForm(false)
-                setNewUserForm({ username: '', password: '', displayName: '', role: 'operations', assignedChannel: '', profileImage: '' })
+                setNewUserForm({ username: '', password: '', displayName: '', role: 'admin', profileImage: '' })
               }}
               className="h-10"
             >
