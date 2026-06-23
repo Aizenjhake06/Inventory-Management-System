@@ -660,7 +660,7 @@ export async function validateCredentials(username: string, password: string): P
   }
 }
 
-export async function updateAccount(username: string, updates: { password?: string; displayName?: string; email?: string; phone?: string; assignedChannel?: string; profileImage?: string }): Promise<void> {
+export async function updateAccount(username: string, updates: { password?: string; displayName?: string; email?: string; phone?: string; profileImage?: string }): Promise<void> {
   const updateData: any = {}
   
   // Hash password if being updated
@@ -672,7 +672,6 @@ export async function updateAccount(username: string, updates: { password?: stri
   if (updates.displayName !== undefined) updateData.display_name = updates.displayName
   if (updates.email !== undefined) updateData.email = updates.email
   if (updates.phone !== undefined) updateData.phone = updates.phone
-  if (updates.assignedChannel !== undefined) updateData.assigned_channel = updates.assignedChannel || null
   if (updates.profileImage !== undefined) updateData.profile_image = updates.profileImage || null
 
   console.log('[updateAccount] Updating user:', {
