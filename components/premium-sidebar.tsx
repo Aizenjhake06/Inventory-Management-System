@@ -17,6 +17,8 @@ import {
   X,
   Settings,
   BarChart2,
+  Briefcase,
+  PackageSearch,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useReducedMotion } from "@/hooks/use-accessibility"
@@ -79,6 +81,18 @@ const getNavigation = (lowStockCount: number = 0, outOfStockCount: number = 0): 
         badge: outOfStockCount > 0 ? outOfStockCount : undefined,
         badgeVariant: 'destructive'
       },
+    ],
+  },
+  {
+    section: "Business",
+    items: [
+      { name: "Business Contacts", href: "/dashboard/business-contacts", icon: Briefcase },
+    ],
+  },
+  {
+    section: "Operations",
+    items: [
+      { name: "Internal Usage", href: "/dashboard/internal-usage", icon: PackageSearch },
     ],
   },
   {

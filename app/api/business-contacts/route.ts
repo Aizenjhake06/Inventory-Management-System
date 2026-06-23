@@ -17,7 +17,7 @@ export const GET = withAuth(async (request, { user }) => {
   }
 })
 
-export const POST = withRoles(['admin', 'operations', 'logistics-admin'], async (request, { user }) => {
+export const POST = withRoles(['admin', 'logistics-admin'], async (request, { user }) => {
   try {
     const body = await request.json()
     

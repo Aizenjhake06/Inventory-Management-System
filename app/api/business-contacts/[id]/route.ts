@@ -3,7 +3,7 @@ import { updateBusinessContact, deleteBusinessContact } from "@/lib/business-con
 import { invalidateCachePattern } from "@/lib/cache"
 import { withAdmin, withRoles } from "@/lib/api-helpers"
 
-export const PUT = withRoles(['admin', 'operations', 'logistics-admin'], async (request, { params, user }) => {
+export const PUT = withRoles(['admin', 'logistics-admin'], async (request, { params, user }) => {
   try {
     const id = params.id
     const body = await request.json()

@@ -1,4 +1,4 @@
-import { supabase } from "./supabase"
+import { supabaseAdmin } from "./supabase"
 import type { BusinessContact } from "./types"
 
 const formatTimestamp = (date: Date) => {
@@ -17,7 +17,7 @@ const formatTimestamp = (date: Date) => {
 }
 
 export async function getBusinessContacts(): Promise<BusinessContact[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('business_contacts')
     .select('*')
     .order('created_at', { ascending: false })
@@ -46,7 +46,7 @@ export async function addBusinessContact(contact: Omit<BusinessContact, "id" | "
   const id = `CONTACT-${Date.now()}`
   const createdAt = formatTimestamp(new Date())
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('business_contacts')
     .insert({
       id,
@@ -59,7 +59,6 @@ export async function addBusinessContact(contact: Omit<BusinessContact, "id" | "
       phone: contact.phone || null,
       address: contact.address || null,
       notes: contact.notes || null,
-      created_at: createdAt,
     })
     .select()
     .single()
@@ -85,7 +84,7 @@ export async function updateBusinessContact(id: string, updates: Partial<Busines
   if (updates.address !== undefined) updateData.address = updates.address || null
   if (updates.notes !== undefined) updateData.notes = updates.notes || null
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('business_contacts')
     .update(updateData)
     .eq('id', id)
@@ -97,7 +96,7 @@ export async function updateBusinessContact(id: string, updates: Partial<Busines
 }
 
 export async function deleteBusinessContact(id: string): Promise<void> {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('business_contacts')
     .delete()
     .eq('id', id)

@@ -12,11 +12,11 @@ export const GET = withAuth(async (request, { user }) => {
     )
 
     // DEPARTMENT FILTERING: Operations users only see their department's stores
+    // Admin and logistics-admin see all stores
     let filteredStores = stores
     if (user.role === 'operations' && user.assignedChannel) {
       filteredStores = stores.filter(store => store.sales_channel === user.assignedChannel)
     }
-    // Admin sees all stores
 
     return NextResponse.json(filteredStores)
   } catch (error) {

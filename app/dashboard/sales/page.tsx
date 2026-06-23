@@ -21,12 +21,14 @@ interface SalesData {
     revenue: number;
     itemsSold: number;
     profit: number;
+    orders?: number;
   }>;
   monthlySales: Array<{
     month: string;
     revenue: number;
     itemsSold: number;
     profit: number;
+    orders?: number;
   }>;
 }
 

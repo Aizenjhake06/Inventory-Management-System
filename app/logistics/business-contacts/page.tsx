@@ -27,6 +27,7 @@ export default function BusinessContactsPage() {
   const [loading, setLoading] = useState(true)
   const currentUser = getCurrentUser()
   const isAdmin = currentUser?.role === 'admin'
+  const canEdit = currentUser?.role === 'admin' || currentUser?.role === 'logistics-admin'
   
   // Filter states
   const [search, setSearch] = useState("")
@@ -392,7 +393,7 @@ export default function BusinessContactsPage() {
                   <th className="py-3 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '18%' }}>Contact Info</th>
                   <th className="py-3 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '16%' }}>Address</th>
                   <th className="py-3 px-3 text-left text-[10px] font-bold text-white uppercase tracking-wider border-r border-slate-700/50" style={{ width: '14%' }}>Notes</th>
-                  {isAdmin && (
+                  {canEdit && (
                     <th className="py-3 px-3 text-center text-[10px] font-bold text-white uppercase tracking-wider" style={{ width: '8%' }}>Actions</th>
                   )}
                 </tr>
@@ -452,7 +453,7 @@ export default function BusinessContactsPage() {
                         {contact.notes || "-"}
                       </div>
                     </td>
-                    {isAdmin && (
+                    {canEdit && (
                       <td className="py-3 px-3">
                         <div className="flex items-center justify-center gap-2">
                           <TooltipProvider>
