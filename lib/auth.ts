@@ -34,11 +34,13 @@ export const ROLE_PERMISSIONS = {
     '/dashboard/pos',
     '/dashboard/inventory/**',
     '/dashboard/analytics',
-    '/dashboard/log'
+    '/dashboard/log',
+    '/dashboard/settings'
   ],
   'logistics-admin': [
     '/dashboard/pos',
-    '/dashboard/inventory/**'
+    '/dashboard/inventory/**',
+    '/dashboard/settings'
   ]
 } as const
 
