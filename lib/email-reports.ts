@@ -601,7 +601,6 @@ export async function generatePDFReport(data: ReportData): Promise<Buffer> {
   return Buffer.from(pdfBuffer)
   */
 }
-}
 
 /**
  * Generate email HTML template - Professional and concise
