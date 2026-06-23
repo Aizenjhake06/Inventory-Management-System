@@ -22,7 +22,7 @@ import type { ChartDataPoint, PeriodComparison, TimePeriod } from "@/components/
  * @returns Formatted chart data points
  */
 export function formatChartData(
-  salesOverTime: Array<{ date: string; sales: number; purchases: number; quantity: number }> | undefined,
+  salesOverTime: Array<{ date: string; sales: number; purchases: number; quantity: number; orders: number }> | undefined,
   timePeriod: TimePeriod
 ): ChartDataPoint[] {
   if (!salesOverTime || salesOverTime.length === 0) return []
@@ -59,7 +59,8 @@ export function formatChartData(
       date: displayDate,
       sales: item.sales,
       purchases: item.purchases,
-      quantity: item.quantity || 0
+      quantity: item.quantity || 0,
+      orders: item.orders || 0
     }
   })
 }

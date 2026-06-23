@@ -314,15 +314,31 @@ export default function SalesAnalyticsPage() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-slate-900 dark:text-white">Daily Sales Calendar</CardTitle>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')}>
-                  Previous
-                </Button>
-                <Badge variant="secondary">
-                  {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                </Badge>
-                <Button variant="outline" size="sm" onClick={() => navigateMonth('next')}>
-                  Next
-                </Button>
+                <select
+                  value={currentMonth.getMonth()}
+                  onChange={(e) => {
+                    const newMonth = new Date(currentMonth.getFullYear(), parseInt(e.target.value), 1)
+                    setCurrentMonth(newMonth)
+                  }}
+                  className="px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+                >
+                  {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month, index) => (
+                    <option key={index} value={index}>{month}</option>
+                  ))}
+                </select>
+                <select
+                  value={currentMonth.getFullYear()}
+                  onChange={(e) => {
+                    const newMonth = new Date(parseInt(e.target.value), currentMonth.getMonth(), 1)
+                    setCurrentMonth(newMonth)
+                  }}
+                  className="px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+                >
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const year = new Date().getFullYear() - 2 + i
+                    return <option key={year} value={year}>{year}</option>
+                  })}
+                </select>
               </div>
             </div>
           </CardHeader>
@@ -341,20 +357,9 @@ export default function SalesAnalyticsPage() {
                   const date = new Date(d.date);
                   const matches = date.getDate() === day && date.getMonth() === currentMonth.getMonth() && date.getFullYear() === currentMonth.getFullYear();
                   
-                  // Debug logging for Feb 16
-                  if (day === 16 && currentMonth.getMonth() === 1 && currentMonth.getFullYear() === 2026) {
-                    console.log('Feb 16 Debug:', {
-                      day,
-                      currentMonth: currentMonth.getMonth(),
-                      currentYear: currentMonth.getFullYear(),
-                      dateString: d.date,
-                      parsedDate: date,
-                      parsedDay: date.getDate(),
-                      parsedMonth: date.getMonth(),
-                      parsedYear: date.getFullYear(),
-                      matches,
-                      revenue: d.revenue
-                    });
+                  // Debug: Log data for days with sales
+                  if (matches && dayData) {
+                    console.log(`Day ${day} data:`, dayData);
                   }
                   
                   return matches;
@@ -371,8 +376,11 @@ export default function SalesAnalyticsPage() {
                         <div className="text-xs text-green-600 dark:text-green-400 font-medium">
                           {formatCurrency(dayData.revenue)}
                         </div>
+                        <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                          {dayData.orders || 0} {(dayData.orders || 0) === 1 ? 'order' : 'orders'}
+                        </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
-                          Sale
+                          {dayData.itemsSold} units
                         </div>
                       </>
                     ) : (

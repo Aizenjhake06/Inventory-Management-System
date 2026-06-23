@@ -26,7 +26,6 @@ export default function AnalyticsPage() {
   const [view, setView] = useState<'daily' | 'monthly'>('daily')
   const [chartType, setChartType] = useState<'bar' | 'line' | 'area'>('bar')
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [salesChannelFilter, setSalesChannelFilter] = useState("all")
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
 
@@ -57,9 +56,6 @@ export default function AnalyticsPage() {
         url.searchParams.append('startDate', startDateStr)
         url.searchParams.append('endDate', endDateStr)
         url.searchParams.append('view', view)
-        if (salesChannelFilter && salesChannelFilter !== 'all') {
-          url.searchParams.append('salesChannel', salesChannelFilter)
-        }
 
         const reportRes = await fetch(url)
 
@@ -80,7 +76,7 @@ export default function AnalyticsPage() {
     }
 
     fetchData()
-  }, [view, currentMonth, salesChannelFilter, startDate, endDate])
+  }, [view, currentMonth, startDate, endDate])
 
   const prevMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
@@ -139,7 +135,7 @@ export default function AnalyticsPage() {
     ? dailySales.reduce((max, d) => d.revenue > max.revenue ? d : max, dailySales[0])
     : null
 
-  const totalTransactions = dailySales.reduce((sum, d) => sum + (d.revenue > 0 ? 1 : 0), 0)
+  const totalTransactions = report?.totalOrders || 0
 
   const profitMarginTrend = report?.profitMargin && report.profitMargin > 0 ? 'up' : 'down'
 
@@ -238,22 +234,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Additional Insights - Professional Design */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Avg Daily Revenue */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/30 flex-shrink-0">
-              <Calendar className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Avg Daily Revenue</p>
-              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
-                {formatCurrency(avgDailyRevenue)}
-              </p>
-            </div>
-          </div>
-        </Card>
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Total Transactions */}
         <Card className="p-5 border-0 shadow-lg">
           <div className="flex items-center gap-3">
@@ -264,6 +245,39 @@ export default function AnalyticsPage() {
               <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Total Transactions</p>
               <p className="text-2xl font-bold text-emerald-900 dark:text-emerald-100 tabular-nums">
                 {formatNumber(totalTransactions)}
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Total Items */}
+        <Card className="p-5 border-0 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-500/30 flex-shrink-0">
+              <Package className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider">Total Items</p>
+              <p className="text-2xl font-bold text-indigo-900 dark:text-indigo-100 tabular-nums">
+                {formatNumber(report?.itemsSold || 0)}
+              </p>
+              <p className="text-xs text-indigo-600 dark:text-indigo-500 mt-0.5">
+                Units sold
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Avg Daily Revenue */}
+        <Card className="p-5 border-0 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/30 flex-shrink-0">
+              <Calendar className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Avg Daily Revenue</p>
+              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
+                {formatCurrency(avgDailyRevenue)}
               </p>
             </div>
           </div>
@@ -294,7 +308,7 @@ export default function AnalyticsPage() {
       <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-4">
           <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs text-slate-600 dark:text-slate-400 mb-1.5 block">View Type</Label>
                 <div className="flex gap-2">
@@ -319,23 +333,6 @@ export default function AnalyticsPage() {
                 </div>
               </div>
 
-              <div>
-                <Label className="text-xs text-slate-600 dark:text-slate-400 mb-1.5 block">Sales Channel</Label>
-                <Select value={salesChannelFilter} onValueChange={setSalesChannelFilter}>
-                  <SelectTrigger className="h-9 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20">
-                    <SelectValue placeholder="All Channels" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Channels</SelectItem>
-                    <SelectItem value="Shopee">Shopee</SelectItem>
-                    <SelectItem value="Lazada">Lazada</SelectItem>
-                    <SelectItem value="Facebook">Facebook</SelectItem>
-                    <SelectItem value="TikTok">TikTok</SelectItem>
-                    <SelectItem value="Physical Store">Physical Store</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               {view === 'monthly' && (
                 <div>
                   <Label className="text-xs text-slate-600 dark:text-slate-400 mb-1.5 block">Chart Type</Label>
@@ -351,20 +348,41 @@ export default function AnalyticsPage() {
                   </Select>
                 </div>
               )}
-            </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {view === 'daily' && (
-                <div className="flex items-center gap-2 flex-1">
-                  <Button variant="outline" size="sm" onClick={prevMonth} className="h-9 flex-shrink-0">
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white text-center flex-1">
-                    {monthYear}
-                  </span>
-                  <Button variant="outline" size="sm" onClick={nextMonth} className="h-9 flex-shrink-0">
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                <div>
+                  <Label className="text-xs text-slate-600 dark:text-slate-400 mb-1.5 block">Select Month & Year</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <select
+                      value={currentMonth.getMonth()}
+                      onChange={(e) => {
+                        const newMonth = new Date(currentMonth.getFullYear(), parseInt(e.target.value), 1)
+                        setCurrentMonth(newMonth)
+                        setLoading(true)
+                        setError(null)
+                      }}
+                      className="h-9 px-3 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                    >
+                      {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month, index) => (
+                        <option key={index} value={index}>{month}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={currentMonth.getFullYear()}
+                      onChange={(e) => {
+                        const newMonth = new Date(parseInt(e.target.value), currentMonth.getMonth(), 1)
+                        setCurrentMonth(newMonth)
+                        setLoading(true)
+                        setError(null)
+                      }}
+                      className="h-9 px-3 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                    >
+                      {Array.from({ length: 5 }, (_, i) => {
+                        const year = new Date().getFullYear() - 2 + i
+                        return <option key={year} value={year}>{year}</option>
+                      })}
+                    </select>
+                  </div>
                 </div>
               )}
             </div>
@@ -488,19 +506,35 @@ export default function AnalyticsPage() {
                       content={({ active, payload }) => {
                         if (!active || !payload || !payload.length) return null
                         const data = payload[0]
+                        const monthData = data.payload as { month: string; revenue: number; itemsSold: number; orders?: number }
+                        console.log('[Tooltip] Month data:', monthData) // Debug log
                         return (
-                          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-4 min-w-[200px]">
+                          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-4 min-w-[220px]">
                             <div className="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100 dark:border-slate-800">
                               <div className="w-3 h-3 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600"></div>
                               <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                                {new Date(data.payload.month + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                                {new Date(monthData.month + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                               </p>
                             </div>
-                            <div className="space-y-1">
-                              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Revenue</p>
-                              <p className="text-2xl font-bold bg-gradient-to-br from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
-                                {formatCurrency(data.value as number)}
-                              </p>
+                            <div className="space-y-3">
+                              <div>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">Total Orders</p>
+                                <p className="text-lg font-bold text-cyan-600 dark:text-cyan-400">
+                                  {formatNumber(monthData.orders || 0)}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">Total Quantity</p>
+                                <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                                  {formatNumber(monthData.itemsSold || 0)} units
+                                </p>
+                              </div>
+                              <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">Revenue</p>
+                                <p className="text-2xl font-bold bg-gradient-to-br from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+                                  {formatCurrency(monthData.revenue)}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         )

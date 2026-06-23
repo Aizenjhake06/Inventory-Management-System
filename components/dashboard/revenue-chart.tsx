@@ -45,6 +45,7 @@ export interface ChartDataPoint {
   sales: number
   purchases: number
   quantity: number
+  orders: number
 }
 
 export interface PeriodComparison {
@@ -161,6 +162,8 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 
   const sales = payload[0]?.value || 0
   const purchases = payload[1]?.value || 0
+  const quantity = payload[0]?.payload?.quantity || 0
+  const orders = payload[0]?.payload?.orders || 0
   
   // Note: "purchases" here represents restock costs, not COGS
   // Net profit calculation is simplified (doesn't account for actual COGS)
@@ -173,7 +176,32 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
         {label}
       </p>
 
-      {/* Sales */}
+      {/* Total Orders */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-cyan-500" />
+          <span className="text-xs text-slate-600 dark:text-slate-300">Total Orders</span>
+        </div>
+        <span className="text-sm font-bold text-cyan-600 dark:text-cyan-400">
+          {orders}
+        </span>
+      </div>
+
+      {/* Total Items */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-purple-500" />
+          <span className="text-xs text-slate-600 dark:text-slate-300">Total Items</span>
+        </div>
+        <span className="text-sm font-bold text-purple-600 dark:text-purple-400">
+          {quantity}
+        </span>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-slate-200 dark:border-slate-700 my-2" />
+
+      {/* Sales Revenue */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-blue-500" />
@@ -197,12 +225,10 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
         </div>
       )}
 
-      {/* Divider - only show if there are purchases */}
+      {/* Net (Sales - Restocks) - only show if there are purchases */}
       {purchases > 0 && (
         <>
           <div className="border-t border-slate-200 dark:border-slate-700 my-2" />
-
-          {/* Net (Sales - Restocks) */}
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
               Net (Sales - Restocks)

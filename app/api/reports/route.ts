@@ -121,19 +121,20 @@ export async function GET(request: NextRequest) {
     })
 
     // Generate daily sales data
-    const dailyMap = new Map<string, { revenue: number; itemsSold: number; profit: number }>()
+    const dailyMap = new Map<string, { revenue: number; itemsSold: number; profit: number; orders: number }>()
 
     activeOrders.forEach((order) => {
       const orderDate = new Date(order.date)
       const dateStr = orderDate.toISOString().split("T")[0]
       
       if (!dailyMap.has(dateStr)) {
-        dailyMap.set(dateStr, { revenue: 0, itemsSold: 0, profit: 0 })
+        dailyMap.set(dateStr, { revenue: 0, itemsSold: 0, profit: 0, orders: 0 })
       }
       const dayData = dailyMap.get(dateStr)!
       dayData.revenue += order.total
       dayData.itemsSold += order.qty
       dayData.profit += (order.total - order.cogs)
+      dayData.orders += 1 // Count each order
     })
 
     const dailySales: DailySales[] = Array.from(dailyMap.entries())
@@ -141,24 +142,27 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => a.date.localeCompare(b.date))
 
     // Generate monthly sales data
-    const monthlySalesMap = new Map<string, { revenue: number; itemsSold: number; profit: number }>()
+    const monthlySalesMap = new Map<string, { revenue: number; itemsSold: number; profit: number; orders: number }>()
 
     activeOrders.forEach((order) => {
       const orderDate = new Date(order.date)
       const month = orderDate.toISOString().slice(0, 7) // YYYY-MM
       
       if (!monthlySalesMap.has(month)) {
-        monthlySalesMap.set(month, { revenue: 0, itemsSold: 0, profit: 0 })
+        monthlySalesMap.set(month, { revenue: 0, itemsSold: 0, profit: 0, orders: 0 })
       }
       const monthData = monthlySalesMap.get(month)!
       monthData.revenue += order.total
       monthData.itemsSold += order.qty
       monthData.profit += (order.total - order.cogs)
+      monthData.orders += 1 // Count each order
     })
 
     const monthlySales: MonthlySales[] = Array.from(monthlySalesMap.entries())
       .map(([month, data]) => ({ month, ...data }))
       .sort((a, b) => a.month.localeCompare(b.month))
+
+    console.log('[Reports API] Sample monthly sales:', monthlySales[0])
 
     // Generate salesOverTime (for backward compatibility)
     const salesOverTime = dailySales.map(d => ({ date: d.date, revenue: d.revenue }))

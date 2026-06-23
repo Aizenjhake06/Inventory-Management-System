@@ -106,6 +106,9 @@ export async function GET(request: Request) {
         () => getRestocks(),
         60000 // 1 minute
       )
+      console.log('[Dashboard API] Restocks fetched:', restockHistory.length)
+      console.log('[Dashboard API] Sample restock:', restockHistory[0])
+      console.log('[Dashboard API] Restock reasons:', [...new Set(restockHistory.map(r => r.reason))])
     } catch (dbError) {
       console.error("[Dashboard API] Database error:", dbError)
       return NextResponse.json(emptyDashboardStats())
@@ -288,7 +291,7 @@ export async function GET(request: Request) {
     const lastMonthQuantity = lastMonthOrders.reduce((sum, o) => sum + o.qty, 0)
 
     // Sales over time based on period
-    let salesOverTime: { date: string; purchases: number; sales: number; quantity: number }[] = []
+    let salesOverTime: { date: string; purchases: number; sales: number; quantity: number; orders: number }[] = []
 
     if (period === 'ID') {
       // Today: Hourly data
@@ -307,8 +310,9 @@ export async function GET(request: Request) {
 
         const sales = hourOrders.reduce((sum, o) => sum + o.total, 0)
         const quantity = hourOrders.reduce((sum, o) => sum + o.qty, 0)
+        const orders = hourOrders.length
 
-        return { date: hourStr, purchases: 0, sales, quantity }
+        return { date: hourStr, purchases: 0, sales, quantity, orders }
       })
     } else if (period === '1W') {
       // Last 7 days
@@ -328,8 +332,9 @@ export async function GET(request: Request) {
 
         const sales = dayOrders.reduce((sum, o) => sum + o.total, 0)
         const quantity = dayOrders.reduce((sum, o) => sum + o.qty, 0)
+        const orders = dayOrders.length
 
-        return { date: dayStr, purchases: 0, sales, quantity }
+        return { date: dayStr, purchases: 0, sales, quantity, orders }
       })
     } else if (period === '1M') {
       // Current month
@@ -350,8 +355,9 @@ export async function GET(request: Request) {
 
         const sales = dayOrders.reduce((sum, o) => sum + o.total, 0)
         const quantity = dayOrders.reduce((sum, o) => sum + o.qty, 0)
+        const orders = dayOrders.length
 
-        return { date: dayStr, purchases: 0, sales, quantity }
+        return { date: dayStr, purchases: 0, sales, quantity, orders }
       })
     }
 
@@ -479,10 +485,16 @@ export async function GET(request: Request) {
       .map(([name, revenue]) => ({ name, count: revenue as number }))
       .sort((a, b) => b.count - a.count)
 
-    // Return metrics - Now using restocks table (Customer Return) instead of orders
-    const customerReturnsForKPI = restockHistory.filter(r => r.reason === 'Customer Return')
+    // Return metrics - Now using restocks table (customer-return) instead of orders
+    const customerReturnsForKPI = restockHistory.filter(r => r.reason === 'customer-return')
+    console.log('[Dashboard API] Customer Returns for KPI:', customerReturnsForKPI.length)
+    console.log('[Dashboard API] Sample KPI return:', customerReturnsForKPI[0])
+    
     const totalReturns = customerReturnsForKPI.reduce((sum, r) => sum + (r.quantity || 0), 0)
-    const returnValue = customerReturnsForKPI.reduce((sum, r) => sum + (r.total_cost || 0), 0)
+    const returnValue = customerReturnsForKPI.reduce((sum, r) => sum + (r.totalCost || 0), 0)
+    
+    console.log('[Dashboard API] Total Returns:', totalReturns)
+    console.log('[Dashboard API] Return Value:', returnValue)
     
     // Calculate return rate based on total orders (not just active orders) (for KPI cards)
     const totalOrdersQuantity = filteredOrdersForKPIs.reduce((sum, o) => sum + (o.qty || 0), 0)
@@ -503,17 +515,23 @@ export async function GET(request: Request) {
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(0, 5)
 
-    // Top Returns - from restocks table where reason = 'Customer Return'
-    const customerReturns = restockHistory.filter(r => r.reason === 'Customer Return')
+    // Top Returns - from restocks table where reason = 'customer-return'
+    const customerReturns = restockHistory.filter(r => r.reason === 'customer-return')
+    console.log('[Dashboard API] Customer Returns found:', customerReturns.length)
+    console.log('[Dashboard API] Sample customer return:', customerReturns[0])
+    
     const returnsGrouped = customerReturns.reduce((acc: { [key: string]: number }, r) => {
-      const itemName = r.item_name || 'Unknown'
-      acc[itemName] = (acc[itemName] || 0) + (r.quantity_added || r.quantity || 0)
+      const itemName = r.itemName || 'Unknown'
+      acc[itemName] = (acc[itemName] || 0) + (r.quantity || 0)
       return acc
     }, {})
+    console.log('[Dashboard API] Returns grouped:', returnsGrouped)
+    
     const topReturns = Object.entries(returnsGrouped)
       .map(([name, returns]) => ({ name, returns }))
       .sort((a, b) => b.returns - a.returns)
       .slice(0, 5)
+    console.log('[Dashboard API] Top Returns:', topReturns)
 
     // Cancelled orders metrics (for KPI cards)
     const cancelledOrders = filteredOrdersForKPIs.filter(o => o.parcel_status === 'CANCELLED')
@@ -675,7 +693,7 @@ export async function GET(request: Request) {
       totalCost: financialMetrics.totalCOGS,
       totalProfit: financialMetrics.totalProfit,
       profitMargin: financialMetrics.profitMargin,
-      totalTransactions: allOrdersMapped.length, // ALL orders in Track Orders
+      totalTransactions: activeOrdersKPI.length, // Active orders only (excludes CANCELLED, RETURNED, etc.)
       salesOverTime,
       topProducts,
       topReturns, // NEW: Top 5 items with highest returns

@@ -102,6 +102,7 @@ export interface DailySales {
   revenue: number
   itemsSold: number
   profit: number
+  orders?: number
 }
 
 export interface MonthlySales {
@@ -109,6 +110,7 @@ export interface MonthlySales {
   revenue: number
   itemsSold: number
   profit: number
+  orders?: number
 }
 
 export interface SalesReport {

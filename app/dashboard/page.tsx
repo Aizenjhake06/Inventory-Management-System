@@ -299,7 +299,7 @@ export default function DashboardPage() {
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Sales</p>
               <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
-                <AnimatedNumber value={stats?.totalSold || 0} duration={1500} />
+                <AnimatedNumber value={stats?.totalSales || 0} duration={1500} />
               </p>
               <p className="text-xs text-blue-600 dark:text-blue-500 flex items-center gap-1 mt-0.5">
                 Items sold
@@ -317,7 +317,7 @@ export default function DashboardPage() {
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">Avg Order Value</p>
               <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 tabular-nums">
-                ₱<AnimatedNumber value={stats?.totalSold > 0 ? (stats?.totalRevenue || 0) / stats.totalSold : 0} duration={1500} decimals={0} />
+                ₱<AnimatedNumber value={stats?.totalSales && stats.totalSales > 0 ? (stats?.totalRevenue || 0) / stats.totalSales : 0} duration={1500} decimals={0} />
               </p>
               <p className="text-xs text-purple-600 dark:text-purple-500 flex items-center gap-1 mt-0.5">
                 Per order
@@ -335,10 +335,10 @@ export default function DashboardPage() {
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">Total Orders</p>
               <p className="text-2xl font-bold text-cyan-900 dark:text-cyan-100 tabular-nums">
-                <AnimatedNumber value={stats?.totalSold || 0} duration={1500} />
+                <AnimatedNumber value={stats?.totalTransactions || 0} duration={1500} />
               </p>
               <p className="text-xs text-cyan-600 dark:text-cyan-500 flex items-center gap-1 mt-0.5">
-                Dispatched
+                Transactions
               </p>
             </div>
           </div>
