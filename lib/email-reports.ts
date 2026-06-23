@@ -157,10 +157,15 @@ export function generateExcelReport(data: ReportData): Buffer {
 }
 
 /**
- * Generate PDF report - EXACT FORMAT from Track Orders Page
- * Uses puppeteer directly for browser-identical rendering
+ * Generate PDF report - DISABLED (requires puppeteer)
+ * COMMENTED OUT: Puppeteer is not installed to reduce deployment size
+ * To enable: npm install puppeteer and uncomment this function
  */
 export async function generatePDFReport(data: ReportData): Promise<Buffer> {
+  // PDF generation temporarily disabled - puppeteer not installed
+  throw new Error('PDF generation is currently disabled. Use Excel export instead.')
+  
+  /* COMMENTED OUT - REQUIRES PUPPETEER
   const puppeteer = require('puppeteer')
   
   const totalQuantity = data.orders.reduce((sum, order) => sum + order.quantity, 0)
@@ -593,8 +598,9 @@ export async function generatePDFReport(data: ReportData): Promise<Buffer> {
   })
   
   await browser.close()
-  
   return Buffer.from(pdfBuffer)
+  */
+}
 }
 
 /**
