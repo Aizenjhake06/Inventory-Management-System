@@ -303,26 +303,22 @@ export default function InternalUsagePage() {
   }
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden pt-2 pb-12">
+    <div className="max-w-[1400px] mx-auto py-5 space-y-6">
       {/* Page Header - Enterprise Premium */}
-      <div className="mb-8">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl font-bold gradient-text mb-2 tracking-tight">
-              Internal Usage Management
-            </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Track demo displays, internal consumption, and warehouse transfers with real-time cost analytics
-            </p>
-          </div>
-          <Button 
-            onClick={openDispatchModal}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 rounded-full px-6 h-11"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            <span className="text-sm font-semibold">Dispatch Items</span>
-          </Button>
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold gradient-text">Internal Usage Management</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            Track demo displays, internal consumption, and warehouse transfers with real-time cost analytics
+          </p>
         </div>
+        <Button 
+          onClick={openDispatchModal}
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 rounded-full px-6 h-11"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          <span className="text-sm font-semibold">Dispatch Items</span>
+        </Button>
       </div>
 
       {/* Tabs - Enterprise Design */}

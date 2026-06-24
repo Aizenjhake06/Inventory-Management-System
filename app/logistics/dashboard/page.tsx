@@ -261,28 +261,87 @@ export default function LogisticsAdminDashboard() {
           </div>
         </div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { label: 'Packing Queue',         value: filteredQueue.length,         sub: filteredQueue.length === 0 ? 'All caught up' : `${filteredQueue.length} awaiting`,     icon: Package,    from: 'from-orange-500', to: 'to-amber-500',  bg: 'bg-orange-50 dark:bg-orange-900/20',   ic: 'text-orange-600 dark:text-orange-400',   ring: 'ring-orange-200 dark:ring-orange-800' },
-            { label: 'Packed (Period)',        value: packedInPeriod.length,        sub: `${packedInPeriod.length} completed`,                                                   icon: PackageCheck,from: 'from-emerald-500',to: 'to-green-500',  bg: 'bg-emerald-50 dark:bg-emerald-900/20', ic: 'text-emerald-600 dark:text-emerald-400', ring: 'ring-emerald-200 dark:ring-emerald-800' },
-            { label: 'Cancelled (Packing)',   value: cancelledQueueCount,          sub: cancelledQueueCount === 0 ? 'No cancellations' : `${cancelledQueueCount} cancelled`,    icon: XCircle,    from: 'from-rose-500',   to: 'to-red-500',    bg: 'bg-rose-50 dark:bg-rose-900/20',       ic: 'text-rose-600 dark:text-rose-400',       ring: 'ring-rose-200 dark:ring-rose-800' },
-          ].map(s => (
-            <Card key={s.label} className="border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={cn('p-2.5 rounded-xl ring-1', s.bg, s.ring)}>
-                    <s.icon className={cn('h-5 w-5', s.ic)} />
-                  </div>
-                  <span className={cn('text-3xl font-bold bg-gradient-to-br bg-clip-text text-transparent', s.from, s.to)}>
-                    <AnimatedNumber value={s.value} />
-                  </span>
+        {/* KPI CARDS - 5 Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {/* Total Items */}
+          <Card className="border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div className={cn('p-2.5 rounded-xl ring-1 bg-indigo-50 dark:bg-indigo-900/20 ring-indigo-200 dark:ring-indigo-800')}>
+                  <Package className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{s.label}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{s.sub}</p>
-              </CardContent>
-            </Card>
-          ))}
+                <span className="text-3xl font-bold bg-gradient-to-br from-indigo-600 to-indigo-700 bg-clip-text text-transparent">
+                  <AnimatedNumber value={0} />
+                </span>
+              </div>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Total Items</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Product count</p>
+            </CardContent>
+          </Card>
+
+          {/* Total Quantity */}
+          <Card className="border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div className={cn('p-2.5 rounded-xl ring-1 bg-green-50 dark:bg-green-900/20 ring-green-200 dark:ring-green-800')}>
+                  <PackageCheck className="h-5 w-5 text-green-600 dark:text-green-400" />
+                </div>
+                <span className="text-3xl font-bold bg-gradient-to-br from-green-600 to-green-700 bg-clip-text text-transparent">
+                  <AnimatedNumber value={0} />
+                </span>
+              </div>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Total Quantity</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Stock units</p>
+            </CardContent>
+          </Card>
+
+          {/* Total Orders */}
+          <Card className="border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div className={cn('p-2.5 rounded-xl ring-1 bg-blue-50 dark:bg-blue-900/20 ring-blue-200 dark:ring-blue-800')}>
+                  <Truck className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <span className="text-3xl font-bold bg-gradient-to-br from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                  <AnimatedNumber value={totalOrders} />
+                </span>
+              </div>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Total Orders</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tracked orders</p>
+            </CardContent>
+          </Card>
+
+          {/* Total Sales */}
+          <Card className="border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div className={cn('p-2.5 rounded-xl ring-1 bg-emerald-50 dark:bg-emerald-900/20 ring-emerald-200 dark:ring-emerald-800')}>
+                  <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <span className="text-2xl font-bold bg-gradient-to-br from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+                  ₱<AnimatedNumber value={Math.round(filteredTracked.reduce((sum, o) => sum + o.totalAmount, 0))} />
+                </span>
+              </div>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Total Sales</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Revenue</p>
+            </CardContent>
+          </Card>
+
+          {/* Total Returns (Quantity) */}
+          <Card className="border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div className={cn('p-2.5 rounded-xl ring-1 bg-amber-50 dark:bg-amber-900/20 ring-amber-200 dark:ring-amber-800')}>
+                  <RotateCcw className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <span className="text-3xl font-bold bg-gradient-to-br from-amber-600 to-amber-700 bg-clip-text text-transparent">
+                  <AnimatedNumber value={statusCounts['RETURNED'] || 0} />
+                </span>
+              </div>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Total Returns</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Return quantity</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* PARCEL STATUS AREA CHART */}

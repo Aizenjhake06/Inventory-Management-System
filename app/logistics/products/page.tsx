@@ -107,9 +107,9 @@ export default function LogisticsProductsPage() {
   }
 
   const regularItems = items.filter(i => (i as any).productType !== 'bundle')
-  const inStockCount = regularItems.filter(i => i.quantity > i.reorderLevel).length
-  const lowStockCount = regularItems.filter(i => i.quantity > 0 && i.quantity <= i.reorderLevel).length
-  const outOfStockCount = regularItems.filter(i => i.quantity === 0).length
+  const totalQuantity = regularItems.reduce((sum, i) => sum + i.quantity, 0)
+  const totalCOGS = regularItems.reduce((sum, i) => sum + (i.costPrice * i.quantity), 0)
+  const totalValue = regularItems.reduce((sum, i) => sum + (i.sellingPrice * i.quantity), 0)
   const categories = Array.from(new Set(regularItems.map(i => i.category).filter(cat => cat && cat.trim()))).sort()
 
   const handleEdit = (item: InventoryItem) => {
@@ -223,34 +223,34 @@ export default function LogisticsProductsPage() {
                 </p>
               </div>
             </div>
-            {/* In Stock */}
+            {/* Total Quantity */}
             <div className="relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-700">
               <div className="relative">
                 <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30 inline-block mb-2">
                   <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
-                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">In Stock</p>
-                <p className="text-2xl font-bold bg-gradient-to-br from-green-600 to-green-700 bg-clip-text text-transparent tabular-nums">{formatNumber(inStockCount)}</p>
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Total Quantity</p>
+                <p className="text-2xl font-bold bg-gradient-to-br from-green-600 to-green-700 bg-clip-text text-transparent tabular-nums">{formatNumber(totalQuantity)}</p>
               </div>
             </div>
-            {/* Low Stock */}
+            {/* Total COGS */}
             <div className="relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-700">
               <div className="relative">
                 <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 inline-block mb-2">
                   <Package className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 </div>
-                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Low Stock</p>
-                <p className="text-2xl font-bold bg-gradient-to-br from-amber-600 to-amber-700 bg-clip-text text-transparent tabular-nums">{formatNumber(lowStockCount)}</p>
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Total COGS</p>
+                <p className="text-2xl font-bold bg-gradient-to-br from-amber-600 to-amber-700 bg-clip-text text-transparent tabular-nums">{formatCurrency(totalCOGS)}</p>
               </div>
             </div>
-            {/* Out of Stock */}
+            {/* Total Value */}
             <div className="relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 p-4 rounded-xl bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-700">
               <div className="relative">
-                <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 inline-block mb-2">
-                  <Package className="h-4 w-4 text-red-600 dark:text-red-400" />
+                <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 inline-block mb-2">
+                  <Package className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
-                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Out of Stock</p>
-                <p className="text-2xl font-bold bg-gradient-to-br from-red-600 to-red-700 bg-clip-text text-transparent tabular-nums">{formatNumber(outOfStockCount)}</p>
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Total Value</p>
+                <p className="text-2xl font-bold bg-gradient-to-br from-blue-600 to-blue-700 bg-clip-text text-transparent tabular-nums">{formatCurrency(totalValue)}</p>
               </div>
             </div>
           </div>
@@ -270,27 +270,6 @@ export default function LogisticsProductsPage() {
                 className="pl-9 h-10 border-slate-200 dark:border-slate-700"
               />
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-10 w-[180px] bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map(cat => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={productTypeFilter} onValueChange={setProductTypeFilter}>
-              <SelectTrigger className="h-10 w-[170px] bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="single">Single Product</SelectItem>
-                <SelectItem value="bundle">Bundle</SelectItem>
-              </SelectContent>
-            </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="h-10 w-[160px] bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                 <SelectValue placeholder="All Status" />

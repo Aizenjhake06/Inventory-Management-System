@@ -83,17 +83,20 @@ export function CleanSaaSSidebar({
         <div className="h-16 flex items-center justify-between px-4 border-b border-[#E5E7EB]">
           {!collapsed && (
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SS</span>
-              </div>
-              <span className="font-semibold text-slate-900">StockSync</span>
+              <img 
+                src="/wihilogo.png" 
+                alt="WIHI Logo" 
+                className="h-11 w-auto object-contain"
+              />
             </Link>
           )}
           {collapsed && (
             <Link href="/dashboard" className="flex items-center justify-center w-full">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SS</span>
-              </div>
+              <img 
+                src="/wihilogo.png" 
+                alt="WIHI Logo" 
+                className="h-11 w-auto object-contain"
+              />
             </Link>
           )}
           

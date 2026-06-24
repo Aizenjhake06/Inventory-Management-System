@@ -182,186 +182,236 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Redesigned KPI Cards - 2 Rows Only */}
+      {/* Redesigned KPI Cards */}
       
-      {/* Row 1: Financial Metrics (4 cards) */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Sold */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/30 flex-shrink-0">
-              <ShoppingCart className="h-5 w-5 text-white" strokeWidth={2.5} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Sold</p>
-              <div className="flex items-center gap-1">
-                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
-                  <AnimatedNumber value={stats?.totalSales || 0} duration={1500} />
-                </p>
-                <ComparisonBadge pct={salesChange} />
+      {/* Conditional Layout: Admin (2 rows) vs Logistics (1 row) */}
+      {currentUser?.role === 'logistics-admin' ? (
+        /* Logistics Admin: 1 Row with 3 Cards */
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Total Sold */}
+          <Card className="p-5 border-0 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/30 flex-shrink-0">
+                <ShoppingCart className="h-5 w-5 text-white" strokeWidth={2.5} />
               </div>
-              <p className="text-xs text-blue-600 dark:text-blue-500 flex items-center gap-1 mt-0.5">
-                {stats?.itemsSoldToday !== undefined && stats.itemsSoldToday > 0
-                  ? `${stats.itemsSoldToday} units today`
-                  : 'All-time quantity'}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Total Revenue */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-green-600 shadow-lg shadow-green-500/30 flex-shrink-0">
-              <TrendingUp className="h-5 w-5 text-white" strokeWidth={2.5} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-green-700 dark:text-green-400 uppercase tracking-wider">Total Revenue</p>
-              <div className="flex items-center gap-1">
-                <p className="text-2xl font-bold text-green-900 dark:text-green-100 tabular-nums">
-                  ₱<AnimatedNumber value={stats?.totalRevenue || 0} duration={1500} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Sold</p>
+                <div className="flex items-center gap-1">
+                  <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
+                    <AnimatedNumber value={stats?.totalSales || 0} duration={1500} />
+                  </p>
+                  <ComparisonBadge pct={salesChange} />
+                </div>
+                <p className="text-xs text-blue-600 dark:text-blue-500 flex items-center gap-1 mt-0.5">
+                  {stats?.itemsSoldToday !== undefined && stats.itemsSoldToday > 0
+                    ? `${stats.itemsSoldToday} units today`
+                    : 'All-time quantity'}
                 </p>
-                {!startDate && !endDate && <ComparisonBadge pct={revenueChange} />}
               </div>
-              <p className="text-xs text-green-600 dark:text-green-500 flex items-center gap-1 mt-0.5">
-                {startDate || endDate ? (
-                  stats?.totalRevenue && stats.totalRevenue > 0 ? (
-                    <><ArrowUpRight className="h-3 w-3" />Filtered period</>
-                  ) : "No sales in period"
-                ) : (
-                  stats?.revenueToday !== undefined && stats.revenueToday > 0 ? (
-                    <><ArrowUpRight className="h-3 w-3" />₱{formatNumber(stats.revenueToday)} today</>
-                  ) : "No sales today yet"
-                )}
-              </p>
             </div>
-          </div>
-        </Card>
+          </Card>
 
-        {/* Gross Profit */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-600 shadow-lg shadow-purple-500/30 flex-shrink-0">
-              <DollarSign className="h-5 w-5 text-white" />
+          {/* Total Orders */}
+          <Card className="p-5 border-0 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-cyan-600 shadow-lg shadow-cyan-500/30 flex-shrink-0">
+                <Package className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">Total Orders</p>
+                <p className="text-2xl font-bold text-cyan-900 dark:text-cyan-100 tabular-nums">
+                  <AnimatedNumber value={stats?.totalTransactions || 0} duration={1500} />
+                </p>
+                <p className="text-xs text-cyan-600 dark:text-cyan-500 flex items-center gap-1 mt-0.5">
+                  Transactions
+                </p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">Gross Profit</p>
-              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 tabular-nums">
-                ₱<AnimatedNumber value={netProfit} duration={1500} />
-              </p>
-              <p className="text-xs text-purple-600 dark:text-purple-500 flex items-center gap-1 mt-0.5">
-                {stats?.returnValue !== undefined && stats.returnValue > 0 ? (
-                  <>
-                    <ArrowDownRight className="h-3 w-3" />
-                    ₱{formatNumber(stats.returnValue)} returns
-                  </>
-                ) : (
-                  "No returns"
-                )}
-              </p>
-            </div>
-          </div>
-        </Card>
+          </Card>
 
-        {/* Profit Margin */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-600 shadow-lg shadow-amber-500/30 flex-shrink-0">
-              <Percent className="h-5 w-5 text-white" />
+          {/* Total Returns */}
+          <Card className="p-5 border-0 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-red-600 shadow-lg shadow-red-500/30 flex-shrink-0">
+                <RotateCcw className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-red-700 dark:text-red-400 uppercase tracking-wider">Total Returns</p>
+                <p className="text-2xl font-bold text-red-900 dark:text-red-100 tabular-nums">
+                  <AnimatedNumber value={stats?.totalReturns || 0} duration={1500} />
+                </p>
+                <p className="text-xs text-red-600 dark:text-red-500 flex items-center gap-1 mt-0.5">
+                  {stats?.returnRate !== undefined ? `${stats.returnRate.toFixed(1)}% return rate` : 'Customer returns'}
+                </p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Profit Margin</p>
-              <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 tabular-nums">
-                <AnimatedNumber value={stats?.profitMargin || 0} decimals={1} duration={1500} />%
-              </p>
-              <p className="text-xs text-amber-600 dark:text-amber-500 flex items-center gap-1 mt-0.5">
-                {(stats?.profitMargin || 0) >= 30 ? (
-                  "🏆 Excellent!"
-                ) : (stats?.profitMargin || 0) >= 15 ? (
-                  "✓ Good"
-                ) : (
-                  "⚠ Improve"
-                )}
-              </p>
-            </div>
-          </div>
-        </Card>
-      </div>
+          </Card>
+        </div>
+      ) : (
+        /* Admin: 2 Rows (Row 1: 4 cards, Row 2: 3 cards) */
+        <>
+          {/* Row 1: Financial Metrics (4 cards) */}
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Total Sold */}
+            <Card className="p-5 border-0 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/30 flex-shrink-0">
+                  <ShoppingCart className="h-5 w-5 text-white" strokeWidth={2.5} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Sold</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
+                      <AnimatedNumber value={stats?.totalSales || 0} duration={1500} />
+                    </p>
+                    <ComparisonBadge pct={salesChange} />
+                  </div>
+                  <p className="text-xs text-blue-600 dark:text-blue-500 flex items-center gap-1 mt-0.5">
+                    {stats?.itemsSoldToday !== undefined && stats.itemsSoldToday > 0
+                      ? `${stats.itemsSoldToday} units today`
+                      : 'All-time quantity'}
+                  </p>
+                </div>
+              </div>
+            </Card>
 
-      {/* Row 2: Sales Performance Metrics (4 cards - added Returns) */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Sales Volume */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/30 flex-shrink-0">
-              <ShoppingCart className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Sales</p>
-              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 tabular-nums">
-                <AnimatedNumber value={stats?.totalSales || 0} duration={1500} />
-              </p>
-              <p className="text-xs text-blue-600 dark:text-blue-500 flex items-center gap-1 mt-0.5">
-                Items sold
-              </p>
-            </div>
-          </div>
-        </Card>
+            {/* Total Revenue */}
+            <Card className="p-5 border-0 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-green-600 shadow-lg shadow-green-500/30 flex-shrink-0">
+                  <TrendingUp className="h-5 w-5 text-white" strokeWidth={2.5} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold text-green-700 dark:text-green-400 uppercase tracking-wider">Total Revenue</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-2xl font-bold text-green-900 dark:text-green-100 tabular-nums">
+                      ₱<AnimatedNumber value={stats?.totalRevenue || 0} duration={1500} />
+                    </p>
+                    {!startDate && !endDate && <ComparisonBadge pct={revenueChange} />}
+                  </div>
+                  <p className="text-xs text-green-600 dark:text-green-500 flex items-center gap-1 mt-0.5">
+                    {startDate || endDate ? (
+                      stats?.totalRevenue && stats.totalRevenue > 0 ? (
+                        <><ArrowUpRight className="h-3 w-3" />Filtered period</>
+                      ) : "No sales in period"
+                    ) : (
+                      stats?.revenueToday !== undefined && stats.revenueToday > 0 ? (
+                        <><ArrowUpRight className="h-3 w-3" />₱{formatNumber(stats.revenueToday)} today</>
+                      ) : "No sales today yet"
+                    )}
+                  </p>
+                </div>
+              </div>
+            </Card>
 
-        {/* Average Order Value */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-600 shadow-lg shadow-purple-500/30 flex-shrink-0">
-              <TrendingUp className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">Avg Order Value</p>
-              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 tabular-nums">
-                ₱<AnimatedNumber value={stats?.totalSales && stats.totalSales > 0 ? (stats?.totalRevenue || 0) / stats.totalSales : 0} duration={1500} decimals={0} />
-              </p>
-              <p className="text-xs text-purple-600 dark:text-purple-500 flex items-center gap-1 mt-0.5">
-                Per order
-              </p>
-            </div>
-          </div>
-        </Card>
+            {/* Gross Profit */}
+            <Card className="p-5 border-0 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-purple-600 shadow-lg shadow-purple-500/30 flex-shrink-0">
+                  <DollarSign className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">Gross Profit</p>
+                  <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 tabular-nums">
+                    ₱<AnimatedNumber value={netProfit} duration={1500} />
+                  </p>
+                  <p className="text-xs text-purple-600 dark:text-purple-500 flex items-center gap-1 mt-0.5">
+                    {stats?.returnValue !== undefined && stats.returnValue > 0 ? (
+                      <>
+                        <ArrowDownRight className="h-3 w-3" />
+                        ₱{formatNumber(stats.returnValue)} returns
+                      </>
+                    ) : (
+                      "No returns"
+                    )}
+                  </p>
+                </div>
+              </div>
+            </Card>
 
-        {/* Total Orders */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-cyan-600 shadow-lg shadow-cyan-500/30 flex-shrink-0">
-              <Package className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">Total Orders</p>
-              <p className="text-2xl font-bold text-cyan-900 dark:text-cyan-100 tabular-nums">
-                <AnimatedNumber value={stats?.totalTransactions || 0} duration={1500} />
-              </p>
-              <p className="text-xs text-cyan-600 dark:text-cyan-500 flex items-center gap-1 mt-0.5">
-                Transactions
-              </p>
-            </div>
+            {/* Profit Margin */}
+            <Card className="p-5 border-0 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-amber-600 shadow-lg shadow-amber-500/30 flex-shrink-0">
+                  <Percent className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Profit Margin</p>
+                  <p className="text-2xl font-bold text-amber-900 dark:text-amber-100 tabular-nums">
+                    <AnimatedNumber value={stats?.profitMargin || 0} decimals={1} duration={1500} />%
+                  </p>
+                  <p className="text-xs text-amber-600 dark:text-amber-500 flex items-center gap-1 mt-0.5">
+                    {(stats?.profitMargin || 0) >= 30 ? (
+                      "🏆 Excellent!"
+                    ) : (stats?.profitMargin || 0) >= 15 ? (
+                      "✓ Good"
+                    ) : (
+                      "⚠ Improve"
+                    )}
+                  </p>
+                </div>
+              </div>
+            </Card>
           </div>
-        </Card>
 
-        {/* Total Returns - NEW */}
-        <Card className="p-5 border-0 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-red-600 shadow-lg shadow-red-500/30 flex-shrink-0">
-              <RotateCcw className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-red-700 dark:text-red-400 uppercase tracking-wider">Total Returns</p>
-              <p className="text-2xl font-bold text-red-900 dark:text-red-100 tabular-nums">
-                <AnimatedNumber value={stats?.totalReturns || 0} duration={1500} />
-              </p>
-              <p className="text-xs text-red-600 dark:text-red-500 flex items-center gap-1 mt-0.5">
-                {stats?.returnRate !== undefined ? `${stats.returnRate.toFixed(1)}% return rate` : 'Customer returns'}
-              </p>
-            </div>
+          {/* Row 2: Sales Performance Metrics (3 cards) */}
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Average Order Value */}
+            <Card className="p-5 border-0 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-purple-600 shadow-lg shadow-purple-500/30 flex-shrink-0">
+                  <TrendingUp className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">Avg Order Value</p>
+                  <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 tabular-nums">
+                    ₱<AnimatedNumber value={stats?.totalSales && stats.totalSales > 0 ? (stats?.totalRevenue || 0) / stats.totalSales : 0} duration={1500} decimals={0} />
+                  </p>
+                  <p className="text-xs text-purple-600 dark:text-purple-500 flex items-center gap-1 mt-0.5">
+                    Per order
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Total Orders */}
+            <Card className="p-5 border-0 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-cyan-600 shadow-lg shadow-cyan-500/30 flex-shrink-0">
+                  <Package className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">Total Orders</p>
+                  <p className="text-2xl font-bold text-cyan-900 dark:text-cyan-100 tabular-nums">
+                    <AnimatedNumber value={stats?.totalTransactions || 0} duration={1500} />
+                  </p>
+                  <p className="text-xs text-cyan-600 dark:text-cyan-500 flex items-center gap-1 mt-0.5">
+                    Transactions
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Total Returns */}
+            <Card className="p-5 border-0 shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-red-600 shadow-lg shadow-red-500/30 flex-shrink-0">
+                  <RotateCcw className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold text-red-700 dark:text-red-400 uppercase tracking-wider">Total Returns</p>
+                  <p className="text-2xl font-bold text-red-900 dark:text-red-100 tabular-nums">
+                    <AnimatedNumber value={stats?.totalReturns || 0} duration={1500} />
+                  </p>
+                  <p className="text-xs text-red-600 dark:text-red-500 flex items-center gap-1 mt-0.5">
+                    {stats?.returnRate !== undefined ? `${stats.returnRate.toFixed(1)}% return rate` : 'Customer returns'}
+                  </p>
+                </div>
+              </div>
+            </Card>
           </div>
-        </Card>
-      </div>
+        </>
+      )}
 
       {/* Quick Actions & Alerts */}
       <div className={cn(
@@ -495,14 +545,16 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Enhanced Revenue Chart - Enterprise Level */}
-      <RevenueChart
-        data={formatChartData(stats?.salesOverTime, timePeriod)}
-        timePeriod={timePeriod}
-        onPeriodChange={setTimePeriod}
-        comparison={calculatePeriodComparison(stats, timePeriod)}
-        loading={refreshing}
-      />
+      {/* Enhanced Revenue Chart - Enterprise Level - Hidden for logistics-admin */}
+      {currentUser?.role !== 'logistics-admin' && (
+        <RevenueChart
+          data={formatChartData(stats?.salesOverTime, timePeriod)}
+          timePeriod={timePeriod}
+          onPeriodChange={setTimePeriod}
+          comparison={calculatePeriodComparison(stats, timePeriod)}
+          loading={refreshing}
+        />
+      )}
 
       {/* Performance Analytics */}
       <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">

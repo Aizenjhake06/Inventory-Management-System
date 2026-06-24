@@ -84,6 +84,8 @@ export function PremiumNavbar({ sidebarCollapsed, onMenuClick, onMobileMenuToggl
               setUserRole("Packer")
             } else if (storedRole === "logistics") {
               setUserRole("Logistics")
+            } else if (storedRole === "logistics-admin") {
+              setUserRole("Logistics Admin")
             } else {
               setUserRole("Staff")
             }

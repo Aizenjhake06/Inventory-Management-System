@@ -355,7 +355,7 @@ export function PremiumSidebar({ onNavClick, mobileOpen = false, onMobileClose, 
       >
         {/* Logo & Brand - Professional Layout with Dark Mode Support */}
         <div 
-          className="h-14 flex items-center px-1.5 xl:px-2 flex-shrink-0 relative"
+          className="h-16 flex items-center px-1.5 xl:px-2 flex-shrink-0 relative"
         >
           {/* Bottom border line - matching separator style */}
           <div className="absolute bottom-0 left-2 right-2 h-px bg-gradient-to-r from-transparent via-white to-transparent dark:from-transparent dark:via-white dark:to-transparent" />
@@ -363,17 +363,10 @@ export function PremiumSidebar({ onNavClick, mobileOpen = false, onMobileClose, 
           {/* Logo - Centered */}
           <div className="flex items-center justify-center flex-1">
             <div className="flex items-center justify-center py-1.5">
-              {/* Light mode logo */}
               <img 
-                src="/Vertex-icon.png" 
-                alt="Vertex" 
-                className="h-9 w-auto object-contain dark:hidden"
-              />
-              {/* Dark mode logo */}
-              <img 
-                src="/Vertex-icon-2.png" 
-                alt="Vertex" 
-                className="h-9 w-auto object-contain hidden dark:block"
+                src="/wihilogo.png" 
+                alt="WIHI Logo" 
+                className="h-12 w-auto object-contain"
               />
             </div>
           </div>

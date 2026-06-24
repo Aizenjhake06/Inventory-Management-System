@@ -153,12 +153,14 @@ export async function addTransaction(transaction: Omit<Transaction, "id" | "time
       cost_price: transaction.costPrice,
       selling_price: transaction.sellingPrice,
       total_cost: transaction.totalCost,
+      total_revenue: transaction.totalRevenue || 0,
       profit: transaction.profit,
       timestamp,
+      type: transaction.type || 'sale',
+      transaction_type: transaction.transactionType || 'sale',
       department: transaction.department || '',
       staff_name: transaction.staffName || '',
       notes: transaction.notes || '',
-      transaction_type: transaction.transactionType || 'sale',
     })
     .select()
     .single()
@@ -733,8 +735,7 @@ export async function addAccount(account: Omit<Account, "id" | "createdAt">): Pr
       password: hashedPassword,
       role: account.role,
       display_name: account.displayName,
-      assigned_channel: account.assignedChannel || null, // Add assigned_channel field
-      profile_image: account.profileImage || null, // Add profile_image field
+      profile_image: account.profileImage || null,
       created_at: createdAt,
     })
     .select()
@@ -750,7 +751,6 @@ export async function addAccount(account: Omit<Account, "id" | "createdAt">): Pr
     username: account.username,
     password: hashedPassword,
     role: account.role,
-    assignedChannel: account.assignedChannel,
     displayName: account.displayName,
     profileImage: account.profileImage,
     createdAt,
